@@ -119,7 +119,7 @@ DMA_Controller DMA_Controller (
     .wbs_dat_i(wbs_dat_i),
     .wbs_ack_o(wbs_ack_o),
     .wbs_dat_o(wbs_dat_o),
-    .la_data_out(la_data_out),
+    .la_data_out(la_data_out), 
     // Cache
     .rw(dma_rw),
     .burst(dma_burst),
@@ -150,7 +150,7 @@ Arbiter Arbiter (
     .wbs_adr_i(wbs_adr_i),
     .wbs_dat_i(wbs_dat_i),
     .wbs_ack_o(wbs_ack_o),
-    // Cache
+    // Cache -> Arbiter
     .wbs_cache_miss(wbs_cache_miss),
     // DMA
     .dma_rw(dma_rw),
