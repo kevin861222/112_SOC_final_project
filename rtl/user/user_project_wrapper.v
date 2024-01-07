@@ -76,7 +76,7 @@ wire [1:0]dma_burst;
 wire dma_rw;
 wire dma_in_valid;
 wire [12:0] dma_addr;
-wire dma_ack;
+wire ack_from_abt , ack_from_ctr ;
 wire [31:0] dma_data_out;
 wire [31:0] dma_data_in;
 
@@ -89,6 +89,8 @@ wire bram_data_in;
 wire bram_wr;
 wire bram_addr;
 wire reader_sel;
+wire bram_data_out ;
+wire cache_in_valid ;
 
 // ASIC
 wire [2:0] ap_start_ASIC;
@@ -120,14 +122,15 @@ DMA_Controller DMA_Controller (
     .wbs_ack_o(wbs_ack_o),
     .wbs_dat_o(wbs_dat_o),
     .la_data_out(la_data_out), 
-    // Cache
+    // Arbiter
     .rw(dma_rw),
     .burst(dma_burst),
-    .ack(dma_ack),
+    .ack(ack_from_abt|ack_from_ctr), // Wangyu : There are two ack source , from arbiter and BRAM controller .
     .addr(dma_addr),
-    .in_valid(dma_in_valid),
-    .data_in(dma_data_in),
-    .data_out(dma_data_out),
+    .in_valid(dma_in_valid), 
+
+    .data_in(bram_data_out), // wangyu : change dma_data_in into bram_data_out
+    .data_out(dma_data_in),
     // AXI-Stream (DMA->ASIC)
     .sm_tvalid(sm_tvalid), 
     .sm_tdata(sm_tdata), 
@@ -155,7 +158,7 @@ Arbiter Arbiter (
     // DMA
     .dma_rw(dma_rw),
     .dma_burst(dma_burst),
-    .dma_ack(dma_ack),
+    .dma_ack(ack_from_abt),
     .dma_addr(dma_addr),
     .dma_data_in(dma_data_in),
     .dma_in_valid(dma_in_valid),
@@ -181,8 +184,8 @@ instru_cache instru_cache (
     // Arbiter
     .wbs_cache_miss(wbs_cache_miss),
     // BRAM Controller
-    .bram_data_in(bram_data_in),
-    .bram_in_valid(bram_in_valid)
+    .bram_data_in(bram_data_out),
+    .bram_in_valid(cache_in_valid)
 );
 
 bram_controller bram_controller(
@@ -194,13 +197,14 @@ bram_controller bram_controller(
     .Addr(bram_addr),
     .reader_sel(reader_sel),
     // DMA
-    .dma_ack(dma_ack),
+    .dma_ack(ack_from_ctr),
     // Arbiter
-    .Di(),
-    .In_valid(),
+    .Di(bram_data_in),
+    .In_valid(bram_in_valid),
+    // Cache & DMA
+    .Do(bram_data_out),
     // Cache
-    .Do(),
-    .Out_valid()
+    .Out_valid(cache_in_valid)
 );
 
 accelerator accelerator(
