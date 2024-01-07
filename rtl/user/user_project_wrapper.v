@@ -148,7 +148,11 @@ DMA_Controller DMA_Controller (
     .ss_tready(ss_tready),
     .ss_tvalid(ss_tvalid), 
     .ss_tdata(ss_tdata), 
-    .ss_tlast(ss_tlast)
+    .ss_tlast(ss_tlast),
+    // Status
+    .ap_start_ASIC(ap_start_ASIC),
+    .ap_idle_ASIC(ap_idle_ASIC),
+    .ap_done_ASIC(ap_done_ASIC)
 );
 
 Arbiter Arbiter (
