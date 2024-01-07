@@ -58,11 +58,11 @@ module main_tb;
 	end
 
 	initial begin
-		$display("Test start - FIR");
 		wait(checkbits == 16'hAB40);
+		$display("Test start - FIR");
 		repeat (10000) @(posedge clock);
-		$display("Test end   - FIR");
 		wait(checkbits == 16'hAB51);
+		$display("Test end   - FIR");
 		$finish;
 	end
 

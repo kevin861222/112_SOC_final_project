@@ -72,6 +72,7 @@ module user_project_wrapper #(
 /*--------------------------------------*/
 
 // DMA
+wire wbs_ack_o_DMA;
 wire [1:0]dma_burst;
 wire dma_rw;
 wire dma_in_valid;
@@ -81,6 +82,7 @@ wire [31:0] dma_data_out;
 wire [31:0] dma_data_in;
 
 // Arbiter
+wire wbs_ack_o_arbiter;
 wire wbs_cache_miss;
 
 // BRAM
@@ -97,6 +99,9 @@ wire [2:0] ap_start_ASIC;
 wire       ap_idle_ASIC;
 wire [2:0] ap_done_ASIC;
 
+// Cache
+wire wbs_ack_o_cache_instru;
+
 // AXI-Stream (Write, DMA->ASIC)
 wire        sm_tready;
 wire        sm_tvalid;
@@ -109,6 +114,9 @@ wire [31:0] ss_tdata;
 wire        ss_tlast;
 wire        ss_tready;
 
+// wishbone ack
+assign wbs_ack_o = wbs_ack_o_DMA | wbs_ack_o_arbiter | wbs_ack_o_cache_instru;
+
 DMA_Controller DMA_Controller (
     // MGMT SoC Wishbone Slave
     .wb_clk_i(wb_clk_i),
@@ -119,7 +127,7 @@ DMA_Controller DMA_Controller (
     .wbs_sel_i(wbs_sel_i),
     .wbs_adr_i(wbs_adr_i),
     .wbs_dat_i(wbs_dat_i),
-    .wbs_ack_o(wbs_ack_o),
+    .wbs_ack_o(wbs_ack_o_DMA),
     .wbs_dat_o(wbs_dat_o),
     .la_data_out(la_data_out), 
     // Arbiter
@@ -152,7 +160,7 @@ Arbiter Arbiter (
     .wbs_we_i(wbs_we_i),
     .wbs_adr_i(wbs_adr_i),
     .wbs_dat_i(wbs_dat_i),
-    .wbs_ack_o(wbs_ack_o),
+    .wbs_ack_o(wbs_ack_o_arbiter),
     // Cache -> Arbiter
     .wbs_cache_miss(wbs_cache_miss),
     // DMA
@@ -179,7 +187,7 @@ instru_cache instru_cache (
     .wbs_we_i(wbs_we_i),
     .wbs_dat_i(wbs_dat_i),
     .wbs_adr_i(wbs_adr_i),
-    .wbs_ack_o(wbs_ack_o),
+    .wbs_ack_o(wbs_ack_o_cache_instru),
     .wbs_dat_o(wbs_dat_o),
     // Arbiter
     .wbs_cache_miss(wbs_cache_miss),
@@ -222,9 +230,9 @@ accelerator accelerator(
     .sm_tdata(ss_tdata), 
     .sm_tlast(ss_tlast), 
     // Status
-    .ap_start(ap_start),
-    .ap_idle(ap_idle),
-    .ap_done(ap_done)
+    .ap_start(ap_start_ASIC),
+    .ap_idle(ap_idle_ASIC),
+    .ap_done(ap_done_ASIC)
 );
 
 endmodule	// user_project_wrapper
