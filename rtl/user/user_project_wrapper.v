@@ -85,11 +85,11 @@ wire wbs_cache_miss;
 
 // BRAM
 wire bram_in_valid;
-wire bram_data_in;
+wire [31:0] bram_data_in;
 wire bram_wr;
-wire bram_addr;
+wire [12:0] bram_addr;
 wire reader_sel;
-wire bram_data_out ;
+wire [31:0] bram_data_out ;
 wire cache_in_valid ;
 
 // ASIC
