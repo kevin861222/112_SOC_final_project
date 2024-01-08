@@ -17,23 +17,14 @@ DMA I/O {
 1.  DMA Write data to BRAM_u1 .
     data flow : DMA controller -> BRAM controller u1
 
-    a. Arbiter is idle .
+    a. DMA write has highest priority on BRAM_u1 , so don't need to wait for ack signal .
                 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
 clk             |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 dma_addr_w      ___/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\______
 dma_w_in_valid  ___/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\______     
 dma_data_out    ___/d0|d1|d2|d3|d4|d5|d6|d7|d8|d9|dA|dB\______
-brc1_ready      ___/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\______
-minimun latency : 0T
+latency : 0T
 
-    b. Arbiter is busy .
-                0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
-clk             |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-dma_addr_w      ___/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\___
-dma_w_in_valid  ___/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\___     
-dma_data_out    ___/‾d0‾‾|d1|d2|d3|d4|d5|d6|d7|d8|d9|dA|dB\___
-brc1_ready      ______/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\___
-maximun latency : 1T
 
 
 2.  DMA Read data from BRAM_u0 .
