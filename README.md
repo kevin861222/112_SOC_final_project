@@ -50,3 +50,10 @@ make
 ```
 
 ## Simulation Result
+
+## About This Project
+### Memory Map 
+
+### Transfer Protocol
+
+### Linker Script
