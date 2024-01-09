@@ -6,7 +6,9 @@ wbs 例外
 */
 
 /*待優化
-1. BRAM u1 的地址不用那麼多
+1. BRAM u1 的地址不用那麼多，看到時候算完的資料有多大在優化
+2. cache FIFO 看多久讀一次決定大小。
+3. 
 */
 
 module Arbiter #(
@@ -38,14 +40,12 @@ module Arbiter #(
     // use Stream protoco to read / write data .
     // Read / Write can be simultaneous . 
     // DMA Read 
-    // input dma_addr_r , // it must access bram u0
     input dma_r_ready , // it seen as read request
     input [12:0] dma_r_addr ,
-    output dma_ack ,
+    output dma_r_ack ,
     
     // DMA Write
-    // input dma_addr_w , // it must access bram u1
-    input dma_in_valid , // it seen as write request
+    input dma_w_valid , // it seen as write request
     input [12:0] dma_w_addr ,
     input [31:0] dma_w_data ,
 
@@ -94,9 +94,9 @@ assign bram_u1_data_in = bram_u1_data_in_d ;
 // Just rename
 wire dma_read_request , dma_write_request ;
 assign dma_read_request = dma_r_ready ;
-assign dma_write_request = dma_in_valid ; 
-reg dma_ack_d ;
-assign dma_ack = dma_ack_d ;
+assign dma_write_request = dma_w_valid ; 
+reg dma_r_ack_d ;
+assign dma_r_ack = dma_r_ack_d ;
 
 // WB decoder 
 wire is_u0 , is_u1;
@@ -110,6 +110,20 @@ end
 wire wbs_same_addr_n ;
 assign wbs_same_addr_n = (last_wbs_read_addr==wbs_adr_i[15:2])?(0):(1);
 
+// read_counter
+reg read_flag_d ,FIFO_read_flag_d ;
+reg [12:0] FIFO_counter ;
+reg [2:0] read_counter ;
+always @(posedge wb_rst_i or posedge wb_clk_i) begin
+    if (wb_rst_i) begin
+        FIFO_counter <= 0 ;
+        read_counter <= 0 ;
+    end else begin
+        read_counter <= read_counter + read_flag_d ;
+        FIFO_counter <= FIFO_counter + FIFO_read_flag_d ;
+    end
+end
+
 /* function */
 /* access BRAM u0
 addr : 0x3800_0000 ~ 0x3800_6FFF
@@ -117,31 +131,38 @@ condition : CPU - W / R
             DMA - R
 */
 always @(*) begin
+    read_flag_d = 0 ;
     wbs_ack_d = 0 ; 
     bram_u0_wr_d = 0 ;
     bram_u0_in_valid_d = 0 ;
     bram_u0_addr_d = 13'd0 ; 
     bram_u0_data_in_d = 32'd0 ; 
     bram_u0_reader_sel_d = 0 ;
-    dma_ack_d = 0 ;
-    if (wbs_stb_i & wbs_cyc_i & wbs_we_i & ~wbs_adr_i[15]) begin :                                      CPU_Write
+    dma_r_ack_d = 0 ;
+    if (|read_counter) begin:                                                                           CPU_Burst_Read_Instruction
+        read_flag_d = 1 ;
+        bram_u0_wr_d = 0 ;
+        bram_u0_in_valid_d = 1 ;
+        bram_u0_addr_d = wbs_adr_i[15:2] + read_counter ;
+        bram_u0_reader_sel_d = 1 ;
+    end else if (wbs_stb_i & wbs_cyc_i & wbs_we_i & ~wbs_adr_i[15]) begin :                             CPU_Write_u0
         wbs_ack_d = 1 ;
         bram_u0_wr_d = 1 ;
         bram_u0_in_valid_d = 1 ;
         bram_u0_addr_d = wbs_adr_i[15:2] ;
         bram_u0_data_in_d = wbs_dat_i ;
-    end else if (wbs_stb_i & wbs_cyc_i & ~wbs_we_i & ~wbs_adr_i[15] & is_u0 & wbs_same_addr_n) begin :  CPU_Read
-        // 地址沒切換會連續讀很多筆
+    end else if (wbs_stb_i & wbs_cyc_i & ~wbs_we_i & ~wbs_adr_i[15] & is_u0 & wbs_cache_miss ) begin :  CPU_Read_u0
+        read_flag_d = 1 ;
         bram_u0_wr_d = 0 ;
         bram_u0_in_valid_d = 1 ;
         bram_u0_addr_d = wbs_adr_i[15:2] ;
         bram_u0_reader_sel_d = 1 ;
-    end else if (dma_read_request) begin :                                                              DMA_Read
+    end else if (dma_read_request) begin :                                                              DMA_Read_u0
         bram_u0_wr_d = 0 ;
         bram_u0_in_valid_d = 1 ;
         bram_u0_addr_d = dma_r_addr ;
         bram_u0_reader_sel_d = 0 ;
-        dma_ack_d = 1 ;
+        dma_r_ack_d = 1 ;
         // switch into DMA burst read mode .
     end
 end
@@ -151,20 +172,22 @@ condition : CPU - R
             DMA - W
 */
 always @(*) begin
-
     bram_u1_wr_d = 0 ;
     bram_u1_in_valid_d = 0 ;
     bram_u1_addr_d = 13'd0 ;
     bram_u1_data_in_d = 32'd0 ; 
-    if (dma_write_request) begin : DMA_Write
+    if (dma_write_request) begin : DMA_Write_u1
+    // first 10th data will directly write into FIFO
         bram_u1_wr_d = 1 ;
         bram_u1_in_valid_d = 1 ;
         bram_u1_addr_d = dma_w_addr ;
         bram_u1_data_in_d = dma_w_data ;
-    end else if (wbs_stb_i & wbs_cyc_i & ~wbs_we_i & ~wbs_adr_i[15] & is_u1 & wbs_same_addr_n ) begin : CPU_Read
+    end else if (fifo_full_n) begin : CPU_Read_u1
+    /*wbs_stb_i & wbs_cyc_i & ~wbs_we_i & ~wbs_adr_i[15] & is_u1 & wbs_same_addr_n*/
+        FIFO_read_flag_d = 1 ;
         bram_u1_wr_d = 0 ;
         bram_u1_in_valid_d = 1 ;
-        bram_u1_addr_d = wbs_adr_i[15:2] ;
+        bram_u1_addr_d = /*offset =*/13'd10 + FIFO_counter ;//wbs_adr_i[15:2] ;
     end
 end
 
