@@ -17,7 +17,6 @@
 
 // This include is relative to $CARAVEL_PATH (see Makefile)
 #include <defs.h>
-#include <stub.c>
 
 #define DMA_wbs         0x30008000
 #define DMA_offset_cfg  0x00

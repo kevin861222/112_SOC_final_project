@@ -6,13 +6,15 @@
 -v ../rtl/user/user_project_wrapper.v
 -v ../rtl/user/DMA/DMA_Controller.v
 -v ../rtl/user/Cache/instru_cache.v
--v ../rtl/user/BRAM/bram_controller.v
+-v ../rtl/user/BRAM/bram_controller_u0.v
+-v ../rtl/user/BRAM/bram_controller_u1.v
 -v ../rtl/user/BRAM/bram.v
--v ../rtl/user/Arbiter/Arbiter.v
+-v ../rtl/user/Arbiter/Arbiter_new.v
 -v ../rtl/user/ASIC/accelerator.v
 -v ../rtl/user/ASIC/fir.v
 -v ../rtl/user/ASIC/matmul.v
 -v ../rtl/user/ASIC/sorting.v
+-v ../rtl/user/FIFO/data_FIFO.v
 
 ## VIP
 -v ../vip/tbuart.v
