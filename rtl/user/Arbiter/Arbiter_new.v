@@ -6,10 +6,11 @@ wbs 例外
 */
 
 /*待優化
-1. BRAM u1 的地址不用那麼多，看到時候算完的資料有多大在優化
+1. BRAM u0 / u1 的地址不用那麼多，看到時候算完的資料有多大在優化
 2. cache FIFO 看多久讀一次決定大小。
 3. 把 bram 地址改用 define 參數
 4. DMA 讀資料會不會被 CPU 讀取要求中斷
+5. 調整 BRAM 大小
 */
 
 module Arbiter #(
@@ -127,8 +128,9 @@ end
 
 /* function */
 /* access BRAM u0
-addr : 0x3800_0000 ~ 0x3800_6FFF
-condition : CPU - W / R
+Contents : CPU Instruction / BSS / Raw Data
+Addr : 0x3800_0000 ~ 0x3800_6FFF
+Condition : CPU - W / R
             DMA - R
 */
 always @(*) begin
@@ -174,9 +176,10 @@ always @(*) begin
     end
 end
 /* access BRAM u1
-addr : 0x3800_7000 ~ 0x3800_7FFF
-condition : CPU - R
-            DMA - W
+Contents : Processed Data
+Addr : 0x3800_7000 ~ 0x3800_7FFF
+Condition : CPU - R 
+            DMA - W 
 */
 always @(*) begin
     FIFO_read_flag_d = 0 ;
@@ -195,7 +198,7 @@ always @(*) begin
         FIFO_read_flag_d = 1 ;
         bram_u1_wr_d = 0 ;
         bram_u1_in_valid_d = 1 ;
-        bram_u1_addr_d = /*offset =*/13'd10 + FIFO_counter ;//wbs_adr_i[15:2] ;
+        bram_u1_addr_d = /*offset =*/13'd1 + FIFO_counter ;//wbs_adr_i[15:2] ;
     end
 end
 
