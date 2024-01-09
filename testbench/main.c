@@ -17,6 +17,9 @@
 
 // This include is relative to $CARAVEL_PATH (see Makefile)
 #include <defs.h>
+#include "fir.h"
+#include "qsort.h"
+#include "matmul.h"
 
 #define DMA_wbs         0x30008000
 #define DMA_offset_cfg  0x00

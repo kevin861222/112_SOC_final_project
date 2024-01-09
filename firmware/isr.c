@@ -11,40 +11,31 @@ void isr(void);
 
 #ifdef CONFIG_CPU_HAS_INTERRUPT
 
-uint16_t flag;
-
 void isr(void)
 {
-//	__attribute__((unused)) unsigned int irqs;
-//
-//	irqs = irq_pending() & irq_getmask();
-//
+#ifndef USER_PROJ_IRQ0_EN
 	irq_setmask(0);
-//
-//    reg_timer0_irq_en = 0; // disable interrupt
-//    reg_debug_irq_en = 0;
+#else
+    int buf;
+    if ( irqs & (1 << USER_IRQ_0_INTERRUPT)) {
+        user_irq_0_ev_pending_write(1); //Clear Interrupt Pending Event
+        buf = uart_read();
+        uart_write(buf);
+    }
+    // uint16_t mprj_31_16;
+    // uint8_t mprj_31_24, mprj_23_16;
+    // if( irqs & (1 << USER_IRQ_1_INTERRUPT)) {
+    //     user_irq_1_ev_pending_write(1); //Clear Interrupt Pending Event
+    //     mprj_31_16 = ((reg_la1_data & 0xFFFF0000) >> 16);
+    //     mprj_31_24 = ((mprj_31_16 & (0xFF<<8))>>8);
+    //     mprj_23_16 = ((mprj_31_16 & (0xFF<<0))>>0);
 
-//    reg_reset = 1;
-//    asm volatile ("slli x0, x0, 0x1f");
-//    asm volatile ("ebreak");
-//    asm volatile ("srai x0, x0, 7");
-
-   reg_la1_data = 0xa;
-   reg_la0_data = 0x20000;
-   flag = 1;
-
-//	if(irqs & (1 << TIMER0_INTERRUPT)) {
-////		uart_isr();
-//        reg_la1_data = 0xa;	// Signal end of test 1st stage
-//        reg_la0_data = 0x20000;
-//        flag = 1;
-//    }
+    //     uart_write(mprj_31_24);
+    //     uart_write(mprj_23_16);
+    //     uart_write(0x0a); // "\n"
+    // }
+#endif
     return;
-
-//#ifndef UART_POLLING
-//	if(irqs & (1 << UART_INTERRUPT))
-//		uart_isr();
-//#endif
 }
 
 #else
