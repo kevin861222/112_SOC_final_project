@@ -38,6 +38,11 @@ G3 --> G5
 G5 --> G
 end
 ```
+
+## System Architecture
+![截圖 2024-01-10 上午1 08 22](https://github.com/pocper/112_SOC_final_project/assets/79128379/4e949ce3-229f-4ff7-af8f-372c3f7bb3ae)
+
+
 ## Simulation
 ``` bash
 cd ~/testbench
