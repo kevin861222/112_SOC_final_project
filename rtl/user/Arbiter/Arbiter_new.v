@@ -8,7 +8,8 @@ wbs 例外
 /*待優化
 1. BRAM u1 的地址不用那麼多，看到時候算完的資料有多大在優化
 2. cache FIFO 看多久讀一次決定大小。
-3. 
+3. 把 bram 地址改用 define 參數
+4. DMA 讀資料會不會被 CPU 讀取要求中斷
 */
 
 module Arbiter #(
@@ -139,31 +140,37 @@ always @(*) begin
     bram_u0_data_in_d = 32'd0 ; 
     bram_u0_reader_sel_d = 0 ;
     dma_r_ack_d = 0 ;
-    if (|read_counter) begin:                                                                           CPU_Burst_Read_Instruction
-        read_flag_d = 1 ;
-        bram_u0_wr_d = 0 ;
-        bram_u0_in_valid_d = 1 ;
-        bram_u0_addr_d = wbs_adr_i[15:2] + read_counter ;
-        bram_u0_reader_sel_d = 1 ;
-    end else if (wbs_stb_i & wbs_cyc_i & wbs_we_i & ~wbs_adr_i[15]) begin :                             CPU_Write_u0
+    
+    if (wbs_stb_i & wbs_cyc_i & wbs_we_i & ~wbs_adr_i[15]) begin :          CPU_Write_u0
         wbs_ack_d = 1 ;
         bram_u0_wr_d = 1 ;
         bram_u0_in_valid_d = 1 ;
         bram_u0_addr_d = wbs_adr_i[15:2] ;
         bram_u0_data_in_d = wbs_dat_i ;
-    end else if (wbs_stb_i & wbs_cyc_i & ~wbs_we_i & ~wbs_adr_i[15] & is_u0 & wbs_cache_miss ) begin :  CPU_Read_u0
-        read_flag_d = 1 ;
-        bram_u0_wr_d = 0 ;
-        bram_u0_in_valid_d = 1 ;
-        bram_u0_addr_d = wbs_adr_i[15:2] ;
-        bram_u0_reader_sel_d = 1 ;
-    end else if (dma_read_request) begin :                                                              DMA_Read_u0
+    end else if (dma_read_request) begin :                                  DMA_Read_u0
         bram_u0_wr_d = 0 ;
         bram_u0_in_valid_d = 1 ;
         bram_u0_addr_d = dma_r_addr ;
         bram_u0_reader_sel_d = 0 ;
         dma_r_ack_d = 1 ;
         // switch into DMA burst read mode .
+    end else if (|read_counter) begin:                                      CPU_Burst_Read_Instruction
+        read_flag_d = 1 ;
+        bram_u0_wr_d = 0 ;
+        bram_u0_in_valid_d = 1 ;
+        bram_u0_addr_d = wbs_adr_i[15:2] + read_counter ;
+        bram_u0_reader_sel_d = 1 ;
+    end else if ( wbs_cache_miss ) begin :                                  CPU_Read_u0
+        /*wbs_stb_i & wbs_cyc_i & ~wbs_we_i & ~wbs_adr_i[15] & is_u0 &*/
+        read_flag_d = 1 ;
+        bram_u0_wr_d = 0 ;
+        bram_u0_in_valid_d = 1 ;
+        bram_u0_addr_d = wbs_adr_i[15:2] ;
+        bram_u0_reader_sel_d = 1 ;
+    end /*else if () begin : Predict_FIFO_Read
+
+    end*/ else begin : IDLE_task
+        bram_u0_in_valid_d = 0 ;
     end
 end
 /* access BRAM u1
