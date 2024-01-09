@@ -1,0 +1,80 @@
+
+// Just e|plain how DMA transmit datas .
+
+/*
+naming{
+    dma  : DMA
+    brc0 : BRAM controller 0 
+    brc1 : BRAM controller 1 
+    abt  : Arbiter
+}
+
+DMA I/O {
+    input : !dma_xxxx
+    output : dma_xxxx
+
+    // DMA Read 
+    output dma_r_ready , // it seen as read request
+    output [12:0] dma_r_addr ,
+    input abt_r_ack ,
+    
+    // DMA Write
+    output dma_w_valid , // it seen as write request
+    output [12:0] dma_w_addr ,
+    output [31:0] dma_w_data ,
+}
+
+1.  DMA Write data to BRAM_u1 .
+    data flow : DMA controller -> BRAM controller u1
+
+    a. DMA write has highest priority on BRAM_u1 , so don't need to wait for ack signal .
+                0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+clk             |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+dma_w_addr      ___/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\______
+dma_w_valid     ___/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\______     
+dma_w_data      ___/d0|d1|d2|d3|d4|d5|d6|d7|d8|d9|dA|dB\______
+latency : 0T
+
+
+
+2.  DMA Read data from BRAM_u0 .
+    data flow : BRAM controller u0 -> DMA controller
+
+    a. Arbiter is idle .
+                0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+clk             |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+dma_r_addr      ___/a0|a1|a2|a3|a4|a5|a6|a7|a8|a9|aA|aB\____________________________________
+dma_r_ready     ___/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\____________________________________
+abt_r_ack       ___/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\____________________________________
+brc0_out_valid  _________________________________/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\______     
+brc0_data_out   _________________________________/d0|d1|d2|d3|d4|d5|d6|d7|d8|d9|dA|dB\______
+                   |<-----------10T------------->|
+minimun latency : 10T
+< if add a cache at DMA can reduce the latency to 1T , maybe could implement 0T ! >
+
+    b. Arbiter is busy .
+                0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+clk             |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+dma_r_addr      ___/‾a0‾‾|a1|a2|a3|a4|a5|a6|a7|a8|a9|aA|aB\_________________________________
+dma_r_ready     ___/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\_________________________________
+abt_r_ack       _________/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\_________________________________
+brc0_out_valid  _______________________________________/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\    
+brc0_data_out   _______________________________________/d0|d1|d2|d3|d4|d5|d6|d7|d8|d9|dA|dB\
+                         |<-----------10T------------->|
+
+    c. Interrupt by cpu
+                0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26
+clk             |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+dma_r_addr      ___/‾a0‾‾|a1|a2|a3|a4|a5|‾a6‾‾|a7|a8|a9|aA|aB\_________________________________
+dma_r_ready     ___/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\_________________________________
+abt_r_ack       _________/‾‾‾‾‾‾‾‾‾‾‾‾‾‾\__/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\_________________________________
+brc0_out_valid  _______________________________________/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\__/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\    
+brc0_data_out   _______________________________________/d0|d1|d2|d3|d4|d5|xx|d6|d7|d8|d9|dA|dB\
+                         |<-----------10T------------->|
+
+    /*
+        d0 , d1 : data0 , data1
+        a0 , a1 : addr0 , addr1
+    */
+
+*/
