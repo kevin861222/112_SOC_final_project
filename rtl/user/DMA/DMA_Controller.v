@@ -60,15 +60,15 @@ module DMA_Controller
     input                          ss_tlast, 
     output reg                     ss_tready, 
 
-    // Cache
-    input ack,
-    input [(pDATA_WIDTH-1):0] data_out,
-
-    output        rw,
-    output [12:0] addr,
-    output        in_valid,
-    output reg [(pDATA_WIDTH-1):0] data_in,
-    output reg [1:0] burst,
+    // Memory
+    output        mem_r_ready, // mem_r_addr valid
+    output [12:0] mem_r_addr,
+    input         mem_r_ack,
+    output        mem_w_valid,
+    output [12:0] mem_w_addr,
+    output [31:0] mem_w_data,
+    input         mem_r_valid, // mem_r_data valid
+    input  [31:0] mem_r_data,
 
     // ASIC signal line
     input       ap_idle_ASIC,
@@ -190,7 +190,7 @@ always @(posedge wb_clk_i, posedge wb_rst_i) begin
         counter_length <= 0;
     end
     else begin
-        if(!ap_idle_DMA && ack && counter_length<length)
+        if(!ap_idle_DMA && mem_r_ack && counter_length<length)
             counter_length <= counter_length + 1;
 
         if(ap_done_DMA) 
@@ -198,59 +198,28 @@ always @(posedge wb_clk_i, posedge wb_rst_i) begin
     end
 end
 
-// Cache
-// Port
-// 1. rw => Read = 0, Write = 1
-// 2. in_valid => rw & address valid
-// 3. address  => data need to R/W from/to BRAM
-// 4. data_in  => data need to save to BRAM
-// 5. data_out => data read from BRAM
-// State : read from cache to DMA
-// 1. rw = 0, address = addr_BRAM, in_valid = 1
-// 2. wait until ack = 1, data_out is valid
-// State : write from DMA to cache
-// 1. rw = 1, address = addr_BRAM, in_valid = 1, data_in = data[31:0]
-// 2. wait until ack = 1, data is saving to Cache and after 10T cache will save data to BRAM
-// Notice, rw/invalid/address need to wait until receiving ack
+// Memory
+// Read
+// mem_r_ready
+// mem_r_valid
+// mem_r_addr
+// mem_r_ack
+// mem_r_data
+// Write
+// mem_w_valid
+// mem_w_addr
+// mem_w_data
 
-assign rw = type;
-assign addr = (addr_DMA2RAM | (counter_length << 2));
+assign mem_r_addr = (addr_DMA2RAM | (counter_length << 2));
 assign in_valid = !ap_idle_DMA && ((counter_length==0) || (counter_length>0 && sm_tready));
-// in_valid = 1
-// 1. when ap_idle_DMA = 0 -> DMA is working
-// 2. AXI-Stream send 1st data to ASIC
-// 3. AXI-Stream send data to ASIC and ASIC is ready to receive data
-// cache -> DMA -> ASIC
-//
-
-always @(*) begin
-    // length >= 64
-    if(length[6]) 
-        burst=2'd3;
-    // length >= 16
-    else if(length[4]) 
-        burst=2'd2;
-    // length >= 10
-    else if(length[3]&length[1])
-        burst=2'd1;
-    else 
-        burst=2'd0;
-end
 
 // AXI-Stream (Write, DMA->ASIC)
-assign sm_tdata = data_out;
 always @(posedge wb_clk_i, posedge wb_rst_i) begin
     if(wb_rst_i) begin
         sm_tvalid <= 0;
         sm_tlast <= 0;
     end
     else begin
-        // if rw = 0, ack = 1 -> data_out is valid
-        if(!rw & ack) sm_tvalid <= 1;
-        // sm_tvalid hold until tready = 1 -> sm_tvalid = 0
-        if(sm_tready) sm_tvalid <= 0;
-        if(!ap_idle_DMA && counter_length==length) sm_tlast <= 1;
-        if(sm_tlast) sm_tlast <= 0;
     end
 end
 
@@ -258,11 +227,8 @@ end
 always @(posedge wb_clk_i, posedge wb_rst_i) begin
     if(wb_rst_i) begin
         ss_tready <= 1;
-        data_in <= 32'b0;
     end
     else begin
-        ss_tready <= ack;
-        data_in <= ss_tdata;
     end
 end
 

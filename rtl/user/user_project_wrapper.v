@@ -153,23 +153,20 @@ DMA_Controller DMA_Controller (
     .ss_tready(ss_tready),
     .ss_tvalid(ss_tvalid), 
     .ss_tdata(ss_tdata), 
-    .ss_tlast(ss_tlast)
+    .ss_tlast(ss_tlast),
 
-    // // DMA Read (DMA<-Arbiter)
-    // .dma_r_ready(dma_r_ready), // it seen as read request
-    // .dma_r_addr(dma_r_addr),
-    // .dma_r_ack(dma_r_ack),
-    
-    // // DMA Write (DMA->Arbiter)
-    // .dma_w_valid(dma_w_valid), // it seen as write request
-    // .dma_w_addr(dma_w_addr),
-    // .dma_w_data(dma_w_data),
-
-    // // BRAM Controller u0 (DMA<-BRAM Controller)
-    // .dma_in_valid(dma_in_valid),
-
-    // // BRAM Controller u0 (DMA<-BRAM Controller)
-    // .Do(brc_u0_data_o)
+    // Memory
+    // DMA Read (DMA<-Arbiter)
+    .mem_r_ready(dma_r_ready),
+    .mem_r_addr(dma_r_addr),
+    .mem_r_ack(dma_r_ack),
+    // DMA Write (DMA->Arbiter)
+    .mem_w_valid(dma_w_valid),
+    .mem_w_addr(dma_w_addr),
+    .mem_w_data(dma_w_data),
+    // BRAM Controller u0 (DMA<-BRAM Controller)
+    .mem_r_valid(dma_in_valid),
+    .mem_r_data(brc_u0_data_o)
 );
 
 Arbiter Arbiter (
