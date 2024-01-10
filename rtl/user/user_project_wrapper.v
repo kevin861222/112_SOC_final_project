@@ -129,7 +129,13 @@ wire fifo_in_valid;
 wire wbs_ack_o_cache;
 wire [31:0] wbs_dat_o_cache;
 
+// CPU
 assign wbs_ack_o = wbs_ack_o_dma | wbs_ack_o_cache | wbs_ack_o_FIFO | wbs_ack_o_abt;
+
+// Just for testing
+wire CPU_Read_userproj ,  CPU_Write_userproj ;
+assign CPU_Read_userproj = wbs_cyc_i & wbs_stb_i & ~wbs_we_i & (wbs_adr_i[31:16]==16'h3800) ;
+assign CPU_Write_userproj = wbs_cyc_i & wbs_stb_i & wbs_we_i & (wbs_adr_i[31:16]==16'h3800) ;
 
 DMA_Controller DMA_Controller (
     // MGMT SoC Wishbone Slave
@@ -153,20 +159,23 @@ DMA_Controller DMA_Controller (
     .ss_tready(ss_tready),
     .ss_tvalid(ss_tvalid), 
     .ss_tdata(ss_tdata), 
-    .ss_tlast(ss_tlast),
+    .ss_tlast(ss_tlast)
 
-    // Memory
-    // DMA Read (DMA<-Arbiter)
-    .mem_r_ready(dma_r_ready),
-    .mem_r_addr(dma_r_addr),
-    .mem_r_ack(dma_r_ack),
-    // DMA Write (DMA->Arbiter)
-    .mem_w_valid(dma_w_valid),
-    .mem_w_addr(dma_w_addr),
-    .mem_w_data(dma_w_data),
-    // BRAM Controller u0 (DMA<-BRAM Controller)
-    .mem_r_valid(dma_in_valid),
-    .mem_r_data(brc_u0_data_o)
+    // // DMA Read (DMA<-Arbiter)
+    // .dma_r_ready(dma_r_ready), // it seen as read request
+    // .dma_r_addr(dma_r_addr),
+    // .dma_r_ack(dma_r_ack),
+    
+    // // DMA Write (DMA->Arbiter)
+    // .dma_w_valid(dma_w_valid), // it seen as write request
+    // .dma_w_addr(dma_w_addr),
+    // .dma_w_data(dma_w_data),
+
+    // // BRAM Controller u0 (DMA<-BRAM Controller)
+    // .dma_in_valid(dma_in_valid),
+
+    // // BRAM Controller u0 (DMA<-BRAM Controller)
+    // .Do(brc_u0_data_o)
 );
 
 Arbiter Arbiter (
@@ -221,7 +230,6 @@ instru_cache instru_cache (
     .wbs_stb_i(wbs_stb_i),
     .wbs_cyc_i(wbs_cyc_i),
     .wbs_we_i(wbs_we_i),
-    .wbs_dat_i(wbs_dat_i),
     .wbs_adr_i(wbs_adr_i),
     .wbs_ack_o(wbs_ack_o_cache),
     .wbs_dat_o(wbs_dat_o_cache),
