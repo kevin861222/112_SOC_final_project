@@ -80,6 +80,7 @@ wire dma_w_valid;
 wire dma_in_valid;
 wire wbs_ack_o_dma;
 wire [31:0] wbs_dat_o_dma;
+wire irq_DMA;
 
 // Arbiter
 wire wbs_cache_miss;
@@ -132,10 +133,7 @@ wire [31:0] wbs_dat_o_cache;
 // CPU
 assign wbs_ack_o = wbs_ack_o_dma | wbs_ack_o_cache | wbs_ack_o_FIFO | wbs_ack_o_abt;
 
-// Just for testing
-wire CPU_Read_userproj ,  CPU_Write_userproj ;
-assign CPU_Read_userproj = wbs_cyc_i & wbs_stb_i & ~wbs_we_i & (wbs_adr_i[31:16]==16'h3800) ;
-assign CPU_Write_userproj = wbs_cyc_i & wbs_stb_i & wbs_we_i & (wbs_adr_i[31:16]==16'h3800) ;
+assign user_irq[1] = irq_DMA;
 
 DMA_Controller DMA_Controller (
     // MGMT SoC Wishbone Slave
@@ -149,7 +147,7 @@ DMA_Controller DMA_Controller (
     .wbs_dat_i(wbs_dat_i),
     .wbs_ack_o(wbs_ack_o_dma),
     .wbs_dat_o(wbs_dat_o_dma),
-    .la_data_out(la_data_out), 
+    .irq(irq_DMA), 
     // AXI-Stream (DMA->ASIC)
     .sm_tvalid(sm_tvalid), 
     .sm_tdata(sm_tdata), 

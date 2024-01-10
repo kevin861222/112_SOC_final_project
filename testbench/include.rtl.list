@@ -15,6 +15,10 @@
 -v ../rtl/user/ASIC/matmul.v
 -v ../rtl/user/ASIC/sorting.v
 -v ../rtl/user/FIFO/data_FIFO.v
+-v ../rtl/user/uart/uart_ctrl.v
+-v ../rtl/user/uart/uart_rx.v
+-v ../rtl/user/uart/uart_tx.v
+-v ../rtl/user/uart/uart.v
 -v ../rtl/user/defines.v
 
 ## VIP

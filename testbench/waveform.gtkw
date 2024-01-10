@@ -1,20 +1,20 @@
 [*]
 [*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
-[*] Wed Jan 10 15:39:17 2024
+[*] Wed Jan 10 17:38:38 2024
 [*]
 [dumpfile] "D:\資料\陽明交通大學\碩一\系統晶片設計\lab_final\Code\testbench\main.vcd"
-[dumpfile_mtime] "Wed Jan 10 15:38:15 2024"
-[dumpfile_size] 82433221
+[dumpfile_mtime] "Wed Jan 10 17:31:21 2024"
+[dumpfile_size] 158531236
 [savefile] "D:\資料\陽明交通大學\碩一\系統晶片設計\lab_final\Code\testbench\waveform.gtkw"
-[timestart] 1420328700
+[timestart] 1795933700
 [size] 1920 1009
 [pos] -1 -1
-*-17.347435 1420676300 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-17.347435 1796214500 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] main_tb.
 [treeopen] main_tb.uut.
 [treeopen] main_tb.uut.mprj.
 [sst_width] 286
-[signals_width] 284
+[signals_width] 329
 [sst_expanded] 1
 [sst_vpaned_height] 298
 @200
@@ -38,7 +38,6 @@ main_tb.uut.mprj.DMA_Controller.ch[1:0]
 main_tb.uut.mprj.DMA_Controller.type
 @24
 main_tb.uut.mprj.DMA_Controller.length[6:0]
-main_tb.uut.mprj.DMA_Controller.counter_length[6:0]
 @200
 -DMA_status
 @28
@@ -47,38 +46,45 @@ main_tb.uut.mprj.DMA_Controller.ap_idle_DMA
 main_tb.uut.mprj.DMA_Controller.ap_done_DMA
 @200
 -DMA_Controller
+@24
+main_tb.uut.mprj.DMA_Controller.length_receive_BRAM[6:0]
+main_tb.uut.mprj.DMA_Controller.length_request_BRAM[6:0]
+@200
 -Cache_data
-@22
+@28
+main_tb.uut.mprj.DMA_Controller.mem_r_ack
+@24
 main_tb.uut.mprj.DMA_Controller.mem_r_addr[12:0]
+@28
+main_tb.uut.mprj.DMA_Controller.irq
+main_tb.uut.user_irq[2:0]
 @420
 main_tb.uut.mprj.DMA_Controller.mem_r_data[31:0]
 @28
 main_tb.uut.mprj.DMA_Controller.mem_r_ready
 main_tb.uut.mprj.DMA_Controller.mem_r_valid
-main_tb.uut.mprj.DMA_Controller.mem_r_ack
 @200
 -AXI-Stream(Write)
 @28
 main_tb.uut.mprj.DMA_Controller.sm_tready
-main_tb.uut.mprj.DMA_Controller.sm_tvalid
-@421
+@420
 main_tb.uut.mprj.DMA_Controller.sm_tdata[31:0]
 @28
+main_tb.uut.mprj.DMA_Controller.sm_tvalid
 main_tb.uut.mprj.DMA_Controller.sm_tlast
 @200
 -ASIC
 @28
-main_tb.uut.mprj.DMA_Controller.ap_idle_ASIC
-main_tb.uut.mprj.DMA_Controller.ap_start_ASIC[2:0]
 main_tb.uut.mprj.DMA_Controller.ap_done_ASIC[2:0]
-@200
--BRAM_u0
-@28
-main_tb.uut.mprj.brc_u0.IsDataForDMA_q
+main_tb.uut.mprj.DMA_Controller.ap_start_ASIC[2:0]
+main_tb.uut.mprj.DMA_Controller.ap_idle_ASIC
 @22
-main_tb.uut.mprj.brc_u0.Task_bay_sel[0:8]
+main_tb.checkbits[15:0]
+@200
+-Arbiter
+@29
+main_tb.uut.mprj.Arbiter.is_u0
 @28
-main_tb.uut.mprj.brc_u0.Out_valid_q
-main_tb.uut.mprj.Arbiter.bram_u0_reader_sel
+main_tb.uut.mprj.Arbiter.is_u1
 [pattern_trace] 1
 [pattern_trace] 0

@@ -26,8 +26,8 @@
 
 // TODO
 // 1. connect LA to CPU to tell DMA is done
-// 2. ASIC, sm_tready = 1 -> in_valid = 1 -> ack = 1 -> sm_tvalid = 1
-// in_valid condition is wrong need to fix
+// ap_done 應該什麼時候=1 工作結束的時候嗎?
+// 因為目前ap_done=1 不可能直接接下份工作
 `include "../rtl/user/defines.v"
 module DMA_Controller 
 #(
@@ -35,18 +35,18 @@ module DMA_Controller
 )
 (
     // Wishbone Slave ports (WB MI A)
-    input wb_clk_i,
-    input wb_rst_i,
-    input wbs_stb_i,
-    input wbs_cyc_i,
-    input wbs_we_i,
-    input [3:0] wbs_sel_i,
-    input [31:0] wbs_dat_i,
-    input [31:0] wbs_adr_i,
-    input [31:0] wbs_adr_o,
-    output     wbs_ack_o,
+    input             wb_clk_i,
+    input             wb_rst_i,
+    input             wbs_stb_i,
+    input             wbs_cyc_i,
+    input             wbs_we_i,
+    input      [3:0]  wbs_sel_i,
+    input      [31:0] wbs_dat_i,
+    input      [31:0] wbs_adr_i,
+    input      [31:0] wbs_adr_o,
+    output            wbs_ack_o,
     output reg [31:0] wbs_dat_o,
-    output [127:0] la_data_out,
+    output            irq,
 
     // AXI-Stream (Write, DMA->ASIC)
     input                          sm_tready, 
@@ -61,7 +61,7 @@ module DMA_Controller
     output reg                     ss_tready, 
 
     // Memory
-    output reg    mem_r_ready, // mem_r_addr valid
+    output        mem_r_ready, // mem_r_addr valid
     output [12:0] mem_r_addr,
     input         mem_r_ack,
     output        mem_w_valid,
@@ -82,15 +82,16 @@ module DMA_Controller
 wire wbs_valid;
 
 // DMA
-reg ap_start_DMA;
-reg ap_idle_DMA;
-reg ap_done_DMA;
+wire ap_start_DMA;
+reg  ap_idle_DMA;
+wire ap_done_DMA;
 reg [1:0] ch;           // DMA IO channel (fir=0,matmul=1,sort=2)
 reg [6:0]length;        // DMA transmit data length
 reg type;               // Cache R(0)/W(1), mem->io=0, io->mem=1
 reg [12:0]addr_DMA2RAM; // DMA address  io->memory
 
-reg [6:0] counter_length;
+reg [6:0] length_request_BRAM;
+reg [6:0] length_receive_BRAM;
 wire isAddr_DMA;
 wire isAddr_DMA_w;
 wire isAddr_DMA_r;
@@ -104,10 +105,12 @@ assign wbs_valid = wbs_cyc_i && wbs_stb_i; // address is in user project
 assign isAddr_DMA = wbs_valid & wbs_adr_i[15:8]==8'h80; // 32'h3800_80XX
 assign isAddr_DMA_w = (isAddr_DMA & wbs_we_i);
 assign isAddr_DMA_r = (isAddr_DMA & ~wbs_we_i);
+assign irq = ap_done_DMA;
+// assign irq = 1;
 
 always @(posedge wb_clk_i, posedge wb_rst_i) begin
     if(wb_rst_i) begin
-        ap_start_DMA <= 1'b0;
+        // ap_start_DMA <= 1'b0;
         type <= 1'b0;
         ch <= 2'b0;
         length <= 7'b0;
@@ -118,7 +121,6 @@ always @(posedge wb_clk_i, posedge wb_rst_i) begin
             case(wbs_adr_i[3:0])
             `DMA_offset_cfg: begin
                 if(ap_idle_DMA) begin
-                    ap_start_DMA <= wbs_dat_i[10];
                     type <= wbs_dat_i[9];
                     ch <= wbs_dat_i[8:7];
                     length <= wbs_dat_i[6:0];
@@ -130,14 +132,6 @@ always @(posedge wb_clk_i, posedge wb_rst_i) begin
             endcase
         end
 
-        if(ap_done_DMA) begin
-            type <= 1'b0;
-            ch <= 2'b0;
-            length <= 7'b0;
-            addr_DMA2RAM <= 13'b0;
-        end
-
-        if(ap_start_DMA) ap_start_DMA <= 1'b0;
     end
 end
 
@@ -160,6 +154,8 @@ always @(posedge wb_clk_i, posedge wb_rst_i) begin
 end
 
 // DMA
+assign ap_start_DMA = (isAddr_DMA_w && wbs_adr_i[3:0]==`DMA_offset_cfg && ap_idle_DMA)?wbs_dat_i[10]:0;
+assign ap_done_DMA = (!ap_idle_DMA & length_request_BRAM==length-1);
 always @(posedge wb_clk_i, posedge wb_rst_i) begin
     if(wb_rst_i) begin
         ap_idle_DMA <= 1;
@@ -174,27 +170,27 @@ end
 
 always @(posedge wb_clk_i, posedge wb_rst_i) begin
     if(wb_rst_i) begin
-        ap_done_DMA <= 0;
+        length_request_BRAM <= 0;
     end
     else begin
-        if(!ap_idle_DMA & counter_length==length-1)
-            ap_done_DMA <= 1;
+        if(!ap_idle_DMA && mem_r_ack)
+            length_request_BRAM <= length_request_BRAM + 1;
 
         if(ap_done_DMA) 
-            ap_done_DMA <= 0;
+            length_request_BRAM <= 0;
     end
 end
 
 always @(posedge wb_clk_i, posedge wb_rst_i) begin
     if(wb_rst_i) begin
-        counter_length <= 0;
+        length_receive_BRAM <= 0;
     end
     else begin
-        if(!ap_idle_DMA && mem_r_ack && counter_length<length)
-            counter_length <= counter_length + 1;
+        if(mem_r_valid)
+            length_receive_BRAM <= length_receive_BRAM + 1;
 
-        if(ap_done_DMA) 
-            counter_length <= 0;
+        if(length_receive_BRAM==length-1) 
+            length_receive_BRAM <= 0;
     end
 end
 
@@ -211,20 +207,8 @@ end
 // mem_w_addr
 // mem_w_data
 
-assign mem_r_addr = (addr_DMA2RAM | counter_length);
-
-always @(posedge wb_clk_i, posedge wb_rst_i) begin
-    if(wb_rst_i) begin
-        mem_r_ready <= 0;
-    end
-    else begin
-        if(!ap_idle_DMA && ((counter_length==0) || (counter_length>0 && sm_tready)))
-            mem_r_ready <= 1;
-        
-        if(mem_r_ack)
-            mem_r_ready <= 0;
-    end
-end
+assign mem_r_addr = (addr_DMA2RAM | length_request_BRAM);
+assign mem_r_ready = (!ap_idle_DMA) && sm_tready;
 
 // AXI-Stream (Write, DMA->ASIC)
 // 會有一種情況
