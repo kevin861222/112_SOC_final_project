@@ -4,8 +4,11 @@
     `define BRAM_ADDR_LENGTH 13
     
     //DMA
-    `define DMA_addr  32'h3800_8000
+    `define addr_DMA  32'h3000_8000
     `define DMA_offset_cfg  4'h0
     `define DMA_offset_addr 4'h4
-    `define ASIC_addr 32'h3800_9000
+
+    // UART
+    `define addr_UART 32'h3000_9000
+
 `endif

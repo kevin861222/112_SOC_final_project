@@ -1,6 +1,8 @@
 testbench/*.elf
 testbench/*.elf-*
 testbench/*.hex
+testbench/*.map
 testbench/*.hexe
 testbench/*.vcd
 testbench/*.vvp
+.vscode

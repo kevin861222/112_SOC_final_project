@@ -14,6 +14,7 @@ Target:
 		--save-temps \
 		-I ../firmware \
 		-march=$(march) -mabi=ilp32 -D__vexriscv__ \
+		-Xlinker -Map=main.map \
 		-Wl,-Bstatic,-T,../firmware/sections.lds,--strip-discarded \
 		-ffreestanding -nostartfiles -o main.elf ../firmware/crt0_vex.S ../firmware/isr.c main.c 
 	@ $(OBJCPY) -O verilog main.elf main.hex
