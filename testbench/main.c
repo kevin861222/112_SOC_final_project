@@ -17,20 +17,7 @@
 
 // This include is relative to $CARAVEL_PATH (see Makefile)
 #include <defs.h>
-#include "fir.h"
-#include "qsort.h"
-#include "matmul.h"
-
-#define DMA_wbs         0x30008000
-#define DMA_offset_cfg  0x00
-#define DMA_offset_addr 0x04
-#define DMA_cfg  (DMA_wbs | DMA_offset_cfg)
-#define DMA_addr (DMA_wbs | DMA_offset_addr)
-#define reg_DMA_cfg  (*(volatile uint32_t *)DMA_cfg)  // 0x3000_8000
-#define reg_DMA_addr (*(volatile uint32_t *)DMA_addr) // 0x3000_8004
-#define BRAM_addr_FIR    0x00
-#define BRAM_addr_matmul 0x80
-#define BRAM_addr_qsort  0xf0
+#include "define.h"
 
 void main()
 {
@@ -95,19 +82,72 @@ void main()
 	// Set User Project Slaves Enable
 	reg_wb_enable = 1;
 
-	reg_mprj_datal = (0xAB40<<16);
+	// start flag - FIR
+	reg_mprj_datal = (0xAB00<<16);
+	// FIR tap
+	reg_DMA_addr   = 	(fir_taps_base<<DMA_addr_base);
+	reg_DMA_cfg   |= 	(1 << DMA_cfg_start) | 
+						(DMA_type_MEM2IO << DMA_cfg_type) | 
+						(DMA_ch_FIR << DMA_cfg_channel) | 
+						(NUM_FIR_TAP<<DMA_cfg_length);
+	// // FIR input
+	// reg_DMA_addr   = 	(fir_input_base<<DMA_addr_base);
+	// reg_DMA_cfg   |= 	(1 << DMA_cfg_start) | 
+	// 					(DMA_type_MEM2IO << DMA_cfg_type) | 
+	// 					(DMA_ch_FIR << DMA_cfg_channel) | 
+	// 					(NUM_FIR_INPUT<<DMA_cfg_length);
+	// // FIR output
+	// // wait for DMA interrupt
+	// // while()
+	// reg_DMA_addr   = 	(fir_output_base<<DMA_addr_base);
+	// reg_DMA_cfg   |= 	(1 << DMA_cfg_start) | 
+	// 					(DMA_type_IO2MEM << DMA_cfg_type) | 
+	// 					(DMA_ch_FIR << DMA_cfg_channel) | 
+	// 					(NUM_FIR_OUTPUT<<DMA_cfg_length);
+	// // end flag - FIR
+	reg_mprj_datal = (0xAB01<<16);
 
-	reg_DMA_addr  = (BRAM_addr_qsort<<0);
-	// DMA_cfg[12]  = ap_busy (1 stands for DMA busy)             [Read only]
-    // DMA_cfg[11]  = ap_idle (1 stands for DMA idle)             [Read only]
-    // DMA_cfg[10]  = ap_start (1 stands for DMA start working)   [R/W]
-    // DMA_cfg[9]   = type (mem->io=0, io->mem=1)                 [R/W]
-    // DMA_cfg[8:7] = channel[1:0] (fir=0,matmul=1,sort=2)        [R/W]
-    // DMA_cfg[6:0] = length[6:0]                                 [R/W]
-    reg_DMA_cfg  |= (1<< 10) | (0 << 9) | (0 << 7) | (64<<0);
+	// // start flag - matmul
+	// reg_mprj_datal = (0xAB10<<16);
+	// // matmul input A
+	// reg_DMA_addr   = 	(mat_A_base<<DMA_addr_base);
+	// reg_DMA_cfg   |= 	(1 << DMA_cfg_start) | 
+	// 					(DMA_type_MEM2IO << DMA_cfg_type) | 
+	// 					(DMA_ch_matmul << DMA_cfg_channel) | 
+	// 					(NUM_MAT_A<<DMA_cfg_length);
+	// // matmul input B
+	// reg_DMA_addr   = 	(mat_B_base<<DMA_addr_base);
+	// reg_DMA_cfg   |= 	(1 << DMA_cfg_start) | 
+	// 					(DMA_type_MEM2IO << DMA_cfg_type) | 
+	// 					(DMA_ch_matmul << DMA_cfg_channel) | 
+	// 					(NUM_MAT_B<<DMA_cfg_length);
+	// // matmul output
+	// reg_DMA_addr   = 	(mat_output_base<<DMA_addr_base);
+	// reg_DMA_cfg   |= 	(1 << DMA_cfg_start) | 
+	// 					(DMA_type_IO2MEM << DMA_cfg_type) | 
+	// 					(DMA_ch_matmul << DMA_cfg_channel) | 
+	// 					(NUM_MAT_OUTPUT<<DMA_cfg_length);
+	// // wait for DMA interrupt
+	// // while()
+	// // end flag - matmul
+	// reg_mprj_datal = (0xAB11<<16);
 
-
-	reg_mprj_datal = (0xAB51<<16);
-	while (1) ;
-	
+	// // start flag - qsort
+	// reg_mprj_datal = (0xAB20<<16);
+	// // qsort input A
+	// reg_DMA_addr   = 	(qsort_input_base<<DMA_addr_base);
+	// reg_DMA_cfg   |= 	(1 << DMA_cfg_start) | 
+	// 					(DMA_type_MEM2IO << DMA_cfg_type) | 
+	// 					(DMA_ch_qsort << DMA_cfg_channel) | 
+	// 					(NUM_QSORT_INPUT<<DMA_cfg_length);
+	// // qsort output
+	// reg_DMA_addr   = 	(mat_output_base<<DMA_addr_base);
+	// reg_DMA_cfg   |= 	(1 << DMA_cfg_start) | 
+	// 					(DMA_type_IO2MEM << DMA_cfg_type) | 
+	// 					(DMA_ch_qsort << DMA_cfg_channel) | 
+	// 					(NUM_QSORT_OUTPUT<<DMA_cfg_length);
+	// // wait for DMA interrupt
+	// // while()
+	// // end flag - qsort
+	// reg_mprj_datal = (0xAB21<<16);
 }
