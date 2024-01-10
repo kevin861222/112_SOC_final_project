@@ -10,7 +10,8 @@ MEMORY {
 	dff2 : ORIGIN = 0x00000400, LENGTH = 0x00000200
 	flash : ORIGIN = 0x10000000, LENGTH = 0x01000000
 	mprj : ORIGIN = 0x30000000, LENGTH = 0x00100000
-	mprjram : ORIGIN = 0x38000000, LENGTH = 0x00400000
+	rawdata : ORIGIN = 0x38000000, LENGTH = 0x00000500
+	mprjram : ORIGIN = 0x38000500, LENGTH = 0x00007500
 	hk : ORIGIN = 0x26000000, LENGTH = 0x00100000
 	csr : ORIGIN = 0xf0000000, LENGTH = 0x00010000
 }
@@ -50,7 +51,7 @@ SECTIONS
 		*(.sdata .sdata.* .gnu.linkonce.s.*)
 		. = ALIGN(8);
 		_edata = .;
-	} > dff AT > flash
+	} > rawdata AT > flash
 
 	.bss :
 	{
