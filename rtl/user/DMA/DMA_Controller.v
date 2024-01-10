@@ -50,7 +50,7 @@ module DMA_Controller
 
     // AXI-Stream (Write, DMA->ASIC)
     input                          sm_tready, 
-    output reg                     sm_tvalid, 
+    output                         sm_tvalid, 
     output     [(pDATA_WIDTH-1):0] sm_tdata, 
     output reg                     sm_tlast, 
     
@@ -61,7 +61,7 @@ module DMA_Controller
     output reg                     ss_tready, 
 
     // Memory
-    output        mem_r_ready, // mem_r_addr valid
+    output reg    mem_r_ready, // mem_r_addr valid
     output [12:0] mem_r_addr,
     input         mem_r_ack,
     output        mem_w_valid,
@@ -71,9 +71,9 @@ module DMA_Controller
     input  [31:0] mem_r_data,
 
     // ASIC signal line
-    input       ap_idle_ASIC,
-    input  [2:0]ap_done_ASIC,
-    output [2:0]ap_start_ASIC
+    output reg [2:0] ap_start_ASIC,
+    input            ap_idle_ASIC,
+    input      [2:0] ap_done_ASIC
 );
 //==============================================================================//
 //                                  Declaration                                 //
@@ -200,23 +200,39 @@ end
 
 // Memory
 // Read
-// mem_r_ready
-// mem_r_valid
 // mem_r_addr
+// mem_r_ready, 應該會一直有效直到ack
 // mem_r_ack
+// mem_r_valid
 // mem_r_data
+
 // Write
 // mem_w_valid
 // mem_w_addr
 // mem_w_data
 
-assign mem_r_addr = (addr_DMA2RAM | (counter_length << 2));
-assign in_valid = !ap_idle_DMA && ((counter_length==0) || (counter_length>0 && sm_tready));
+assign mem_r_addr = (addr_DMA2RAM | counter_length);
 
-// AXI-Stream (Write, DMA->ASIC)
 always @(posedge wb_clk_i, posedge wb_rst_i) begin
     if(wb_rst_i) begin
-        sm_tvalid <= 0;
+        mem_r_ready <= 0;
+    end
+    else begin
+        if(!ap_idle_DMA && ((counter_length==0) || (counter_length>0 && sm_tready)))
+            mem_r_ready <= 1;
+        
+        if(mem_r_ack)
+            mem_r_ready <= 0;
+    end
+end
+
+// AXI-Stream (Write, DMA->ASIC)
+// 會有一種情況
+// sm_tready = 0, sm_tvalid = 1
+assign sm_tdata = mem_r_data;
+assign sm_tvalid = mem_r_ack;
+always @(posedge wb_clk_i, posedge wb_rst_i) begin
+    if(wb_rst_i) begin
         sm_tlast <= 0;
     end
     else begin
@@ -233,5 +249,20 @@ always @(posedge wb_clk_i, posedge wb_rst_i) begin
 end
 
 // ASIC signal line
+// ap_idle_ASIC  觸發條件是啥 會先檢查ASIC是否為idle
+// ap_done_ASIC
+// ap_start_ASIC
+always @(posedge wb_clk_i, posedge wb_rst_i) begin
+    if(wb_rst_i) begin
+        ap_start_ASIC <= 3'b0;
+    end
+    else begin
+        if(ap_idle_ASIC)
+            ap_start_ASIC[ch] <= ap_start_DMA;
 
+        if(|ap_start_ASIC[ch]) 
+            ap_start_ASIC <= 3'b0;
+    end
+
+end
 endmodule

@@ -86,7 +86,7 @@ void main()
 	reg_mprj_datal = (0xAB00<<16);
 	// FIR tap
 	reg_DMA_addr   = 	(fir_taps_base<<DMA_addr_base);
-	reg_DMA_cfg   |= 	(1 << DMA_cfg_start) | 
+	reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
 						(DMA_type_MEM2IO << DMA_cfg_type) | 
 						(DMA_ch_FIR << DMA_cfg_channel) | 
 						(NUM_FIR_TAP<<DMA_cfg_length);

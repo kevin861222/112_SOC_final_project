@@ -172,7 +172,12 @@ DMA_Controller DMA_Controller (
     .mem_w_data(dma_w_data),
     // BRAM Controller u0 (DMA<-BRAM Controller)
     .mem_r_valid(dma_in_valid),
-    .mem_r_data(brc_u0_data_o)
+    .mem_r_data(brc_u0_data_o),
+
+    // ASIC status
+    .ap_start_ASIC(ap_start_ASIC),
+    .ap_idle_ASIC(ap_idle_ASIC),
+    .ap_done_ASIC(ap_done_ASIC)
 );
 
 Arbiter Arbiter (
