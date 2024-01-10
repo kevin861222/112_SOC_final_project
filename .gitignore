@@ -4,3 +4,4 @@ testbench/*.hex
 testbench/*.hexe
 testbench/*.vcd
 testbench/*.vvp
+.vscode
