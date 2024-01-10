@@ -16,7 +16,7 @@ Target:
 		-march=$(march) -mabi=ilp32 -D__vexriscv__ \
 		-Xlinker -Map=main.map \
 		-Wl,-Bstatic,-T,../firmware/sections.lds,--strip-discarded \
-		-ffreestanding -nostartfiles -o main.elf ../firmware/crt0_vex.S ../firmware/isr.c main.c 
+		-ffreestanding -nostartfiles -o main.elf ../firmware/crt0_vex.S ../firmware/isr.c ../firmware/mprj.c main.c 
 	@ $(OBJCPY) -O verilog main.elf main.hex
 	@ sed -ie 's/@10/@00/g' main.hex
 	@ iverilog -Ttyp -DFUNCTIONAL -DSIM -DUNIT_DELAY=#1 \
