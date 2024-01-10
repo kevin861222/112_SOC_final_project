@@ -177,7 +177,7 @@ always @(posedge wb_clk_i, posedge wb_rst_i) begin
         ap_done_DMA <= 0;
     end
     else begin
-        if(!ap_idle_DMA & counter_length==length)
+        if(!ap_idle_DMA & counter_length==length-1)
             ap_done_DMA <= 1;
 
         if(ap_done_DMA) 
@@ -230,7 +230,7 @@ end
 // 會有一種情況
 // sm_tready = 0, sm_tvalid = 1
 assign sm_tdata = mem_r_data;
-assign sm_tvalid = mem_r_ack;
+assign sm_tvalid = mem_r_valid;
 always @(posedge wb_clk_i, posedge wb_rst_i) begin
     if(wb_rst_i) begin
         sm_tlast <= 0;
