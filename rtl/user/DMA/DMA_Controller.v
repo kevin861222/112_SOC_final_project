@@ -28,7 +28,7 @@
 // 1. connect LA to CPU to tell DMA is done
 // 2. ASIC, sm_tready = 1 -> in_valid = 1 -> ack = 1 -> sm_tvalid = 1
 // in_valid condition is wrong need to fix
-
+`include "../rtl/user/defines.v"
 module DMA_Controller 
 #(
     parameter pDATA_WIDTH = 32

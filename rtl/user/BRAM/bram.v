@@ -3,7 +3,7 @@ latency = 10 T
 burst = no
 continuous read / write = 1
 */
-
+`include "../rtl/user/defines.v"
 module bram(
     CLK,
     WE,
@@ -21,7 +21,7 @@ module bram(
     input   wire    [12:0]   A;
 
     // 128 kB
-    parameter N = 13 ;
+    parameter N = `BRAM_ADDR_LENGTH;
     (* ram_style = "block" *) reg [31:0] RAM[0:2**N-1];
 
     always @(posedge CLK)

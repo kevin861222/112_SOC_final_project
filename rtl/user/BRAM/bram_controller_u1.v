@@ -1,4 +1,3 @@
-`include "bram.v"
 /* BRAM Controler 
 Bram latency = 10 T 
 burst = no

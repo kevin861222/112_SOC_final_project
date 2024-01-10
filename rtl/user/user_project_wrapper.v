@@ -72,34 +72,34 @@ module user_project_wrapper #(
 /*--------------------------------------*/
 
 // DMA
-wire dma_r_ready ;
-wire [12:0] dma_r_addr , dma_w_addr ;
-wire [31:0] dma_w_data ;
-wire dma_r_ack ;
-wire dma_w_valid ;
-wire dma_in_valid ;
-wire dma_wbs_ack_o ;
-wire [31:0] dma_wbs_dat_o ;
+wire dma_r_ready;
+wire [12:0] dma_r_addr, dma_w_addr;
+wire [31:0] dma_w_data;
+wire dma_r_ack;
+wire dma_w_valid;
+wire dma_in_valid;
+wire wbs_ack_o_dma;
+wire [31:0] wbs_dat_o_dma;
 
 // Arbiter
-wire wbs_cache_miss ;
-wire abt_wbs_ack_o ;
+wire wbs_cache_miss;
+wire wbs_ack_o_abt;
 
 // BRAM_u0
-wire bram_u0_wr ;
-wire bram_u0_in_valid ;
-wire [12:0] bram_u0_addr ;
-wire [31:0] bram_u0_data_in ;
-wire bram_u0_reader_sel ;
-wire [31:0] brc_u0_data_o ;
+wire bram_u0_wr;
+wire bram_u0_in_valid;
+wire [12:0] bram_u0_addr;
+wire [31:0] bram_u0_data_in;
+wire bram_u0_reader_sel;
+wire [31:0] brc_u0_data_o;
 
 
 // BRAM_u1
-wire bram_u1_wr ;
-wire bram_u1_in_valid ;
-wire [12:0] bram_u1_addr ;
-wire [31:0] bram_u1_data_in ;
-wire [31:0] brc_u1_data_o ;
+wire bram_u1_wr;
+wire bram_u1_in_valid;
+wire [12:0] bram_u1_addr;
+wire [31:0] bram_u1_data_in;
+wire [31:0] brc_u1_data_o;
 
 // ASIC
 wire [2:0] ap_start_ASIC;
@@ -119,15 +119,17 @@ wire        ss_tlast;
 wire        ss_tready;
 
 // Data FIFO
-wire fifo_full_n ;
-wire FIFO_wbs_ack_o ;
-wire [31:0] FIFO_wbs_dat_o ;
+wire fifo_full_n;
+wire wbs_ack_o_FIFO;
+wire [31:0] wbs_dat_o_FIFO;
 
 // Instruction Cache 
-wire cache_in_valid ;
-wire fifo_in_valid ;
-wire cache_wbs_ack_o ;
-wire [31:0] cache_wbs_dat_o ;
+wire cache_in_valid;
+wire fifo_in_valid;
+wire wbs_ack_o_cache;
+wire [31:0] wbs_dat_o_cache;
+
+assign wbs_ack_o = wbs_ack_o_dma | wbs_ack_o_cache | wbs_ack_o_FIFO | wbs_ack_o_abt;
 
 DMA_Controller DMA_Controller (
     // MGMT SoC Wishbone Slave
@@ -139,8 +141,8 @@ DMA_Controller DMA_Controller (
     .wbs_sel_i(wbs_sel_i),
     .wbs_adr_i(wbs_adr_i),
     .wbs_dat_i(wbs_dat_i),
-    .wbs_ack_o(dma_wbs_ack_o),
-    .wbs_dat_o(dma_wbs_dat_o),
+    .wbs_ack_o(wbs_ack_o_dma),
+    .wbs_dat_o(wbs_dat_o_dma),
     .la_data_out(la_data_out), 
     // AXI-Stream (DMA->ASIC)
     .sm_tvalid(sm_tvalid), 
@@ -153,67 +155,65 @@ DMA_Controller DMA_Controller (
     .ss_tdata(ss_tdata), 
     .ss_tlast(ss_tlast)
 
-    /*
-    Wangyu: 我幫你把舊的I/O刪掉了
-            你要把新的I/O更新上來，然後讓我把我下面註解的線接上
-    // bram_controller_u0
-    brc_u0_data_o
-    dma_in_valid
-    // Arbiter
-    // DMA Read 
-    input dma_r_ready , // it seen as read request
-    input [12:0] dma_r_addr ,
-    output dma_r_ack ,
+    // // DMA Read (DMA<-Arbiter)
+    // .dma_r_ready(dma_r_ready), // it seen as read request
+    // .dma_r_addr(dma_r_addr),
+    // .dma_r_ack(dma_r_ack),
     
-    // DMA Write
-    input dma_w_valid , // it seen as write request
-    input [12:0] dma_w_addr ,
-    input [31:0] dma_w_data ,
-    */
+    // // DMA Write (DMA->Arbiter)
+    // .dma_w_valid(dma_w_valid), // it seen as write request
+    // .dma_w_addr(dma_w_addr),
+    // .dma_w_data(dma_w_data),
+
+    // // BRAM Controller u0 (DMA<-BRAM Controller)
+    // .dma_in_valid(dma_in_valid),
+
+    // // BRAM Controller u0 (DMA<-BRAM Controller)
+    // .Do(brc_u0_data_o)
 );
 
 Arbiter Arbiter (
     /* CPU WB <--> Arbiter */
     // System 
-    .wb_clk_i(wb_clk_i) ,
-    .wb_rst_i(wb_rst_i) ,
+    .wb_clk_i(wb_clk_i),
+    .wb_rst_i(wb_rst_i),
     // Wishbone Slave ports
-    .wbs_stb_i(wbs_stb_i) ,
-    .wbs_cyc_i(wbs_cyc_i) ,
-    .wbs_we_i(wbs_we_i) ,
-    // input [3:0] wbs_sel_i ,
-    .wbs_dat_i(wbs_dat_i) ,
-    .wbs_adr_i(wbs_adr_i) ,
-    .wbs_ack_o(abt_wbs_ack_o) ,
+    .wbs_stb_i(wbs_stb_i),
+    .wbs_cyc_i(wbs_cyc_i),
+    .wbs_we_i(wbs_we_i),
+    // input [3:0] wbs_sel_i,
+    .wbs_dat_i(wbs_dat_i),
+    .wbs_adr_i(wbs_adr_i),
+    .wbs_ack_o(wbs_ack_o_abt),
 
     /* CPU Cache <--> Arbiter */
-    .wbs_cache_miss(wbs_cache_miss) ,     // CPU intruction cache miss
+    .wbs_cache_miss(wbs_cache_miss),     // CPU intruction cache miss
 
     /* Data FIFO <--> Arbiter */
-    .fifo_full_n(fifo_full_n) ,
+    .fifo_full_n(fifo_full_n),
 
     /* DMA <--> Arbiter */
     // DMA Read 
-    .dma_r_ready(dma_r_ready) , // it seen as read request
-    .dma_r_addr(dma_r_addr) ,
-    .dma_r_ack(dma_r_ack) ,
+    .dma_r_ready(dma_r_ready), // it seen as read request
+    .dma_r_addr(dma_r_addr),
+    .dma_r_ack(dma_r_ack),
     
     // DMA Write
-    .dma_w_valid(dma_w_valid) , // it seen as write request
-    .dma_w_addr(dma_w_addr) ,
-    .dma_w_data(dma_w_data) ,
+    .dma_w_valid(dma_w_valid), // it seen as write request
+    .dma_w_addr(dma_w_addr),
+    .dma_w_data(dma_w_data),
 
     /* Arbiter <--> BRAM Controller u0 */
-    .bram_u0_wr(bram_u0_wr) ,  // 0:R 1:W
-    .bram_u0_in_valid(bram_u0_in_valid) , 
-    .bram_u0_addr(bram_u0_addr) , 
-    .bram_u0_data_in(bram_u0_data_in) ,
-    .bram_u0_reader_sel(bram_u0_reader_sel) , // 0:DMA  1:CPU
+    .bram_u0_wr(bram_u0_wr),  // 0:R 1:W
+    .bram_u0_in_valid(bram_u0_in_valid), 
+    .bram_u0_addr(bram_u0_addr), 
+    .bram_u0_data_in(bram_u0_data_in),
+    .bram_u0_reader_sel(bram_u0_reader_sel), // 0:DMA  1:CPU
 
     /* Arbiter <--> BRAM Controller u1 */
-    .bram_u1_wr(bram_u1_wr) ,  // 0:R 1:W
-    .bram_u1_in_valid(bram_u1_in_valid) , 
-    .bram_u1_addr(bram_u1_addr) , 
+    .bram_u1_wr(bram_u1_wr),  // 0:R 1:W
+    .bram_u1_in_valid(bram_u1_in_valid), 
+    .bram_u1_addr(bram_u1_addr), 
     .bram_u1_data_in(bram_u1_data_in) 
 );
 
@@ -226,8 +226,8 @@ instru_cache instru_cache (
     .wbs_we_i(wbs_we_i),
     .wbs_dat_i(wbs_dat_i),
     .wbs_adr_i(wbs_adr_i),
-    .wbs_ack_o(cache_wbs_ack_o),
-    .wbs_dat_o(cache_wbs_dat_o),
+    .wbs_ack_o(wbs_ack_o_cache),
+    .wbs_dat_o(wbs_dat_o_cache),
     // Arbiter
     .wbs_cache_miss(wbs_cache_miss),
     // BRAM Controller u0
@@ -237,23 +237,23 @@ instru_cache instru_cache (
 
 bram_controller_u0 brc_u0 (
     /* From Sysytem */
-    .clk(wb_clk_i) ,
-    .rst(wb_rst_i) ,
+    .clk(wb_clk_i),
+    .rst(wb_rst_i),
 
     /* From Arbiter */
-    .WR(bram_u0_wr) ,
-    .In_valid(bram_u0_in_valid) , 
-    .Addr(bram_u0_addr) ,
-    .Di(bram_u0_data_in) ,
-    .reader_sel(bram_u0_reader_sel) , // 2'b00:DMA 2'b01:CPU 2'b10:Pred_cache
+    .WR(bram_u0_wr),
+    .In_valid(bram_u0_in_valid), 
+    .Addr(bram_u0_addr),
+    .Di(bram_u0_data_in),
+    .reader_sel(bram_u0_reader_sel), // 2'b00:DMA 2'b01:CPU 2'b10:Pred_cache
     /*if add predict FIFO
-    input [1:0] reader_sel ,*/
+    input [1:0] reader_sel,*/
 
     /* To DMA */
-    .dma_in_valid(dma_in_valid) ,
+    .dma_in_valid(dma_in_valid),
 
     /* To CPU cache */
-    .cache_in_valid(cache_in_valid) ,
+    .cache_in_valid(cache_in_valid),
 
     /* To DMA or CPU cache */
     .Do(brc_u0_data_o) //
@@ -261,64 +261,64 @@ bram_controller_u0 brc_u0 (
 
 bram_controller_u1 brc_u1 (
     /* From Sysytem */
-    .clk(wb_clk_i) ,
-    .rst(wb_rst_i) ,
+    .clk(wb_clk_i),
+    .rst(wb_rst_i),
 
     /* From Arbiter */
-    .WR(bram_u1_wr) ,
-    .In_valid(bram_u1_in_valid) , 
-    .Addr(bram_u1_addr) ,
-    .Di(bram_u1_data_in) ,
+    .WR(bram_u1_wr),
+    .In_valid(bram_u1_in_valid), 
+    .Addr(bram_u1_addr),
+    .Di(bram_u1_data_in),
 
     /* To CPU FIFO */
-    .fifo_in_valid(fifo_in_valid) ,
+    .fifo_in_valid(fifo_in_valid),
     .Do(brc_u1_data_o) //
 );
 
 data_FIFO data_FIFO(
     /* System */
-    .clk(wb_clk_i) , 
-    .rst(wb_rst_i) ,
+    .clk(wb_clk_i), 
+    .rst(wb_rst_i),
 
     /* To arbiter */
-    .abt_full_n(fifo_full_n) ,
+    .abt_full_n(fifo_full_n),
 
     /* From controller */
-    .brc_in_valid(fifo_in_valid) ,
-    .Di(brc_u1_data_o) ,
+    .brc_in_valid(fifo_in_valid),
+    .Di(brc_u1_data_o),
 
     /* From WB bus */
     // Wishbone Slave ports
-    .wbs_stb_i(wbs_stb_i) ,
-    .wbs_cyc_i(wbs_cyc_i) ,
-    .wbs_we_i(wbs_we_i) ,
-    // input [3:0] wbs_sel_i ,
-    .wbs_dat_i(wbs_dat_i) ,
-    .wbs_adr_i(wbs_adr_i) ,
+    .wbs_stb_i(wbs_stb_i),
+    .wbs_cyc_i(wbs_cyc_i),
+    .wbs_we_i(wbs_we_i),
+    // input [3:0] wbs_sel_i,
+    .wbs_dat_i(wbs_dat_i),
+    .wbs_adr_i(wbs_adr_i),
     
     /* To WB bus */
-    .wbs_ack_o(FIFO_wbs_ack_o) ,
-    .wbs_dat_o(FIFO_wbs_dat_o) 
+    .wbs_ack_o(wbs_ack_o_FIFO),
+    .wbs_dat_o(wbs_dat_o_FIFO) 
 );
 
 accelerator acc_ASIC(
     // MGMT SoC Wishbone Slave
     .clk(wb_clk_i),
     .rst(wb_rst_i),       
-    // AXI-Stream (DMA->ASIC)
+    // AXI-Stream (ASIC<-DMA)
     .ss_tvalid(sm_tvalid), 
     .ss_tdata(sm_tdata), 
     .ss_tlast(sm_tlast), 
     .ss_tready(sm_tready), 
-    // AXI-Stream (DMA<-ASIC)
+    // AXI-Stream (ASIC->DMA)
     .sm_tready(ss_tready), 
     .sm_tvalid(ss_tvalid), 
     .sm_tdata(ss_tdata), 
     .sm_tlast(ss_tlast), 
     // Status
-    .ap_start(ap_start),
-    .ap_idle(ap_idle),
-    .ap_done(ap_done)
+    .ap_start(ap_start_ASIC),
+    .ap_idle(ap_idle_ASIC),
+    .ap_done(ap_done_ASIC)
 );
 
 endmodule	// user_project_wrapper

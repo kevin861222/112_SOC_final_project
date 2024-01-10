@@ -1,0 +1,6 @@
+testbench/*.elf
+testbench/*.elf-*
+testbench/*.hex
+testbench/*.hexe
+testbench/*.vcd
+testbench/*.vvp
