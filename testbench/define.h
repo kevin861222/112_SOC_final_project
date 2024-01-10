@@ -69,7 +69,7 @@ int mat_B[NUM_MAT_B] =
 int mat_output[NUM_MAT_OUTPUT];
 
 // qsort
-int qsort_A[NUM_QSORT_INPUT] = {893, 40, 3233, 4267, 2669, 2541, 9073, 6023, 5681, 4622};
+int qsort_input[NUM_QSORT_INPUT] = {893, 40, 3233, 4267, 2669, 2541, 9073, 6023, 5681, 4622};
 int qsort_output[NUM_QSORT_OUTPUT];
 
 // Memory-Map Address
