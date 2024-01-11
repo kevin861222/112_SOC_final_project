@@ -25,12 +25,17 @@ module main_tb;
 	reg power1, power2;
 
 	wire gpio;
-	wire uart_tx;
 	wire [37:0] mprj_io;
 	wire [15:0] checkbits;
-
+	wire uart_tx;
+	wire uart_rx;
+	reg tx_start;
+	reg [7:0] tx_data;
+	wire tx_busy;
+	wire tx_clear_req;
 	assign checkbits  = mprj_io[31:16];
 	assign uart_tx = mprj_io[6];
+	assign mprj_io[5] = uart_rx;
 
 	always #12.5 clock <= (clock === 1'b0);
 
@@ -63,18 +68,29 @@ module main_tb;
 		wait(checkbits == 16'hAB01);
 		$display("Test end   - FIR");
 
-		// wait(checkbits == 16'hAB10);
-		// $display("Test start - matmul");
-		// wait(checkbits == 16'hAB11);
-		// $display("Test end   - matmul");
+		wait(checkbits == 16'hAB10);
+		$display("Test start - matmul");
+		wait(checkbits == 16'hAB11);
+		$display("Test end   - matmul");
 
-		// wait(checkbits == 16'hAB20);
-		// $display("Test start - qsort");
-		// wait(checkbits == 16'hAB21);
-		// $display("Test end   - qsort");
+		wait(checkbits == 16'hAB20);
+		$display("Test start - qsort");
+		wait(checkbits == 16'hAB21);
+		$display("Test end   - qsort");
 		$finish;
 	end
 
+	task send_data(input [7:0] data);
+	begin
+		@(posedge clock);
+		tx_start = 1;
+		tx_data = data;
+		#50;
+		wait(!tx_busy);
+		tx_start = 0;
+		$display("tx complete");
+	end 
+	endtask
 
 	initial begin
 		RSTB <= 1'b0;
@@ -136,6 +152,14 @@ module main_tb;
 	tbuart tbuart (
 		.ser_rx(uart_tx)
 	);
+	// tbuart_interrupt tbuart (
+		// .ser_rx(uart_tx),
+		// .tx_start(tx_start),
+		// .ser_tx(uart_rx),
+		// .tx_data(tx_data),
+		// .tx_busy(tx_busy),
+		// .tx_clear_req(tx_clear_req)
+	// );
 
 endmodule
 `default_nettype wire

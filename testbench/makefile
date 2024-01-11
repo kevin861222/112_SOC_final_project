@@ -7,16 +7,16 @@ CC = riscv32-unknown-elf-gcc
 OBJCPY = riscv32-unknown-elf-objcopy
 march = rv32i
 endif
-
+# -DUSER_PROJ_IRQ1_EN
 Target:
 	@ make clean
-	@ $(CC) -Wl,--no-warn-rwx-segments -g \
+	@ $(CC) -Wl,--no-warn-rwx-segments \
 		--save-temps \
 		-I ../firmware \
 		-march=$(march) -mabi=ilp32 -D__vexriscv__ \
 		-Xlinker -Map=main.map \
 		-Wl,-Bstatic,-T,../firmware/sections.lds,--strip-discarded \
-		-ffreestanding -nostartfiles -o main.elf ../firmware/crt0_vex.S ../firmware/isr.c ../firmware/mprj.c main.c 
+		-ffreestanding -nostartfiles -o main.elf ../firmware/crt0_vex.S ../firmware/isr.c uart.c main.c 
 	@ $(OBJCPY) -O verilog main.elf main.hex
 	@ sed -ie 's/@10/@00/g' main.hex
 	@ iverilog -Ttyp -DFUNCTIONAL -DSIM -DUNIT_DELAY=#1 \

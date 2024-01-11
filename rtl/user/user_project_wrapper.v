@@ -131,11 +131,8 @@ wire [31:0] wbs_dat_o_cache;
 
 // CPU
 assign wbs_ack_o = wbs_ack_o_dma | wbs_ack_o_cache | wbs_ack_o_FIFO | wbs_ack_o_abt;
-
-// Just for testing
-wire CPU_Read_userproj ,  CPU_Write_userproj ;
-assign CPU_Read_userproj = wbs_cyc_i & wbs_stb_i & ~wbs_we_i & (wbs_adr_i[31:16]==16'h3800) ;
-assign CPU_Write_userproj = wbs_cyc_i & wbs_stb_i & wbs_we_i & (wbs_adr_i[31:16]==16'h3800) ;
+assign wbs_dat_o = wbs_dat_o_dma | wbs_dat_o_cache | wbs_dat_o_FIFO;
+assign user_irq = 3'b0;
 
 DMA_Controller DMA_Controller (
     // MGMT SoC Wishbone Slave
@@ -149,7 +146,6 @@ DMA_Controller DMA_Controller (
     .wbs_dat_i(wbs_dat_i),
     .wbs_ack_o(wbs_ack_o_dma),
     .wbs_dat_o(wbs_dat_o_dma),
-    .la_data_out(la_data_out), 
     // AXI-Stream (DMA->ASIC)
     .sm_tvalid(sm_tvalid), 
     .sm_tdata(sm_tdata), 
@@ -172,7 +168,12 @@ DMA_Controller DMA_Controller (
     .mem_w_data(dma_w_data),
     // BRAM Controller u0 (DMA<-BRAM Controller)
     .mem_r_valid(dma_in_valid),
-    .mem_r_data(brc_u0_data_o)
+    .mem_r_data(brc_u0_data_o),
+
+    // ASIC status
+    .ap_start_ASIC(ap_start_ASIC),
+    .ap_idle_ASIC(ap_idle_ASIC),
+    .ap_done_ASIC(ap_done_ASIC)
 );
 
 Arbiter Arbiter (

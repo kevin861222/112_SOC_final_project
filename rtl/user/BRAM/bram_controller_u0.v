@@ -117,8 +117,8 @@ always @(posedge clk or posedge rst) begin
     end
 end
 always @(*) begin
-    IsDataForCache_d = Task_bay_sel[pointer] ;
-    IsDataForDMA_d = Task_bay_sel[pointer] ;
+    IsDataForCache_d = Task_bay_sel[pointer]==2'b01;
+    IsDataForDMA_d = Task_bay_sel[pointer]==2'b00;
 end
 assign cache_in_valid = Out_valid_q & IsDataForCache_q ;
 assign dma_in_valid = Out_valid_q & IsDataForDMA_q ;
