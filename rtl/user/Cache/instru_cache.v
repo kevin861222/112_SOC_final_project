@@ -10,7 +10,7 @@ module instru_cache #(
     input wbs_cyc_i ,
     input wbs_we_i ,
     // input [3:0] wbs_sel_i ,
-    input [31:0] wbs_dat_i ,
+    // input [31:0] wbs_dat_i ,
     input [31:0] wbs_adr_i ,
     
     /* To CPU */
@@ -62,7 +62,7 @@ end
 /* HIT and MISS */
 wire HIT , MISS ;
 assign wbs_cache_miss = MISS ;
-assign MISS = valid & ~wbs_we_i & ~cache_state_d ;
+assign MISS = valid & ~wbs_we_i & ~cache_state_d & (wbs_adr_i [31:16]==16'h3800) & ~(&wbs_adr_i[14:12]) ;
 assign HIT = n_empty & (addr_origin == wbs_adr_i[14:5]) & valid & ~wbs_we_i ;
 
 /*---------------------------------------------------------------------------*/

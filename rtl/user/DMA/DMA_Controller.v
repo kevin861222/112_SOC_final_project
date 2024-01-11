@@ -40,7 +40,7 @@ module DMA_Controller
     input      [31:0] wbs_dat_i,
     input      [31:0] wbs_adr_i,
     input      [31:0] wbs_adr_o,
-    output            wbs_ack_o,
+    output reg        wbs_ack_o,
     output reg [31:0] wbs_dat_o,
 
     // AXI-Stream (Write, DMA->ASIC)
@@ -96,11 +96,19 @@ wire isAddr_DMA_r;
 //                                     Design                                   //
 //==============================================================================//
 // Wishbone
-assign wbs_ack_o = isAddr_DMA;
 assign wbs_valid = wbs_cyc_i && wbs_stb_i; // address is in user project
 assign isAddr_DMA = wbs_valid & wbs_adr_i[15:8]==8'h80; // 32'h3800_80XX
 assign isAddr_DMA_w = (isAddr_DMA & wbs_we_i);
 assign isAddr_DMA_r = (isAddr_DMA & ~wbs_we_i);
+
+always @(posedge wb_clk_i, posedge wb_rst_i) begin
+    if(wb_rst_i) begin
+        wbs_ack_o <= 0;
+    end
+    else begin
+        wbs_ack_o <= isAddr_DMA;
+    end
+end
 
 always @(posedge wb_clk_i, posedge wb_rst_i) begin
     if(wb_rst_i) begin
