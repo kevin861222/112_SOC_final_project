@@ -24,10 +24,6 @@
 // ------------------------------------------------------------------ //
 // DMA_addr[12:0]  = address_DMA2RAM                       [R/W]
 
-// TODO
-// 1. connect LA to CPU to tell DMA is done
-// ap_done 應該什麼時候=1 工作結束的時候嗎?
-// 因為目前ap_done=1 不可能直接接下份工作
 `include "../rtl/user/defines.v"
 module DMA_Controller 
 #(
@@ -48,16 +44,16 @@ module DMA_Controller
     output reg [31:0] wbs_dat_o,
 
     // AXI-Stream (Write, DMA->ASIC)
-    input                          sm_tready, 
-    output                         sm_tvalid, 
-    output     [(pDATA_WIDTH-1):0] sm_tdata, 
-    output                         sm_tlast, 
+    input                      sm_tready, 
+    output                     sm_tvalid, 
+    output [(pDATA_WIDTH-1):0] sm_tdata, 
+    output                     sm_tlast, 
     
     // AXI-Stream (Read, DMA<-ASIC)
-    input                          ss_tvalid, 
-    input      [(pDATA_WIDTH-1):0] ss_tdata, 
-    input                          ss_tlast, 
-    output reg                     ss_tready, 
+    input                      ss_tvalid, 
+    input  [(pDATA_WIDTH-1):0] ss_tdata, 
+    input                      ss_tlast, 
+    output                     ss_tready, 
 
     // Memory
     output        mem_r_ready, // mem_r_addr valid
@@ -70,9 +66,9 @@ module DMA_Controller
     input  [31:0] mem_r_data,
 
     // ASIC signal line
-    output reg [2:0] ap_start_ASIC,
-    input            ap_idle_ASIC,
-    input      [2:0] ap_done_ASIC
+    output    reg [2:0] ap_start_ASIC,
+    input               ap_idle_ASIC,
+    input         [2:0] ap_done_ASIC
 );
 //==============================================================================//
 //                                  Declaration                                 //
@@ -91,6 +87,7 @@ reg [12:0]addr_DMA2RAM; // DMA address  io->memory
 
 reg [6:0] length_request_BRAM;
 reg [6:0] length_receive_BRAM;
+reg [6:0] length_write_BRAM;
 wire isAddr_DMA;
 wire isAddr_DMA_w;
 wire isAddr_DMA_r;
@@ -107,7 +104,6 @@ assign isAddr_DMA_r = (isAddr_DMA & ~wbs_we_i);
 
 always @(posedge wb_clk_i, posedge wb_rst_i) begin
     if(wb_rst_i) begin
-        // ap_start_DMA <= 1'b0;
         type <= 1'b0;
         ch <= 2'b0;
         length <= 7'b0;
@@ -152,7 +148,9 @@ end
 
 // DMA
 assign ap_start_DMA = (isAddr_DMA_w && wbs_adr_i[3:0]==`DMA_offset_cfg && ap_idle_DMA)?wbs_dat_i[10]:0;
-assign ap_done_DMA = (!ap_idle_DMA & length_request_BRAM==length-1);
+assign ap_done_DMA = (!ap_idle_DMA && 
+                        (type==0 && mem_r_ack && length_request_BRAM==length-1) ||
+                        (type==1 && ss_tvalid && length_write_BRAM==length-1));
 always @(posedge wb_clk_i, posedge wb_rst_i) begin
     if(wb_rst_i) begin
         ap_idle_DMA <= 1;
@@ -186,56 +184,54 @@ always @(posedge wb_clk_i, posedge wb_rst_i) begin
         if(mem_r_valid)
             length_receive_BRAM <= length_receive_BRAM + 1;
 
-        if(length_receive_BRAM==length-1) 
+        if(length_receive_BRAM==length) 
             length_receive_BRAM <= 0;
     end
 end
 
+always @(posedge wb_clk_i, posedge wb_rst_i) begin
+    if(wb_rst_i) begin
+        length_write_BRAM <= 0;
+    end
+    else begin
+        if(!ap_idle_DMA && mem_w_valid)
+            length_write_BRAM <= length_write_BRAM + 1;
+
+        if(ap_done_DMA) 
+            length_write_BRAM <= 0;
+    end
+end
+
 // Memory
-// Read
-// mem_r_addr
-// mem_r_ready, 應該會一直有效直到ack
-// mem_r_ack
-// mem_r_valid
-// mem_r_data
-
-// Write
-// mem_w_valid
-// mem_w_addr
-// mem_w_data
-
-assign mem_r_addr = (addr_DMA2RAM | length_request_BRAM);
+// Memory - Read
+assign mem_r_addr = (addr_DMA2RAM + length_request_BRAM);
 assign mem_r_ready = (!ap_idle_DMA) && sm_tready;
+
+// Memory - Write
+assign mem_w_addr = (addr_DMA2RAM + length_write_BRAM);
+assign mem_w_valid = ss_tvalid;
+assign mem_w_data = ss_tdata;
 
 // AXI-Stream (Write, DMA->ASIC)
 assign sm_tdata = mem_r_data;
 assign sm_tvalid = mem_r_valid;
-assign sm_tlast = (length_receive_BRAM==(length-1));
+assign sm_tlast = mem_r_valid && (|length) && (length_receive_BRAM==length-1);
 
 // AXI-Stream (Read, DMA<-ASIC)
-always @(posedge wb_clk_i, posedge wb_rst_i) begin
-    if(wb_rst_i) begin
-        ss_tready <= 1;
-    end
-    else begin
-    end
-end
+assign ss_tready = (!ap_idle_DMA && type==1);
 
 // ASIC signal line
-// ap_idle_ASIC  觸發條件是啥 會先檢查ASIC是否為idle
-// ap_done_ASIC
-// ap_start_ASIC
 always @(posedge wb_clk_i, posedge wb_rst_i) begin
     if(wb_rst_i) begin
         ap_start_ASIC <= 3'b0;
     end
     else begin
-        if(ap_idle_ASIC)
-            ap_start_ASIC[ch] <= ap_start_DMA;
-
-        if(|ap_start_ASIC[ch]) 
+        if(!ap_idle_DMA && ap_idle_ASIC)
+            ap_start_ASIC[ch] <= 1'b1;
+        
+        if(|ap_start_ASIC) 
             ap_start_ASIC <= 3'b0;
-    end
 
+    end
 end
 endmodule

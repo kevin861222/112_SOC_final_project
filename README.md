@@ -49,10 +49,6 @@ cd ~/testbench
 make
 ```
 
-## IRQ
-- IRQ0 - UART Receive 
-- IRQ1 - DMA Controller isTaskDone (1=done, pulse for 1T)
-
 ## Simulation Result
 
 ## About This Project
