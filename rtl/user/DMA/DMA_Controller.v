@@ -46,13 +46,12 @@ module DMA_Controller
     input      [31:0] wbs_adr_o,
     output            wbs_ack_o,
     output reg [31:0] wbs_dat_o,
-    output            irq,
 
     // AXI-Stream (Write, DMA->ASIC)
     input                          sm_tready, 
     output                         sm_tvalid, 
     output     [(pDATA_WIDTH-1):0] sm_tdata, 
-    output reg                     sm_tlast, 
+    output                         sm_tlast, 
     
     // AXI-Stream (Read, DMA<-ASIC)
     input                          ss_tvalid, 
@@ -105,8 +104,6 @@ assign wbs_valid = wbs_cyc_i && wbs_stb_i; // address is in user project
 assign isAddr_DMA = wbs_valid & wbs_adr_i[15:8]==8'h80; // 32'h3800_80XX
 assign isAddr_DMA_w = (isAddr_DMA & wbs_we_i);
 assign isAddr_DMA_r = (isAddr_DMA & ~wbs_we_i);
-assign irq = ap_done_DMA;
-// assign irq = 1;
 
 always @(posedge wb_clk_i, posedge wb_rst_i) begin
     if(wb_rst_i) begin
@@ -211,17 +208,9 @@ assign mem_r_addr = (addr_DMA2RAM | length_request_BRAM);
 assign mem_r_ready = (!ap_idle_DMA) && sm_tready;
 
 // AXI-Stream (Write, DMA->ASIC)
-// 會有一種情況
-// sm_tready = 0, sm_tvalid = 1
 assign sm_tdata = mem_r_data;
 assign sm_tvalid = mem_r_valid;
-always @(posedge wb_clk_i, posedge wb_rst_i) begin
-    if(wb_rst_i) begin
-        sm_tlast <= 0;
-    end
-    else begin
-    end
-end
+assign sm_tlast = (length_receive_BRAM==(length-1));
 
 // AXI-Stream (Read, DMA<-ASIC)
 always @(posedge wb_clk_i, posedge wb_rst_i) begin

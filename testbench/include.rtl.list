@@ -11,8 +11,7 @@
 -v ../rtl/user/BRAM/bram.v
 -v ../rtl/user/Arbiter/Arbiter_new.v
 -v ../rtl/user/ASIC/accelerator.v
--v ../rtl/user/ASIC/fir.v
--v ../rtl/user/ASIC/matmul.v
+-v ../rtl/user/ASIC/firmat.v
 -v ../rtl/user/ASIC/sorting.v
 -v ../rtl/user/FIFO/data_FIFO.v
 -v ../rtl/user/uart/uart_ctrl.v

@@ -34,7 +34,7 @@ module accelerator(
     reg [31:0] ss_tdata_fir, ss_tdata_matmul, ss_tdata_sorting, din;
     reg  ss_tlast_fir, ss_tlast_matmul, ss_tlast_sorting;
     wire ss_tready_fir, ss_tready_matmul, ss_tready_sorting;
-    wire [31:0] data_out_fir, data_out_matmul, data_out_sorting;
+    wire [31:0] data_out_firmat, data_out_sorting;//data_out_fir, data_out_matmul
     wire w_fifo_en_fir, w_fifo_en_matmul, w_fifo_en_sorting;
     reg w_en, r_en, sm_tvalid_d, rstfifo;
     wire empty, full;
@@ -155,12 +155,12 @@ module accelerator(
         case(ap_start_q)
             3'b001: begin
                 ss_tready = ss_tready_fir;
-                din = data_out_fir;
+                din = data_out_firmat;
                 w_en = w_fifo_en_fir;
             end
             3'b010: begin
                 ss_tready = ss_tready_matmul;
-                din = data_out_matmul;
+                din = data_out_firmat;
                 w_en = w_fifo_en_matmul;
             end
             3'b100: begin
@@ -194,28 +194,24 @@ module accelerator(
         .rstfifo(rstfifo)
     );
 //========fir/matmul/sorting=======
-    fir U_fir(
+    firmat U_firmat(
         .clk(clk),
         .rst(rst), 
-        .ss_tvalid(ss_tvalid_fir), 
-        .ss_tdata(ss_tdata_fir), 
-        .ss_tlast(ss_tlast_fir), 
-        .ss_tready(ss_tready_fir), 
+        .acc_ap_start_q(ap_start_q[1:0]),
+        .fir_ss_tvalid(ss_tvalid_fir), 
+        .fir_ss_tdata(ss_tdata_fir), 
+        .fir_ss_tlast(ss_tlast_fir), 
+        .fir_ss_tready(ss_tready_fir), 
         .ap_start_fir(ap_start[0]),
-        .data_out(data_out_fir),
-        .w_fifo_en(w_fifo_en_fir),
-        .done_fir(done_fir)
-    );
-    matmul U_matmul(
-        .clk(clk),
-        .rst(rst), 
-        .ss_tvalid(ss_tvalid_matmul), 
-        .ss_tdata(ss_tdata_matmul), 
-        .ss_tlast(ss_tlast_matmul), 
-        .ss_tready(ss_tready_matmul), 
+        .firmat_data_out(data_out_firmat), 
+        .fir_w_fifo_en(w_fifo_en_fir),
+        .done_fir(done_fir),
+        .mat_ss_tvalid(ss_tvalid_matmul), 
+        .mat_ss_tdata(ss_tdata_matmul), 
+        .mat_ss_tlast(ss_tlast_fir), 
+        .mat_ss_tready(ss_tready_matmul), 
         .ap_start_matmul(ap_start[1]),
-        .data_out(data_out_matmul),
-        .w_fifo_en(w_fifo_en_matmul),
+        .mat_w_fifo_en(w_fifo_en_matmul),
         .done_matmul(done_matmul)
     );
     sorting U_sorting(

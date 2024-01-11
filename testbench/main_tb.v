@@ -35,6 +35,7 @@ module main_tb;
 	wire tx_clear_req;
 	assign checkbits  = mprj_io[31:16];
 	assign uart_tx = mprj_io[6];
+	assign mprj_io[5] = uart_rx;
 
 	always #12.5 clock <= (clock === 1'b0);
 

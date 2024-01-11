@@ -18,10 +18,9 @@
 // This include is relative to $CARAVEL_PATH (see Makefile)
 #include <defs.h>
 #include "define.h"
-// #if defined(USER_PROJ_IRQ0_EN) || defined(USER_IRQ_1_INTERRUPT)
+#ifdef USER_PROJ_IRQ0_EN
 #include <irq_vex.h>
-// #endif
-extern uint8_t isDMADone;
+#endif
 void main()
 {
 	// The upper GPIO pins are configured to be output
@@ -69,12 +68,10 @@ void main()
 	reg_mprj_io_6  = GPIO_MODE_MGMT_STD_OUTPUT;
 	reg_mprj_io_5  = GPIO_MODE_USER_STD_INPUT_NOPULL;
 
-	// reg_uart_enable = 1;
-	
 	// Configure LA probes [31:0], [127:64] as inputs to the cpu 
 	// Configure LA probes [63:32] as outputs from the cpu
 	reg_la0_oenb = reg_la0_iena = 0x00000000;    // [31:0]
-	reg_la1_oenb = reg_la1_iena = 0xFFFFFFFF;    // [63:32]
+	reg_la1_oenb = reg_la1_iena = 0x00000000;    // [63:32]
 	reg_la2_oenb = reg_la2_iena = 0x00000000;    // [95:64]
 	reg_la3_oenb = reg_la3_iena = 0x00000000;    // [127:96]
 	// UART Receive Interrupt
@@ -87,16 +84,6 @@ void main()
 	// enable user_irq_0_ev_enable
 	user_irq_0_ev_enable_write(1);
 #endif
-	// DMA Done Interrupt
-#ifdef USER_PROJ_IRQ1_EN
-    int mask;
-	// unmask USER_IRQ_1_INTERRUPT
-	mask = irq_getmask();
-	mask |= 1 << USER_IRQ_1_INTERRUPT; // USER_IRQ_0_INTERRUPT = 3
-	irq_setmask(mask);
-	// enable user_irq_1_ev_enable
-	user_irq_1_ev_enable_write(1);
-#endif
 
 	// Set User Project Slaves Enable
 	reg_wb_enable = 1;
@@ -105,41 +92,35 @@ void main()
 	reg_mprj_xfer = 1;
 	while (reg_mprj_xfer == 1);
 
-	// // start flag - FIR
+	// start flag - FIR
 	reg_mprj_datal = (0xAB00<<16);
-	// // FIR tap
-	// reg_DMA_addr   = 	(fir_taps_base<<DMA_addr_base);
-	// reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
-	// 					(DMA_type_MEM2IO << DMA_cfg_type) | 
-	// 					(DMA_ch_FIR << DMA_cfg_channel) | 
-	// 					(NUM_FIR_TAP<<DMA_cfg_length);
-	// reg_la1_data = mask;
-	reg_la1_data = 0xff;
-	while(!isDMADone) ;
-	// while(!isDMADone) reg_la1_data = isDMADone;
-
-
-	// reg_mprj_datal = (0xFF<<24) || (isDMADone<<16);
-	// while(!isDMADone) ;
-	// isDMADone = 0;
-
-
+	// FIR tap
+	reg_DMA_addr   = 	(fir_taps_base<<DMA_addr_base);
+	reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
+						(DMA_type_MEM2IO << DMA_cfg_type) | 
+						(DMA_ch_FIR << DMA_cfg_channel) | 
+						(NUM_FIR_TAP<<DMA_cfg_length);
+	// wait for DMA done
+	while(!(reg_DMA_cfg & (1<<DMA_cfg_idle))) ;
 
 	// FIR input
-	// reg_DMA_addr   = 	(fir_input_base<<DMA_addr_base);
-	// reg_DMA_cfg   |= 	(1 << DMA_cfg_start) | 
-	// 					(DMA_type_MEM2IO << DMA_cfg_type) | 
-	// 					(DMA_ch_FIR << DMA_cfg_channel) | 
-	// 					(NUM_FIR_INPUT<<DMA_cfg_length);
-	// // FIR output
-	// // wait for DMA interrupt
-	// // while()
+	reg_DMA_addr   = 	(fir_input_base<<DMA_addr_base);
+	reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
+						(DMA_type_MEM2IO << DMA_cfg_type) | 
+						(DMA_ch_FIR << DMA_cfg_channel) | 
+						(NUM_FIR_INPUT<<DMA_cfg_length);
+	// wait for DMA done
+	while(!(reg_DMA_cfg & (1<<DMA_cfg_idle))) ;
+	
+	// FIR output
 	// reg_DMA_addr   = 	(fir_output_base<<DMA_addr_base);
 	// reg_DMA_cfg   |= 	(1 << DMA_cfg_start) | 
 	// 					(DMA_type_IO2MEM << DMA_cfg_type) | 
 	// 					(DMA_ch_FIR << DMA_cfg_channel) | 
 	// 					(NUM_FIR_OUTPUT<<DMA_cfg_length);
-	// // end flag - FIR
+	// // wait for DMA done
+	// while(!(reg_DMA_cfg & (1<<DMA_cfg_idle))) ;
+	// end flag - FIR
 	reg_mprj_datal = (0xAB01<<16);
 
 	// // start flag - matmul
