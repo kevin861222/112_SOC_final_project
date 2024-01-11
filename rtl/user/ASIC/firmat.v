@@ -39,7 +39,7 @@ module firmat(
     //fir
     reg fir_ss_tready_d;
     reg [1:0] fir_state_cs, fir_state_ns;
-    reg [5:0] fir_counter_r_q, fir_counter_r_d;
+    reg [6:0] fir_counter_r_q, fir_counter_r_d;
     reg fir_counter_r_rst, fir_counter_r_en;
     reg [3:0] fir_counter_s_q, fir_counter_s_d;
     reg fir_counter_s_rst, fir_counter_s_en;
@@ -50,6 +50,14 @@ module firmat(
     reg [31:0] multbuf [0:10];
     reg [3:0] index0, index1, index2, index3, index4, index5, index6, index7, index8, index9, index10;
     integer i;
+    //fifo
+    wire full, empty;
+    reg r_en, w_en, rstfifo;
+    reg [31:0] din;
+    wire [31:0] dout;
+
+
+    
 
     //mat
     reg mat_ss_tready_d;
@@ -93,6 +101,10 @@ module firmat(
         fir_ss_tready_d = 1'd0;
         for(i=0; i<11; i=i+1) shiftbuf_d[i] = shiftbuf_q[i];
         for(i=0; i<11; i=i+1) tap_d[i] = tap_q[i];
+        r_en = 1'd0;
+        w_en = 1'd0;
+        din = 32'd0;
+        rstfifo = 1'd0;
 
         case(fir_state_cs)
             IDLE_fir: begin
@@ -122,20 +134,33 @@ module firmat(
                 end            
             end
             STORE_fir: begin
-                if(fir_ss_tready && fir_ss_tvalid) begin
-                    fir_counter_s_en = 1'd1;
-                    shiftbuf_d[fir_counter_s_q] = fir_ss_tdata;
- 
-                    fir_state_ns = OPER_fir;
+                fir_ss_tready_d = ~full;
+                w_en = fir_ss_tvalid;
+                din = fir_ss_tdata;
+
+                if(fir_counter_r_q == 0 || fir_counter_r_q == 1) begin
+                    if(fir_ss_tready && fir_ss_tvalid) begin
+                        r_en = 1'd1;
+                        fir_counter_r_en = 1'd1;
+                        fir_state_ns = STORE_fir;
+                    end
+                    else begin
+                        fir_state_ns = STORE_fir;
+                    end
                 end
                 else begin
-                    fir_ss_tready_d = 1'd1;
-                    fir_state_ns = STORE_fir;
-                end  
+                    r_en = 1'd1;
+                    fir_counter_r_en = 1'd1;
+                    fir_counter_s_en = 1'd1;
+                    shiftbuf_d[fir_counter_s_q] = dout;
+                    fir_state_ns = OPER_fir;
+                end
             end
             OPER_fir: begin
+                fir_ss_tready_d = ~full;
+                w_en = fir_ss_tvalid;
+                din = fir_ss_tdata;
                 fir_w_fifo_en = 1'd1;
-                fir_counter_r_en = 1'd1;
 
                 multbuf[0] = shiftbuf_d[index0];
                 multbuf[1] = shiftbuf_d[index1];
@@ -149,7 +174,8 @@ module firmat(
                 multbuf[9] = shiftbuf_d[index9];
                 multbuf[10] = shiftbuf_d[index10];
 
-                if(fir_counter_r_q == 63) begin
+                if(fir_counter_r_q == 66) begin
+                    rstfifo = 1'd1;
                     fir_counter_s_rst = 1'd1;
                     fir_counter_r_rst = 1'd1;
                     done_fir = 1'd1;
@@ -202,7 +228,7 @@ module firmat(
         if(rst) begin
             fir_ss_tready <= 1'd0;
             fir_state_cs <= 2'd0;
-            fir_counter_r_q <= 6'd0;
+            fir_counter_r_q <= 7'd0;
             fir_counter_s_q <= 6'd10;
             for(i=0; i<11; i=i+1) shiftbuf_q[i] <= 32'd0;
             for(i=0; i<11; i=i+1) tap_q[i] <= 32'd0;
@@ -358,7 +384,56 @@ module firmat(
         end
     end
 
-
-
+    //fir data fifo
+    synchronous_fifo U_fir_sync_fifo(
+        .clk(clk),
+        .rst(rst),
+        .r_en(r_en),
+        .w_en(w_en),
+        .empty(empty),
+        .full(full),
+        .data_in(din),
+        .data_out(dout),
+        .rstfifo(rstfifo)
+    );
 endmodule
 
+module synchronous_fifo #(parameter DEPTH=65, DATA_WIDTH=32) (
+  input clk, rst,
+  input w_en, r_en,
+  input [DATA_WIDTH-1:0] data_in,
+  output reg [DATA_WIDTH-1:0] data_out,
+  output full, empty,
+  input rstfifo
+);
+  
+  reg [$clog2(DEPTH)-1:0] w_ptr, r_ptr;
+  reg [DATA_WIDTH-1:0] fifo[0:DEPTH-1];
+  
+  // Set Default values on reset.
+  always@(posedge clk, posedge rst) begin
+    if(rst || rstfifo) begin
+      w_ptr <= 0; r_ptr <= 0;
+      data_out <= 0;
+    end
+  end
+  
+  // To write data to FIFO
+  always@(posedge clk) begin
+    if(w_en & !full)begin
+      fifo[w_ptr] <= data_in;
+      w_ptr <= w_ptr + 1;
+    end
+  end
+  
+  // To read data from FIFO
+  always@(posedge clk) begin
+    if(r_en & !empty) begin
+      data_out <= fifo[r_ptr];
+      r_ptr <= r_ptr + 1;
+    end
+  end
+  
+  assign full = ((w_ptr+1'b1) == r_ptr);
+  assign empty = (w_ptr == r_ptr);
+endmodule

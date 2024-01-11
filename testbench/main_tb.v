@@ -63,15 +63,15 @@ module main_tb;
 	end
 
 	initial begin
-		// wait(checkbits == 16'hAB00);
-		// $display("Test start - FIR");
-		// wait(checkbits == 16'hAB01);
-		// $display("Test end   - FIR");
+		wait(checkbits == 16'hAB00);
+		$display("Test start - FIR");
+		wait(checkbits == 16'hAB01);
+		$display("Test end   - FIR");
 
-		wait(checkbits == 16'hAB10);
-		$display("Test start - matmul");
-		wait(checkbits == 16'hAB11);
-		$display("Test end   - matmul");
+		// wait(checkbits == 16'hAB10);
+		// $display("Test start - matmul");
+		// wait(checkbits == 16'hAB11);
+		// $display("Test end   - matmul");
 
 		wait(checkbits == 16'hAB20);
 		$display("Test start - qsort");

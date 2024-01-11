@@ -131,6 +131,7 @@ wire [31:0] wbs_dat_o_cache;
 
 // CPU
 assign wbs_ack_o = wbs_ack_o_dma | wbs_ack_o_cache | wbs_ack_o_FIFO | wbs_ack_o_abt;
+assign wbs_dat_o = wbs_dat_o_dma | wbs_dat_o_cache | wbs_dat_o_FIFO;
 assign user_irq = 3'b0;
 
 DMA_Controller DMA_Controller (
