@@ -1,5 +1,5 @@
 # 112 SOC Lab - Final Project
-![Static Badge](https://img.shields.io/badge/Build-40%25-green?labelColor=gray)
+![Static Badge](https://img.shields.io/badge/Build-Success-green?labelColor=gray)
 
 ## System Architecture
 ```mermaid
@@ -50,10 +50,88 @@ make
 ```
 
 ## Simulation Result
-
+- Command Line
+    ``` bash
+    ~\testbench (main)
+    λ make
+    make[1]: Entering directory '~/testbench'
+    make[1]: Leaving directory ~/testbench'
+    Reading main.hex
+    main.hex loaded into memory
+    Memory 5 bytes = 0x6f 0x00 0x00 0x0b 0x13
+    VCD info: dumpfile main.vcd opened for output.       
+    Times = 1/3
+    Test start - FIR
+    Test end   - FIR
+    Test start - matmul
+    Test end   - matmul
+    Test start - qsort
+    Test end   - qsort
+    Times = 2/3
+    Test start - FIR
+    Test end   - FIR
+    Test start - matmul
+    Test end   - matmul
+    Test start - qsort
+    Test end   - qsort
+    Times = 3/3
+    Test start - FIR
+    Test end   - FIR
+    Test start - matmul
+    Test end   - matmul
+    Test start - qsort
+    Test end   - qsort
+    main_tb.v:84: $finish called at 2936837500 (1ps)
+    ```
+- Waveform
 ## About This Project
 ### Memory Map 
+|  Base   |   End   |   Hardware   |                  Description                 |
+|---------|---------|--------------|----------------------------------------------|
+|3800_0000|3800_6FFF|BRAM_u0       |.text(instruction)<br/>.data(initialized data)|
+|3800_7000|3800_7FFF|BRAM_u1       |Calculated Result                             |
+|3000_8000|3000_8000|DMA_Controller|DMA_cfg                                       |
+|3000_8004|3000_8004|DMA_Controller|DMA_addr                                      |
+|3100_0000|3100_0000|uart_ctrl     |RX_DATA                                       |
+|3100_0004|3100_0004|uart_ctrl     |TX_DATA                                       |
+|3100_0008|3100_0008|uart_ctrl     |STAT_REG                                      |
+
+### DMA Config
+```
+          +------+------+-------+------+---------+--------+
+  DMA_cfg |      |      |       |      |         |        |
+          | done | idle | start | type | channel | length |
+ 38008000 |      |      |       |      |         |        |
+          +------+------+-------+------+---------+--------+
+            [12]   [11]   [10]     [9]    [8:7]     [6:0]
+ 
+ 
+          +--------------------------------+--------------+
+ DMA_addr |                                |              |
+          |                                | addr_DMA2RAM |
+ 38008004 |                                |              |
+          +--------------------------------+--------------+
+                                                 [12:0]
+```
+### UART Config
+```
++------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+|RX_DATA |  RESERVERD  |                        DATA BITS                              |
+|        |    31-8     |  7    |  6    |  5    |  4    |  3    |  2    |  1    |  0    |
++------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+|TX_DATA |  RESERVERD  |                        DATA BITS                              |
+|        |    31-8     |  7    |  6    |  5    |  4    |  3    |  2    |  1    |  0    |
++------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+|STAT_REG|  RESERVERD  |  Frame Err  |  Overrun Err  |  Tx_full  |  Tx_empty  |  Rx_full  |  Rx_empty |
+|        |    31-6     |  5          |  4            |  3        |  2         |  1        |  0        |
++------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+```
+
+### Linker Script
+``` 
+.text: origin : 0x3800_0500 , length : 6500
+.data: origin : 0x3800_0000 , lenght : 500
+```
 
 ### Transfer Protocol
 
-### Linker Script

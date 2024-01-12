@@ -182,7 +182,9 @@ module accelerator(
         r_en = sm_tready;
     end
 //==========output FIFO===========
-    synchronous_fifo U_sync_fifo(
+    synchronous_fifo 
+    #(.DEPTH(65), .DATA_WIDTH(32))
+    U_sync_fifo(
         .clk(clk),
         .rst(rst),
         .r_en(r_en),

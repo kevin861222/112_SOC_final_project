@@ -1,3 +1,4 @@
+`include "../rtl/user/defines.v"
 module ctrl(
     input wire        rst_n,
     input wire        clk,
@@ -18,13 +19,6 @@ module ctrl(
     input wire        i_tx_busy,
     output reg        o_tx_start
 );
-
-// Declare the UART memory mapped registers address
-localparam RX_DATA  = 32'h3000_0000;
-
-localparam TX_DATA	= 32'h3000_0004;
-
-localparam STAT_REG = 32'h3000_0008;
 
 //+------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
 //|RX_DATA |  RESERVERD  |                        DATA BITS                              |
@@ -47,7 +41,7 @@ always@(posedge clk or negedge rst_n)begin
         stat_reg <= 32'h0000_0005;
     end else begin
         if(i_wb_valid && !i_wb_we)begin
-            if(i_wb_adr==STAT_REG)
+            if(i_wb_adr==`addr_STAT_REG)
                 stat_reg[5:4] <= 2'b00;
         end
 
@@ -62,7 +56,7 @@ always@(posedge clk or negedge rst_n)begin
             stat_reg[1:0] <= 2'b10;
         else if(i_rx_busy && stat_reg[1:0]==2'b10)
             stat_reg[4] <= 1'b1;
-        else if((i_wb_valid && i_wb_adr==RX_DATA && !i_wb_we && stat_reg[1:0]==2'b10) || i_frame_err)
+        else if((i_wb_valid && i_wb_adr==`addr_RX_DATA && !i_wb_we && stat_reg[1:0]==2'b10) || i_frame_err)
             stat_reg[1:0] <= 2'b01;
     end
 end
@@ -73,7 +67,7 @@ always@(posedge clk or negedge rst_n)begin
         tx_buffer <= 32'h00000000;
         tx_start_local <= 1'b0;
     end else begin
-        if(i_wb_valid && i_wb_we && i_wb_adr==TX_DATA && !i_tx_busy)begin
+        if(i_wb_valid && i_wb_we && i_wb_adr==`addr_TX_DATA && !i_tx_busy)begin
             tx_buffer <= i_wb_dat;
             tx_start_local <= 1'b1;
         end
@@ -98,10 +92,10 @@ always@(posedge clk or negedge rst_n)begin
     end else begin
         if(i_wb_valid && !i_wb_we)begin
             case(i_wb_adr)
-                RX_DATA:begin
+                `addr_RX_DATA:begin
                     o_wb_dat <= rx_buffer;
                 end
-                STAT_REG:begin
+                `addr_STAT_REG:begin
                     o_wb_dat <= stat_reg;
                 end
                 default:begin 
@@ -116,7 +110,7 @@ always@(posedge clk or negedge rst_n)begin
     if(!rst_n)begin
         o_rx_finish <= 1'b0;
     end else begin
-        if((i_wb_valid && i_wb_adr==RX_DATA && !i_wb_we && stat_reg[1:0]==2'b10) || i_frame_err)
+        if((i_wb_valid && i_wb_adr==`addr_RX_DATA && !i_wb_we && stat_reg[1:0]==2'b10) || i_frame_err)
             o_rx_finish <= 1'b1;
         else 
             o_rx_finish <= 1'b0;

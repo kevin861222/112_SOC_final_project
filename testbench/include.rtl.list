@@ -14,6 +14,7 @@
 -v ../rtl/user/ASIC/firmat.v
 -v ../rtl/user/ASIC/sorting.v
 -v ../rtl/user/FIFO/data_FIFO.v
+-v ../rtl/user/FIFO/synchronous_fifo.v
 -v ../rtl/user/uart/uart_ctrl.v
 -v ../rtl/user/uart/uart_rx.v
 -v ../rtl/user/uart/uart_tx.v

@@ -9,6 +9,8 @@
     `define DMA_offset_addr 4'h4
 
     // UART
-    `define addr_UART 32'h3000_9000
+    `define addr_RX_DATA   32'h3100_0000
+    `define addr_TX_DATA   32'h3100_0004
+    `define addr_STAT_REG  32'h3100_0008
 
 `endif
