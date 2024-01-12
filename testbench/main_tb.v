@@ -48,7 +48,7 @@ module main_tb;
 		$dumpvars(0, main_tb);
 
 		// Repeat cycles of 1000 clock edges as needed to complete testbench
-		repeat (100) begin
+		repeat (150) begin
 			repeat (1000) @(posedge clock);
 			// $display("+1000 cycles");
 		end
@@ -63,6 +63,7 @@ module main_tb;
 	end
 
 	initial begin
+		// test round 1
 		wait(checkbits == 16'hAB00);
 		$display("Test start - FIR");
 		wait(checkbits == 16'hAB01);
@@ -77,6 +78,37 @@ module main_tb;
 		$display("Test start - qsort");
 		wait(checkbits == 16'hAB21);
 		$display("Test end   - qsort");
+		// test round 2 
+		wait(checkbits == 16'hAB00);
+		$display("Test start - FIR");
+		wait(checkbits == 16'hAB01);
+		$display("Test end   - FIR");
+
+		wait(checkbits == 16'hAB10);
+		$display("Test start - matmul");
+		wait(checkbits == 16'hAB11);
+		$display("Test end   - matmul");
+
+		wait(checkbits == 16'hAB20);
+		$display("Test start - qsort");
+		wait(checkbits == 16'hAB21);
+		$display("Test end   - qsort");
+		// test round 3 
+		wait(checkbits == 16'hAB00);
+		$display("Test start - FIR");
+		wait(checkbits == 16'hAB01);
+		$display("Test end   - FIR");
+
+		wait(checkbits == 16'hAB10);
+		$display("Test start - matmul");
+		wait(checkbits == 16'hAB11);
+		$display("Test end   - matmul");
+
+		wait(checkbits == 16'hAB20);
+		$display("Test start - qsort");
+		wait(checkbits == 16'hAB21);
+		$display("Test end   - qsort");
+
 		$finish;
 	end
 
