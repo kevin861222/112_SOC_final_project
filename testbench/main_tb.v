@@ -16,7 +16,7 @@
 `default_nettype none
 
 `timescale 1 ns / 1 ps
-
+`define times_rerun 3
 module main_tb;
 	reg clock;
 	reg RSTB;
@@ -63,52 +63,24 @@ module main_tb;
 	end
 
 	initial begin
-		// test round 1
-		wait(checkbits == 16'hAB00);
-		$display("Test start - FIR");
-		wait(checkbits == 16'hAB01);
-		$display("Test end   - FIR");
-
-		wait(checkbits == 16'hAB10);
-		$display("Test start - matmul");
-		wait(checkbits == 16'hAB11);
-		$display("Test end   - matmul");
-
-		wait(checkbits == 16'hAB20);
-		$display("Test start - qsort");
-		wait(checkbits == 16'hAB21);
-		$display("Test end   - qsort");
-		// test round 2 
-		wait(checkbits == 16'hAB00);
-		$display("Test start - FIR");
-		wait(checkbits == 16'hAB01);
-		$display("Test end   - FIR");
-
-		wait(checkbits == 16'hAB10);
-		$display("Test start - matmul");
-		wait(checkbits == 16'hAB11);
-		$display("Test end   - matmul");
-
-		wait(checkbits == 16'hAB20);
-		$display("Test start - qsort");
-		wait(checkbits == 16'hAB21);
-		$display("Test end   - qsort");
-		// test round 3 
-		wait(checkbits == 16'hAB00);
-		$display("Test start - FIR");
-		wait(checkbits == 16'hAB01);
-		$display("Test end   - FIR");
-
-		wait(checkbits == 16'hAB10);
-		$display("Test start - matmul");
-		wait(checkbits == 16'hAB11);
-		$display("Test end   - matmul");
-
-		wait(checkbits == 16'hAB20);
-		$display("Test start - qsort");
-		wait(checkbits == 16'hAB21);
-		$display("Test end   - qsort");
-
+		for(integer times=0;times<`times_rerun;times=times+1) begin
+			$display("Times = %1d/%1d", times+1, `times_rerun);
+			// FIR
+			wait(checkbits == 16'hAB00);
+			$display("Test start - FIR");
+			wait(checkbits == 16'hAB01);
+			$display("Test end   - FIR");
+			// Matrix Multiplication
+			wait(checkbits == 16'hAB10);
+			$display("Test start - matmul");
+			wait(checkbits == 16'hAB11);
+			$display("Test end   - matmul");
+			// Quick Sort
+			wait(checkbits == 16'hAB20);
+			$display("Test start - qsort");
+			wait(checkbits == 16'hAB21);
+			$display("Test end   - qsort");
+		end
 		$finish;
 	end
 
