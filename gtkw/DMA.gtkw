@@ -1,0 +1,104 @@
+[*]
+[*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
+[*] Thu Jan 11 15:38:56 2024
+[*]
+[dumpfile] "D:\資料\陽明交通大學\碩一\系統晶片設計\lab_final\Code\testbench\main.vcd"
+[dumpfile_mtime] "Thu Jan 11 15:36:00 2024"
+[dumpfile_size] 47224986
+[savefile] "D:\資料\陽明交通大學\碩一\系統晶片設計\lab_final\Code\testbench\waveform.gtkw"
+[timestart] 1448725400
+[size] 1920 1009
+[pos] -1 -1
+*-17.347435 1448872100 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] main_tb.
+[treeopen] main_tb.uut.
+[treeopen] main_tb.uut.mprj.
+[treeopen] main_tb.uut.mprj.acc_ASIC.
+[treeopen] main_tb.uut.soc.
+[treeopen] main_tb.uut.soc.core.
+[sst_width] 286
+[signals_width] 306
+[sst_expanded] 1
+[sst_vpaned_height] 445
+@200
+-wishbone
+@28
+main_tb.uut.mprj.wb_clk_i
+main_tb.uut.mprj.wb_rst_i
+main_tb.uut.mprj.wbs_ack_o
+@22
+main_tb.uut.mprj.wbs_adr_i[31:0]
+@420
+main_tb.uut.mprj.wbs_dat_i[31:0]
+@22
+main_tb.uut.mprj.wbs_dat_o[31:0]
+@200
+-DMA_config
+@22
+main_tb.checkbits[15:0]
+@24
+main_tb.uut.mprj.DMA_Controller.ch[1:0]
+@28
+main_tb.uut.mprj.DMA_Controller.type
+@24
+main_tb.uut.mprj.DMA_Controller.length[6:0]
+@200
+-DMA_status
+@28
+main_tb.uut.mprj.DMA_Controller.ap_start_DMA
+main_tb.uut.mprj.DMA_Controller.ap_idle_DMA
+main_tb.uut.mprj.DMA_Controller.ap_done_DMA
+@200
+-DMA_Controller
+@24
+main_tb.uut.mprj.DMA_Controller.length_receive_BRAM[6:0]
+main_tb.uut.mprj.DMA_Controller.length_request_BRAM[6:0]
+@200
+-Cache_data
+@28
+main_tb.uut.mprj.DMA_Controller.mem_r_ready
+@24
+main_tb.uut.mprj.DMA_Controller.mem_r_addr[12:0]
+@28
+main_tb.uut.mprj.DMA_Controller.mem_r_ack
+@200
+-
+@28
+main_tb.uut.mprj.DMA_Controller.mem_r_valid
+@420
+main_tb.uut.mprj.DMA_Controller.mem_r_data[31:0]
+@201
+-
+@28
+main_tb.uut.mprj.DMA_Controller.mem_w_valid
+@24
+main_tb.uut.mprj.DMA_Controller.mem_w_data[31:0]
+@22
+main_tb.uut.mprj.DMA_Controller.mem_w_addr[12:0]
+@200
+-
+-AXI-Stream(Write)
+@28
+main_tb.uut.mprj.DMA_Controller.sm_tready
+@420
+main_tb.uut.mprj.DMA_Controller.sm_tdata[31:0]
+@28
+main_tb.uut.mprj.DMA_Controller.sm_tvalid
+main_tb.uut.mprj.DMA_Controller.sm_tlast
+@200
+-AXI-Stream(Read)
+@28
+main_tb.uut.mprj.DMA_Controller.ss_tvalid
+main_tb.uut.mprj.DMA_Controller.ss_tready
+main_tb.uut.mprj.DMA_Controller.ss_tlast
+@24
+main_tb.uut.mprj.DMA_Controller.ss_tdata[31:0]
+@200
+-ASIC
+@28
+main_tb.uut.mprj.DMA_Controller.ap_done_ASIC[2:0]
+main_tb.uut.mprj.DMA_Controller.ap_start_ASIC[2:0]
+main_tb.uut.mprj.DMA_Controller.ap_idle_ASIC
+main_tb.uut.mprj.acc_ASIC.ap_start[2:0]
+[pattern_trace] 1
+[pattern_trace] 0

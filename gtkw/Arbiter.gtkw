@@ -1,0 +1,110 @@
+[*]
+[*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
+[*] Wed Jan 10 11:20:18 2024
+[*]
+[dumpfile] "/home/a605/soclab/112_SOC_final_project-dev/testbench/main.vcd"
+[dumpfile_mtime] "Wed Jan 10 11:19:53 2024"
+[dumpfile_size] 39779942
+[savefile] "/home/a605/soclab/112_SOC_final_project-dev/testbench/wangyu.gtkw"
+[timestart] 1416205200
+[size] 1848 1016
+[pos] -151 -151
+*-17.000000 1418147700 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] main_tb.
+[treeopen] main_tb.uut.
+[treeopen] main_tb.uut.mprj.
+[sst_width] 233
+[signals_width] 174
+[sst_expanded] 1
+[sst_vpaned_height] 289
+@200
+-CPU
+@28
+main_tb.uut.mprj.wbs_ack_o_abt
+main_tb.uut.mprj.wbs_ack_o_cache
+main_tb.uut.mprj.wbs_ack_o_dma
+main_tb.uut.mprj.wbs_ack_o_FIFO
+main_tb.uut.mprj.CPU_Read_userproj
+@29
+main_tb.uut.mprj.CPU_Write_userproj
+@200
+-
+-Arbiter
+@28
+main_tb.uut.mprj.Arbiter.wb_clk_i
+main_tb.uut.mprj.Arbiter.wb_rst_i
+main_tb.uut.mprj.Arbiter.wbs_stb_i
+main_tb.uut.mprj.Arbiter.wbs_cyc_i
+main_tb.uut.mprj.Arbiter.wbs_we_i
+@22
+main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+@24
+main_tb.uut.mprj.Arbiter.wbs_dat_i[31:0]
+@28
+main_tb.uut.mprj.Arbiter.wbs_ack_o
+main_tb.uut.mprj.Arbiter.wbs_cache_miss
+@200
+-
+@28
+main_tb.uut.mprj.Arbiter.dma_read_request
+@22
+main_tb.uut.mprj.Arbiter.dma_r_addr[12:0]
+@28
+main_tb.uut.mprj.Arbiter.dma_r_ack
+@200
+-
+@28
+main_tb.uut.mprj.Arbiter.dma_write_request
+@22
+main_tb.uut.mprj.Arbiter.dma_w_addr[12:0]
+main_tb.uut.mprj.Arbiter.dma_w_data[31:0]
+@200
+-
+-BRAM controller u0
+@24
+main_tb.uut.mprj.brc_u0.bram_Di[31:0]
+@28
+main_tb.uut.mprj.brc_u0.EN
+main_tb.uut.mprj.brc_u0.WE
+@22
+main_tb.uut.mprj.brc_u0.A[12:0]
+main_tb.uut.mprj.brc_u0.Do[31:0]
+@200
+-
+@28
+main_tb.uut.mprj.brc_u0.dma_in_valid
+main_tb.uut.mprj.brc_u0.cache_in_valid
+@200
+-BRAM controller u1
+@22
+main_tb.uut.mprj.brc_u1.bram_Di[31:0]
+@28
+main_tb.uut.mprj.brc_u1.EN
+main_tb.uut.mprj.brc_u1.WE
+@22
+main_tb.uut.mprj.brc_u1.A[12:0]
+main_tb.uut.mprj.brc_u1.Do[31:0]
+@200
+-
+-Instruction Cache
+@28
+main_tb.uut.mprj.instru_cache.wbs_cyc_i
+main_tb.uut.mprj.instru_cache.wbs_stb_i
+main_tb.uut.mprj.instru_cache.wbs_we_i
+@22
+main_tb.uut.mprj.instru_cache.wbs_adr_i[31:0]
+@28
+main_tb.uut.mprj.instru_cache.bram_in_valid
+@22
+main_tb.uut.mprj.instru_cache.bram_data_in[31:0]
+@28
+main_tb.uut.mprj.instru_cache.wbs_ack_o
+@22
+main_tb.uut.mprj.instru_cache.wbs_dat_o[31:0]
+@200
+-
+-DMA
+@28
+main_tb.uut.mprj.DMA_Controller.wbs_ack_o
+[pattern_trace] 1
+[pattern_trace] 0
