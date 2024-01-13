@@ -93,7 +93,6 @@ wire [31:0] bram_u0_data_in;
 wire bram_u0_reader_sel;
 wire [31:0] brc_u0_data_o;
 
-
 // BRAM_u1
 wire bram_u1_wr;
 wire bram_u1_in_valid;
@@ -129,10 +128,15 @@ wire fifo_in_valid;
 wire wbs_ack_o_cache;
 wire [31:0] wbs_dat_o_cache;
 
+// UART
+wire wbs_ack_o_uart;
+wire [31:0] wbs_dat_o_uart;
+wire user_irq_uart;
+
 // CPU
-assign wbs_ack_o = wbs_ack_o_dma | wbs_ack_o_cache | wbs_ack_o_FIFO | wbs_ack_o_abt;
-assign wbs_dat_o = wbs_dat_o_dma | wbs_dat_o_cache | wbs_dat_o_FIFO;
-assign user_irq = 3'b0;
+assign wbs_ack_o = wbs_ack_o_dma | wbs_ack_o_cache | wbs_ack_o_FIFO | wbs_ack_o_abt | wbs_ack_o_uart;
+assign wbs_dat_o = wbs_dat_o_dma | wbs_dat_o_cache | wbs_dat_o_FIFO | wbs_dat_o_uart;
+assign user_irq = {2'b0, user_irq_uart};
 
 DMA_Controller DMA_Controller (
     // MGMT SoC Wishbone Slave
@@ -322,6 +326,26 @@ accelerator acc_ASIC(
     .ap_start(ap_start_ASIC),
     .ap_idle(ap_idle_ASIC),
     .ap_done(ap_done_ASIC)
+);
+
+uart uart (
+    // MGMT SoC Wishbone Slave
+    .wb_clk_i(wb_clk_i),
+    .wb_rst_i(wb_rst_i),
+    .wbs_stb_i(wbs_stb_i),
+    .wbs_cyc_i(wbs_cyc_i),
+    .wbs_we_i(wbs_we_i),
+    .wbs_sel_i(wbs_sel_i),
+    .wbs_dat_i(wbs_dat_i),
+    .wbs_adr_i(wbs_adr_i),
+    .wbs_ack_o(wbs_ack_o_uart),
+    .wbs_dat_o(wbs_dat_o_uart),
+    // IO ports
+    .io_in  (io_in),
+    .io_out (io_out),
+    .io_oeb (io_oeb),
+    // IRQ
+    .user_irq (user_irq_uart)
 );
 
 endmodule	// user_project_wrapper

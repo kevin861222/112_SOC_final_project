@@ -28,7 +28,7 @@ module uart #(
 									// output buffer is disabled.
 
   // irq
-  output [2:0] user_irq
+  output user_irq
 );
 
   localparam rx_IDLE = 2'd0,
@@ -79,7 +79,7 @@ module uart #(
   reg tx_start_wen, tx_clear_ren, tx_clear_fifo;
   reg rx_rstfifo, tx_rstfifo;
 
-  assign user_irq = {2'b00, user_irq_q};	// Use USER_IRQ_0
+  assign user_irq = user_irq_q;	// Use USER_IRQ_0
   always @(*) begin
       user_irq_d = 0;
       irq_count_d = irq_count_q;
