@@ -62,16 +62,17 @@ module main_tb;
 		$finish;
 	end
 
+	reg [7:0] times;
 	initial begin
 		fork
-			for(integer times=0;times<`times_rerun;times=times+1) begin
+			for(times=0;times<`times_rerun;times=times+1) begin
 				$display("Times = %1d/%1d - Hardware", times+1, `times_rerun);
 				fir;
 				matmul;
 				qsort;
 			end
 			
-			for(integer times=0;times<`times_rerun;times=times+1) begin
+			for(times=0;times<`times_rerun;times=times+1) begin
 				$display("Times = %1d/%1d - UART", times+1, `times_rerun);
 				send_data(times[7:0]);
 			end
