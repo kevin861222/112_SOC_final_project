@@ -39,8 +39,8 @@ G5 --> G
 end
 ```
 
-## System Architecture
-![截圖 2024-01-10 上午1 08 22](https://github.com/pocper/112_SOC_final_project/assets/79128379/4e949ce3-229f-4ff7-af8f-372c3f7bb3ae)
+## System Data Flow
+![截圖 2024-01-13 下午4 40 39](https://github.com/pocper/112_SOC_final_project/assets/79128379/d9315803-cecd-42dd-8cff-b8e1560f28bc)
 
 
 ## Simulation
@@ -117,7 +117,7 @@ make
 ### Memory Map 
 |  Base   |   End   |   Hardware   |                  Description                 |
 |---------|---------|--------------|----------------------------------------------|
-|3800_0000|3800_6FFF|BRAM_u0       |.text(instruction)<br/>.data(initialized data)|
+|3800_0000|3800_6FFF|BRAM_u0       |instruction<br/>initialized data
 |3800_7000|3800_7FFF|BRAM_u1       |Calculated Result                             |
 |3000_8000|3000_8000|DMA_Controller|DMA_cfg                                       |
 |3000_8004|3000_8004|DMA_Controller|DMA_addr                                      |
@@ -158,7 +158,7 @@ make
 
 ### Linker Script
 ``` 
-.text: origin : 0x3800_0500 , length : 6500
+.mprjram: origin : 0x3800_0500 , length : 6500
 .data: origin : 0x3800_0000 , lenght : 500
 ```
 
