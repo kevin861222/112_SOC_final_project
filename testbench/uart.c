@@ -1,7 +1,5 @@
 #include <defs.h>
-// #ifndef __DEFINE_H__
 #include "define.h"
-// #endif
 #include <irq_vex.h>
 
 

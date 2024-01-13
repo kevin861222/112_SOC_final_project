@@ -17,9 +17,7 @@
 
 // This include is relative to $CARAVEL_PATH (see Makefile)
 #include <defs.h>
-#ifndef __DEFINE_H__
 #include "define.h"
-#endif
 #ifdef USER_PROJ_IRQ0_EN
 #include <irq_vex.h>
 #endif
