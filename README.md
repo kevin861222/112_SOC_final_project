@@ -163,4 +163,11 @@ make
 ```
 
 ### Transfer Protocol
+#### BRAM Controller u0 -> DMA
+
+#### DMA -> BRAM Controller u0 
+
+#### DMA -> ASIC
+
+#### ASIC -> DMA
 
