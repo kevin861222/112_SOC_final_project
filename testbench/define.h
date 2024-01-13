@@ -37,51 +37,26 @@ typedef enum
     qsort_output_end  = (qsort_output_base + NUM_QSORT_OUTPUT - 1)
 } MM_BRAM_u1;
 
-// FIR
-int fir_taps[NUM_FIR_TAP] = {0,-10,-9,23,56,63,56,23,-9,-10,0};
-int fir_input[NUM_FIR_INPUT] = 
-{
-     1, 2, 3, 4, 5, 6, 7, 8, 9,10,
-    11,12,13,14,15,16,17,18,19,20,
-    21,22,23,24,25,26,27,28,29,30,
-    31,32,33,34,35,36,37,38,39,40,
-    41,42,43,44,45,46,47,48,49,50,
-    51,52,53,54,55,56,57,58,59,60,
-    61,62,63,64
-};
-int fir_output[NUM_FIR_INPUT];
-
-// matmul
-int mat_A[NUM_MAT_A] = 
-{
-        0, 1, 2, 3,
-        0, 1, 2, 3,
-        0, 1, 2, 3,
-        0, 1, 2, 3,
-};
-int mat_B[NUM_MAT_B] = 
-{   
-     1,  2,  3,  4,
-     5,  6,  7,  8,
-     9, 10, 11, 12,
-    13, 14, 15, 16,
-};
-int mat_output[NUM_MAT_OUTPUT];
-
-// qsort
-int qsort_input[NUM_QSORT_INPUT] = {893, 40, 3233, 4267, 2669, 2541, 9073, 6023, 5681, 4622};
-int qsort_output[NUM_QSORT_OUTPUT];
-
 // Memory-Map Address
 #define MMIO_DMA         0x30008000
-#define MMIO_UART        0x31009000
+#define MMIO_UART        0x31000000
 
 #define offset_DMA_cfg  0x00
 #define offset_DMA_addr 0x04
-#define DMA_cfg  (MMIO_DMA | offset_DMA_cfg)
-#define DMA_addr (MMIO_DMA | offset_DMA_addr)
+#define DMA_cfg      (MMIO_DMA | offset_DMA_cfg)
+#define DMA_addr     (MMIO_DMA | offset_DMA_addr)
 #define reg_DMA_cfg  (*(volatile uint32_t *)DMA_cfg)  // 0x3000_8000
 #define reg_DMA_addr (*(volatile uint32_t *)DMA_addr) // 0x3000_8004
+
+#define offset_uart_rx_data 0x00
+#define offset_uart_tx_data 0x04
+#define offset_uart_stat    0x08
+#define UART_RX_DATA  (MMIO_UART | offset_uart_rx_data)
+#define UART_TX_DATA  (MMIO_UART | offset_uart_tx_data)
+#define UART_STAT     (MMIO_UART | offset_uart_stat)
+#define reg_rx_data   (*(volatile uint32_t *)UART_RX_DATA) // 0x3100_0000
+#define reg_tx_data   (*(volatile uint32_t *)UART_TX_DATA) // 0x3100_0004
+#define reg_uart_stat (*(volatile uint32_t *)UART_STAT)    // 0x3100_0008
 
 #define DMA_cfg_length  0
 #define DMA_cfg_channel 7

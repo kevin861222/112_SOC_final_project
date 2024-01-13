@@ -48,7 +48,7 @@ module main_tb;
 		$dumpvars(0, main_tb);
 
 		// Repeat cycles of 1000 clock edges as needed to complete testbench
-		repeat (150) begin
+		repeat (250) begin
 			repeat (1000) @(posedge clock);
 			// $display("+1000 cycles");
 		end
@@ -63,36 +63,62 @@ module main_tb;
 	end
 
 	initial begin
-		for(integer times=0;times<`times_rerun;times=times+1) begin
-			$display("Times = %1d/%1d", times+1, `times_rerun);
-			// FIR
-			wait(checkbits == 16'hAB00);
-			$display("Test start - FIR");
-			wait(checkbits == 16'hAB01);
-			$display("Test end   - FIR");
-			// Matrix Multiplication
-			wait(checkbits == 16'hAB10);
-			$display("Test start - matmul");
-			wait(checkbits == 16'hAB11);
-			$display("Test end   - matmul");
-			// Quick Sort
-			wait(checkbits == 16'hAB20);
-			$display("Test start - qsort");
-			wait(checkbits == 16'hAB21);
-			$display("Test end   - qsort");
-		end
+		fork
+			for(integer times=0;times<`times_rerun;times=times+1) begin
+				$display("Times = %1d/%1d - Hardware", times+1, `times_rerun);
+				fir;
+				matmul;
+				qsort;
+			end
+			
+			for(integer times=0;times<`times_rerun;times=times+1) begin
+				$display("Times = %1d/%1d - UART", times+1, `times_rerun);
+				send_data(times[7:0]);
+			end
+		join
 		$finish;
 	end
 
+	task fir;
+	begin
+		// FIR
+		wait(checkbits == 16'hAB00);
+		$display("Test start - FIR");
+		wait(checkbits == 16'hAB01);
+		$display("Test end   - FIR");
+	end
+	endtask
+
+	task matmul;
+	begin
+		// Matrix Multiplication
+		wait(checkbits == 16'hAB10);
+		$display("Test start - matmul");
+		wait(checkbits == 16'hAB11);
+		$display("Test end   - matmul");
+	end
+	endtask
+	
+	task qsort;
+	begin
+		// Quick Sort
+		wait(checkbits == 16'hAB20);
+		$display("Test start - qsort");
+		wait(checkbits == 16'hAB21);
+		$display("Test end   - qsort");
+	end
+	endtask
+
 	task send_data(input [7:0] data);
 	begin
-		@(posedge clock);
+		tx_start = 0;
+		wait(!tx_busy); // wait for uart ready
 		tx_start = 1;
 		tx_data = data;
-		#50;
-		wait(!tx_busy);
+		wait(tx_busy); // wait for transmission start
+		wait(!tx_busy); // wait for transmission complete
 		tx_start = 0;
-		$display("tx complete");
+		$display("tx complete - data: 8'd%03d, 8'h%02x", data, data);
 	end 
 	endtask
 
@@ -154,16 +180,13 @@ module main_tb;
 
 	// Testbench UART
 	tbuart tbuart (
-		.ser_rx(uart_tx)
+		.ser_rx(uart_tx),
+		.tx_start(tx_start),
+		.ser_tx(uart_rx),
+		.tx_data(tx_data),
+		.tx_busy(tx_busy),
+		.tx_clear_req(tx_clear_req)
 	);
-	// tbuart_interrupt tbuart (
-		// .ser_rx(uart_tx),
-		// .tx_start(tx_start),
-		// .ser_tx(uart_rx),
-		// .tx_data(tx_data),
-		// .tx_busy(tx_busy),
-		// .tx_clear_req(tx_clear_req)
-	// );
 
 endmodule
 `default_nettype wire

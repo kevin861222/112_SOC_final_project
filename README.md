@@ -55,33 +55,62 @@ make
     ~\testbench (main)
     λ make
     make[1]: Entering directory '~/testbench'
-    make[1]: Leaving directory ~/testbench'
+    make[1]: Leaving directory '~/testbench'
     Reading main.hex
     main.hex loaded into memory
     Memory 5 bytes = 0x6f 0x00 0x00 0x0b 0x13
-    VCD info: dumpfile main.vcd opened for output.       
-    Times = 1/3
+    VCD info: dumpfile main.vcd opened for output.
+    Times = 1/3 - UART
+    Times = 1/3 - Hardware
+    tx data bit index 0: 0
+    tx data bit index 1: 0
+    tx data bit index 3: 0
+    tx data bit index 4: 0
+    tx data bit index 5: 0
+    tx data bit index 6: 0
+    tx data bit index 7: 0
+    tx complete - data: 8'd000, 8'h00
+    Times = 2/3 - UART
+    tx data bit index 0: 1
+    tx data bit index 1: 0
+    tx data bit index 2: 0
+    tx data bit index 3: 0
+    Test start - FIR
+    tx data bit index 4: 0
+    tx data bit index 5: 0
+    Test end   - FIR
+    Test start - matmul
+    tx data bit index 6: 0
+    Test end   - matmul
+    Test start - qsort
+    tx data bit index 7: 0
+    Test end   - qsort
+    Times = 2/3 - Hardware
+    tx complete - data: 8'd001, 8'h01
+    Times = 3/3 - UART
     Test start - FIR
     Test end   - FIR
     Test start - matmul
     Test end   - matmul
+    tx data bit index 0: 0
     Test start - qsort
+    tx data bit index 1: 1
     Test end   - qsort
-    Times = 2/3
+    Times = 3/3 - Hardware
+    tx data bit index 2: 0
     Test start - FIR
+    tx data bit index 3: 0
     Test end   - FIR
     Test start - matmul
+    tx data bit index 4: 0
+    tx data bit index 5: 0
     Test end   - matmul
     Test start - qsort
+    tx data bit index 6: 0
     Test end   - qsort
-    Times = 3/3
-    Test start - FIR
-    Test end   - FIR
-    Test start - matmul
-    Test end   - matmul
-    Test start - qsort
-    Test end   - qsort
-    main_tb.v:84: $finish called at 2936837500 (1ps)
+    tx data bit index 7: 0
+    tx complete - data: 8'd002, 8'h02
+    main_tb.v:79: $finish called at 3593727000 (1ps)
     ```
 - Waveform
 ## About This Project

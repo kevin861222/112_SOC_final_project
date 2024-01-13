@@ -17,7 +17,9 @@
 
 // This include is relative to $CARAVEL_PATH (see Makefile)
 #include <defs.h>
+#ifndef __DEFINE_H__
 #include "define.h"
+#endif
 #ifdef USER_PROJ_IRQ0_EN
 #include <irq_vex.h>
 #endif
@@ -159,6 +161,8 @@ void main()
 	// Set User Project Slaves Enable
 	reg_wb_enable = 1;
 
+	reg_uart_enable = 1;
+
 	// Now, apply the configuration
 	reg_mprj_xfer = 1;
 	while (reg_mprj_xfer == 1);
@@ -166,4 +170,5 @@ void main()
 	test();
 	test();
 	test();
+	while (1) ;
 }

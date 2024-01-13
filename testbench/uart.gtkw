@@ -1,0 +1,61 @@
+[*]
+[*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
+[*] Sat Jan 13 08:00:05 2024
+[*]
+[dumpfile] "D:\資料\陽明交通大學\碩一\系統晶片設計\lab_final\Code\testbench\main.vcd"
+[dumpfile_mtime] "Sat Jan 13 07:59:26 2024"
+[dumpfile_size] 719295257
+[savefile] "D:\資料\陽明交通大學\碩一\系統晶片設計\lab_final\Code\testbench\uart.gtkw"
+[timestart] 1214000000
+[size] 1536 889
+[pos] -1 -1
+*-28.790899 1727000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] main_tb.
+[treeopen] main_tb.uut.
+[treeopen] main_tb.uut.mprj.
+[treeopen] main_tb.uut.mprj.acc_ASIC.
+[treeopen] main_tb.uut.soc.
+[treeopen] main_tb.uut.soc.core.
+[sst_width] 291
+[signals_width] 345
+[sst_expanded] 1
+[sst_vpaned_height] 374
+@200
+-wishbone
+@28
+main_tb.uut.mprj.wb_clk_i
+main_tb.uut.mprj.wb_rst_i
+main_tb.uut.mprj.wbs_ack_o
+@22
+main_tb.uut.mprj.wbs_adr_i[31:0]
+@420
+main_tb.uut.mprj.wbs_dat_i[31:0]
+@22
+main_tb.uut.mprj.wbs_dat_o[31:0]
+main_tb.checkbits[15:0]
+@420
+main_tb.times
+@200
+-IRQ
+@28
+main_tb.uut.soc.core.VexRiscv.CsrPlugin_mie_MEIE
+main_tb.uut.soc.core.VexRiscv.CsrPlugin_mip_MEIP
+main_tb.uut.soc.core.VexRiscv.CsrPlugin_mstatus_MIE
+main_tb.uut.soc.core.VexRiscv.externalInterrupt
+@200
+-send_data
+@28
+main_tb.tbuart.clk
+main_tb.tbuart.ser_tx
+main_tb.tbuart.ser_rx
+main_tb.tx_start
+main_tb.tx_busy
+@22
+main_tb.tx_data[7:0]
+@28
+main_tb.uart_rx
+main_tb.tbuart.tr_state[2:0]
+main_tb.tbuart.tx_clear_req
+main_tb.uart_tx
+[pattern_trace] 1
+[pattern_trace] 0
