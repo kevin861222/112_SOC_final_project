@@ -76,8 +76,95 @@ module main_tb;
 				$display("Times = %1d/%1d - UART", times_uart+1, `times_rerun);
 				send_data(times_uart);
 			end
+
+			begin
+				fir_check;
+				matmul_check;
+				qsort_check;
+			end
 		join
 		$finish;
+	end
+
+	// FIR
+	integer fir_taps   [10:0];
+	integer fir_input  [63:0];
+	integer fir_output [63:0];
+	reg [5:0]fir_i, fir_j;
+	initial begin
+		// Input
+		fir_taps[0] =   0;
+		fir_taps[1] = -10;
+		fir_taps[2] =  -9;
+		fir_taps[3] =  23;
+		fir_taps[4] =  56;
+		fir_taps[5] =  63;
+		fir_taps[6] =  56;
+		fir_taps[7] =  23;
+		fir_taps[8] =  -9;
+		fir_taps[9] = -10;
+		fir_taps[10] =  0;
+		for(fir_i=0;fir_i<16;fir_i=fir_i+1) begin
+			fir_input[fir_i] = fir_i + 1;
+		end
+		// Output
+		for(fir_i=0;fir_i<64;fir_i=fir_i+1) begin
+			fir_output[fir_i] = 0;
+			for(fir_j=0;fir_j<11;fir_j=fir_j+1) begin
+				fir_output[fir_i] = fir_output[fir_i] + fir_taps[fir_j] * fir_input[10-fir_j];
+			end
+		end
+	end
+
+	// matmul
+	integer mat_A[15:0];
+	integer mat_B_T[15:0];
+	integer mat_output[15:0];
+	reg [3:0]mat_i, mat_j;
+	initial begin
+		// Input
+		for(mat_i=0;mat_i<16;mat_i=mat_i+1) begin
+			mat_A[mat_i] = mat_i%4;
+		end
+		for(mat_i=0;mat_i<4;mat_i=mat_i+1) begin
+			for(mat_j=0;mat_j<4;mat_j=mat_j+1) begin
+				mat_B_T[mat_i*4+mat_j] = mat_j*4+mat_i;
+			end
+		end
+		// Output
+		for(mat_i=0;mat_i<4;mat_i=mat_i+1) begin
+			for(mat_j=0;mat_j<4;mat_j=mat_j+1) begin
+				mat_output[mat_i*4+mat_j] = mat_A[mat_i*4+mat_j] * mat_B_T[mat_i*4+mat_j];
+			end
+		end
+	end
+
+	// qsort
+	integer qsort_input[9:0];
+	integer qsort_output[9:0];
+	initial begin
+		// Input
+		qsort_input[0] =  893;
+		qsort_input[1] =   40;
+		qsort_input[2] = 3233;
+		qsort_input[3] = 4267;
+		qsort_input[4] = 2669;
+		qsort_input[5] = 2541;
+		qsort_input[6] = 9073;
+		qsort_input[7] = 6023;
+		qsort_input[8] = 5681;
+		qsort_input[9] = 4622;
+		// Output
+		qsort_input[0] =   40;
+		qsort_input[1] =  893;
+		qsort_input[2] = 2541;
+		qsort_input[3] = 2669;
+		qsort_input[4] = 3233;
+		qsort_input[5] = 4267;
+		qsort_input[6] = 4622;
+		qsort_input[7] = 5681;
+		qsort_input[8] = 6023;
+		qsort_input[9] = 9073;
 	end
 
 	task fir;
@@ -90,6 +177,16 @@ module main_tb;
 	end
 	endtask
 
+	task fir_check;
+	begin
+		// FIR
+		wait(checkbits == 16'hAB30);
+		$display("Test check start - FIR");
+		wait(checkbits == 16'hAB31);
+		$display("Test check end   - FIR");
+	end
+	endtask
+
 	task matmul;
 	begin
 		// Matrix Multiplication
@@ -97,6 +194,16 @@ module main_tb;
 		$display("Test start - matmul");
 		wait(checkbits == 16'hAB11);
 		$display("Test end   - matmul");
+	end
+	endtask
+
+	task matmul_check;
+	begin
+		// Matrix Multiplication
+		wait(checkbits == 16'hAB40);
+		$display("Test check start - matmul");
+		wait(checkbits == 16'hAB41);
+		$display("Test check end   - matmul");
 	end
 	endtask
 	
@@ -107,6 +214,16 @@ module main_tb;
 		$display("Test start - qsort");
 		wait(checkbits == 16'hAB21);
 		$display("Test end   - qsort");
+	end
+	endtask
+
+	task qsort_check;
+	begin
+		// Matrix Multiplication
+		wait(checkbits == 16'hAB50);
+		$display("Test check start - qsort");
+		wait(checkbits == 16'hAB51);
+		$display("Test check end   - qsort");
 	end
 	endtask
 

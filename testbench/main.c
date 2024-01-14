@@ -26,6 +26,11 @@ extern void workload();
 extern void fir();
 extern void matmul();
 extern void qsort();
+extern void workload_check();
+extern void fir_check();
+extern void matmul_check();
+extern void qsort_check();
+
 void __attribute__ ((section(".mprjram" ))) workload()
 {
 	fir();
@@ -105,6 +110,47 @@ void __attribute__ ((section(".mprjram" ))) qsort()
 	reg_mprj_datal = (0xAB21<<16);
 }
 
+void __attribute__ ((section(".mprjram" ))) workload_check()
+{
+	// Read Result from BRAM to transmit data to testbench
+	fir_check();
+	matmul_check();
+	qsort_check();
+}
+
+void __attribute__ ((section(".mprjram" ))) fir_check()
+{
+	// start flag - FIR
+	reg_mprj_datal = (0xAB30<<16);
+	// Read Result - FIR
+	for(int i = 0; i < NUM_FIR_OUTPUT; i++)
+		reg_mprj_datal = (reg_bram_u1_base + fir_output_base + i)<<16;
+	// end flag - FIR
+	reg_mprj_datal = (0xAB31<<16);
+}
+
+void __attribute__ ((section(".mprjram" ))) matmul_check()
+{
+	// start flag - matmul
+	reg_mprj_datal = (0xAB40<<16);
+	// Read Result - matmul
+	for(int i = 0; i < NUM_MAT_OUTPUT; i++)
+		reg_mprj_datal = (reg_bram_u1_base + mat_output_base + i)<<16;
+	// end flag - matmul
+	reg_mprj_datal = (0xAB41<<16);
+}
+
+void __attribute__ ((section(".mprjram" ))) qsort_check()
+{
+	// start flag - qsort
+	reg_mprj_datal = (0xAB50<<16);
+	// Read Result - qsort
+	for(int i = 0; i < NUM_QSORT_OUTPUT; i++)
+		reg_mprj_datal = (reg_bram_u1_base + qsort_output_base + i)<<16;
+	// end flag - qsort
+	reg_mprj_datal = (0xAB51<<16);
+}
+
 void main()
 {
 	reg_mprj_io_31 = GPIO_MODE_MGMT_STD_OUTPUT;
@@ -169,6 +215,10 @@ void main()
 	reg_mprj_xfer = 1;
 	while (reg_mprj_xfer == 1);
 
+	// Workload (FIR/Matrix Multiplication/Quick Sort)
 	for(int i = 0; i < TIMES_RERUN; i++)
 		workload();
+
+	// Workload_check (FIR/Matrix Multiplication/Quick Sort)
+	workload_check();
 }

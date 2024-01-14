@@ -133,6 +133,28 @@ end
 |3100_0004|3100_0004|uart_ctrl     |TX_DATA                                       |
 |3100_0008|3100_0008|uart_ctrl     |STAT_REG                                      |
 
+
+### Checkbits
+``` verilog
+  assign checkbits = mprj_io[31:16];
+```
+
+|checkbits|Hardware|Meaning                                               |
+|:-------:|:------:|------------------------------------------------------|
+|16'hAB00 |FIR     |testbench has received CPU - FIR start signal         |
+|16'hAB01 |FIR     |testbench has received CPU - FIR end signal           |
+|16'hAB10 |matmul  |testbench has received CPU - matmul start signal      |
+|16'hAB11 |matmul  |testbench has received CPU - matmul end signal        |
+|16'hAB20 |qsort   |testbench has received CPU - qsort start signal       |
+|16'hAB21 |qsort   |testbench has received CPU - qsort end signal         |
+|16'hAB30 |FIR     |testbench has received CPU - FIR_check start signal   |
+|16'hAB31 |FIR     |testbench has received CPU - FIR_check end signal     |
+|16'hAB40 |matmul  |testbench has received CPU - matmul_check start signal|
+|16'hAB41 |matmul  |testbench has received CPU - matmul_check end signal  |
+|16'hAB50 |qsort   |testbench has received CPU - qsort_check start signal |
+|16'hAB51 |qsort   |testbench has received CPU - qsort_check end signal   |
+
+
 ### DMA Config
 ```
           +------+------+-------+------+---------+--------+
