@@ -123,7 +123,7 @@ wire wbs_ack_o_FIFO;
 wire [31:0] wbs_dat_o_FIFO;
 
 // Instruction Cache 
-wire cache_in_valid;
+wire wbs_ack_o_brc_u0;
 wire fifo_in_valid;
 wire wbs_ack_o_cache;
 wire [31:0] wbs_dat_o_cache;
@@ -133,9 +133,9 @@ wire wbs_ack_o_uart;
 wire [31:0] wbs_dat_o_uart;
 wire user_irq_uart;
 
-// CPU
-assign wbs_ack_o = wbs_ack_o_dma | wbs_ack_o_cache | wbs_ack_o_FIFO | wbs_ack_o_abt | wbs_ack_o_uart;
-assign wbs_dat_o = wbs_dat_o_dma | wbs_dat_o_cache | wbs_dat_o_FIFO | wbs_dat_o_uart;
+// CPU           /*     R/W      |       R        |       R        |        RW      |      W
+assign wbs_ack_o = wbs_ack_o_dma | wbs_ack_o_FIFO | wbs_ack_o_brc_u0 | wbs_ack_o_uart | wbs_ack_o_abt ;
+assign wbs_dat_o = wbs_dat_o_dma | wbs_dat_o_FIFO | brc_u0_data_o | wbs_dat_o_uart;
 assign user_irq = {2'b0, user_irq_uart};
 
 DMA_Controller DMA_Controller (
@@ -195,7 +195,7 @@ Arbiter Arbiter (
     .wbs_ack_o(wbs_ack_o_abt),
 
     /* CPU Cache <--> Arbiter */
-    .wbs_cache_miss(wbs_cache_miss),     // CPU intruction cache miss
+    // .wbs_cache_miss(wbs_cache_miss),     // CPU intruction cache miss
 
     /* Data FIFO <--> Arbiter */
     .fifo_full_n(fifo_full_n),
@@ -212,6 +212,7 @@ Arbiter Arbiter (
     .dma_w_data(dma_w_data),
 
     /* Arbiter <--> BRAM Controller u0 */
+    .CPU_get_data(wbs_ack_o_brc_u0),
     .bram_u0_wr(bram_u0_wr),  // 0:R 1:W
     .bram_u0_in_valid(bram_u0_in_valid), 
     .bram_u0_addr(bram_u0_addr), 
@@ -225,22 +226,22 @@ Arbiter Arbiter (
     .bram_u1_data_in(bram_u1_data_in) 
 );
 
-instru_cache instru_cache (
-    // MGMT SoC Wishbone Slave
-    .clk(wb_clk_i),
-    .rst(wb_rst_i),
-    .wbs_stb_i(wbs_stb_i),
-    .wbs_cyc_i(wbs_cyc_i),
-    .wbs_we_i(wbs_we_i),
-    .wbs_adr_i(wbs_adr_i),
-    .wbs_ack_o(wbs_ack_o_cache),
-    .wbs_dat_o(wbs_dat_o_cache),
-    // Arbiter
-    .wbs_cache_miss(wbs_cache_miss),
-    // BRAM Controller u0
-    .bram_data_in(brc_u0_data_o),
-    .bram_in_valid(cache_in_valid)
-);
+// instru_cache instru_cache (
+//     // MGMT SoC Wishbone Slave
+//     .clk(wb_clk_i),
+//     .rst(wb_rst_i),
+//     .wbs_stb_i(wbs_stb_i),
+//     .wbs_cyc_i(wbs_cyc_i),
+//     .wbs_we_i(wbs_we_i),
+//     .wbs_adr_i(wbs_adr_i),
+//     .wbs_ack_o(wbs_ack_o_cache),
+//     .wbs_dat_o(wbs_dat_o_cache),
+//     // Arbiter
+//     .wbs_cache_miss(wbs_cache_miss),
+//     // BRAM Controller u0
+//     .bram_data_in(brc_u0_data_o),
+//     .bram_in_valid(wbs_ack_o_brc_u0)
+// );
 
 bram_controller_u0 brc_u0 (
     /* From Sysytem */
@@ -259,8 +260,8 @@ bram_controller_u0 brc_u0 (
     /* To DMA */
     .dma_in_valid(dma_in_valid),
 
-    /* To CPU cache */
-    .cache_in_valid(cache_in_valid),
+    /* To CPU */
+    .wbs_ack_o_brc_u0(wbs_ack_o_brc_u0),
 
     /* To DMA or CPU cache */
     .Do(brc_u0_data_o) //
