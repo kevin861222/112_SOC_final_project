@@ -21,90 +21,90 @@
 #ifdef USER_PROJ_IRQ0_EN
 #include <irq_vex.h>
 #endif
-void __attribute__ ( ( section ( ".mprjram" ) ) ) Hardware_test(){
+
+extern void workload();
+extern void fir();
+extern void matmul();
+extern void qsort();
+void __attribute__ ((section(".mprjram" ))) workload()
+{
+	fir();
+	matmul();
+	qsort();
+}
+
+void __attribute__ ((section(".mprjram" ))) fir()
+{
 	// start flag - FIR
 	reg_mprj_datal = (0xAB00<<16);
-	// FIR tap
+	// FIR Input
 	reg_DMA_addr   = 	(fir_taps_base<<DMA_addr_base);
 	reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
 						(DMA_type_MEM2IO << DMA_cfg_type) | 
 						(DMA_ch_FIR << DMA_cfg_channel) | 
-						(NUM_FIR_TAP<<DMA_cfg_length);
-
-	// wait for DMA done
+						((NUM_FIR_TAP+NUM_FIR_INPUT)<<DMA_cfg_length);
+	// wait for DMA idle
 	while(!(reg_DMA_cfg & (1<<DMA_cfg_idle))) ;
-
-	// FIR input
-	reg_DMA_addr   = 	(fir_input_base<<DMA_addr_base);
-	reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
-						(DMA_type_MEM2IO << DMA_cfg_type) | 
-						(DMA_ch_FIR << DMA_cfg_channel) | 
-						(NUM_FIR_INPUT<<DMA_cfg_length);
-	// wait for DMA done
-	while(!((reg_DMA_cfg & (1<<DMA_cfg_idle))>>DMA_cfg_idle)) ;
-	reg_mprj_datal = (0xAB03<<16);
 	// FIR output
 	reg_DMA_addr   = 	(fir_output_base<<DMA_addr_base);
 	reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
 						(DMA_type_IO2MEM << DMA_cfg_type) | 
 						(DMA_ch_FIR << DMA_cfg_channel) | 
 						(NUM_FIR_OUTPUT<<DMA_cfg_length);
-	// wait for DMA done
-	while(!((reg_DMA_cfg & (1<<DMA_cfg_idle))>>DMA_cfg_idle)) ;
+	// wait for DMA idle
+	while(!(reg_DMA_cfg & (1<<DMA_cfg_idle))) ;
 	// end flag - FIR
 	reg_mprj_datal = (0xAB01<<16);
+}
 
+void __attribute__ ((section(".mprjram" ))) matmul()
+{
 	// start flag - matmul
 	reg_mprj_datal = (0xAB10<<16);
-	// matmul input A
+	// matmul Input
 	reg_DMA_addr   = 	(mat_A_base<<DMA_addr_base);
 	reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
 						(DMA_type_MEM2IO << DMA_cfg_type) | 
 						(DMA_ch_matmul << DMA_cfg_channel) | 
-						(NUM_MAT_A<<DMA_cfg_length);
-	// wait for DMA done
+						((NUM_MAT_A+NUM_MAT_B)<<DMA_cfg_length);
+	// wait for DMA idle
 	while(!(reg_DMA_cfg & (1<<DMA_cfg_idle))) ;
-	// matmul input B
-	reg_DMA_addr   = 	(mat_B_base<<DMA_addr_base);
-	reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
-						(DMA_type_MEM2IO << DMA_cfg_type) | 
-						(DMA_ch_matmul << DMA_cfg_channel) | 
-						(NUM_MAT_B<<DMA_cfg_length);
-	// wait for DMA done
-	while(!(reg_DMA_cfg & (1<<DMA_cfg_idle))) ;
-	// matmul output
+	// matmul Output
 	reg_DMA_addr   = 	(mat_output_base<<DMA_addr_base);
 	reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
 						(DMA_type_IO2MEM << DMA_cfg_type) | 
 						(DMA_ch_matmul << DMA_cfg_channel) | 
 						(NUM_MAT_OUTPUT<<DMA_cfg_length);
-	// wait for DMA done
+	// wait for DMA idle
 	while(!(reg_DMA_cfg & (1<<DMA_cfg_idle))) ;
 	// end flag - matmul
 	reg_mprj_datal = (0xAB11<<16);
+}
 
+void __attribute__ ((section(".mprjram" ))) qsort()
+{
 	// start flag - qsort
 	reg_mprj_datal = (0xAB20<<16);
-	// qsort input
+	// qsort Input
 	reg_DMA_addr   = 	(qsort_input_base<<DMA_addr_base);
 	reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
 						(DMA_type_MEM2IO << DMA_cfg_type) | 
 						(DMA_ch_qsort << DMA_cfg_channel) | 
 						(NUM_QSORT_INPUT<<DMA_cfg_length);
-	// wait for DMA done
+	// wait for DMA idle
 	while(!(reg_DMA_cfg & (1<<DMA_cfg_idle))) ;
-	// qsort output
+	// qsort Output
 	reg_DMA_addr   = 	(mat_output_base<<DMA_addr_base);
 	reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
 						(DMA_type_IO2MEM << DMA_cfg_type) | 
 						(DMA_ch_qsort << DMA_cfg_channel) | 
 						(NUM_QSORT_OUTPUT<<DMA_cfg_length);
-	// wait for DMA done
+	// wait for DMA idle
 	while(!(reg_DMA_cfg & (1<<DMA_cfg_idle))) ;
 	// end flag - qsort
 	reg_mprj_datal = (0xAB21<<16);
-
 }
+
 void main()
 {
 	reg_mprj_io_31 = GPIO_MODE_MGMT_STD_OUTPUT;
@@ -142,12 +142,12 @@ void main()
 	reg_mprj_io_6  = GPIO_MODE_MGMT_STD_OUTPUT;
 	reg_mprj_io_5  = GPIO_MODE_USER_STD_INPUT_NOPULL;
 
-	// Configure LA probes [31:0], [127:64] as inputs to the cpu 
-	// Configure LA probes [63:32] as outputs from the cpu
-	reg_la0_oenb = reg_la0_iena = 0x00000000;    // [31:0]
-	reg_la1_oenb = reg_la1_iena = 0x00000000;    // [63:32]
-	reg_la2_oenb = reg_la2_iena = 0x00000000;    // [95:64]
+	// Configure LA probes [127:0] as inputs to the cpu 
+	reg_la0_oenb = reg_la0_iena = 0x00000000;    // [ 31: 0]
+	reg_la1_oenb = reg_la1_iena = 0x00000000;    // [ 63:32]
+	reg_la2_oenb = reg_la2_iena = 0x00000000;    // [ 95:64]
 	reg_la3_oenb = reg_la3_iena = 0x00000000;    // [127:96]
+
 	// UART Receive Interrupt
 #ifdef USER_PROJ_IRQ0_EN
     int mask;
@@ -162,14 +162,13 @@ void main()
 	// Set User Project Slaves Enable
 	reg_wb_enable = 1;
 
+	// Set UART output Enable
 	reg_uart_enable = 1;
 
 	// Now, apply the configuration
 	reg_mprj_xfer = 1;
 	while (reg_mprj_xfer == 1);
 
-	Hardware_test();
-	Hardware_test();
-	Hardware_test();
-	while (1) ;
+	for(int i = 0; i < TIMES_RERUN; i++)
+		workload();
 }

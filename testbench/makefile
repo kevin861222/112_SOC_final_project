@@ -32,7 +32,7 @@ clean:
 	@ rm -f *.s *.o *.i *.out *.map *.elf *.hexe *.vvp *.vcd *.hex
 
 wv:
-	@ gtkwave main.vcd  ../gtkw/DMA.gtkw
+	@ gtkwave main.vcd  ../gtkw/uart.gtkw
 
 dump:
 	@ $(OBJDMP) -d main.elf > dump.log

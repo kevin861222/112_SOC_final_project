@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
-[*] Sun Jan 14 15:32:36 2024
+[*] Sun Jan 14 16:17:28 2024
 [*]
 [dumpfile] "D:\vivado\Lab_final\testbench\main.vcd"
-[dumpfile_mtime] "Sun Jan 14 15:32:01 2024"
-[dumpfile_size] 438304612
-[savefile] "D:\vivado\Lab_final\gtkw\DMA.gtkw"
-[timestart] 1227000000
+[dumpfile_mtime] "Sun Jan 14 16:16:18 2024"
+[dumpfile_size] 101932682
+[savefile] "D:\vivado\Lab_final\gtkw\workload.gtkw"
+[timestart] 536500000
 [size] 1536 889
 [pos] -1 -1
-*-30.062233 1501612500 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-27.062233 1515386000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] main_tb.
 [treeopen] main_tb.uut.
 [treeopen] main_tb.uut.mprj.
@@ -17,7 +17,7 @@
 [treeopen] main_tb.uut.soc.
 [treeopen] main_tb.uut.soc.core.
 [sst_width] 286
-[signals_width] 306
+[signals_width] 293
 [sst_expanded] 1
 [sst_vpaned_height] 414
 @200
@@ -26,14 +26,8 @@
 main_tb.uut.mprj.wb_clk_i
 main_tb.uut.mprj.wb_rst_i
 main_tb.uut.mprj.wbs_ack_o
-main_tb.uut.mprj.wbs_ack_o_FIFO
-main_tb.uut.mprj.wbs_ack_o_abt
-main_tb.uut.mprj.wbs_ack_o_brc_u0
-main_tb.uut.mprj.wbs_ack_o_dma
-main_tb.uut.mprj.wbs_ack_o_uart
 @22
 main_tb.uut.mprj.wbs_adr_i[31:0]
-main_tb.uut.soc.core.VexRiscv.memory_INSTRUCTION[31:0]
 main_tb.uut.mprj.wbs_dat_i[31:0]
 @28
 main_tb.uut.mprj.DMA_Controller.wbs_valid
@@ -45,17 +39,13 @@ main_tb.uut.mprj.wbs_sel_i[3:0]
 main_tb.uut.mprj.wbs_we_i
 @22
 main_tb.uut.mprj.wbs_dat_o[31:0]
-main_tb.uut.mprj.wbs_dat_o_FIFO[31:0]
-main_tb.uut.mprj.wbs_dat_o_dma[31:0]
-@23
-main_tb.uut.mprj.wbs_dat_o_uart[31:0]
-@22
-main_tb.uut.mprj.brc_u0_data_o[31:0]
 @200
 -DMA_config
 @28
 main_tb.uut.mprj.DMA_Controller.isAddr_DMA
+@29
 main_tb.uut.mprj.DMA_Controller.isAddr_DMA_r
+@28
 main_tb.uut.mprj.DMA_Controller.isAddr_DMA_w
 @22
 main_tb.uut.mprj.DMA_Controller.addr_DMA2RAM[12:0]
@@ -73,38 +63,11 @@ main_tb.uut.mprj.DMA_Controller.ap_start_DMA
 main_tb.uut.mprj.DMA_Controller.ap_idle_DMA
 main_tb.uut.mprj.DMA_Controller.ap_done_DMA
 @200
--DMA_Controller
-@24
-main_tb.uut.mprj.DMA_Controller.length_receive_BRAM[6:0]
-main_tb.uut.mprj.DMA_Controller.length_request_BRAM[6:0]
-@200
--Cache_data
-@28
-main_tb.uut.mprj.DMA_Controller.mem_r_ready
-@24
-main_tb.uut.mprj.DMA_Controller.mem_r_addr[12:0]
-@28
-main_tb.uut.mprj.DMA_Controller.mem_r_ack
-@200
--
-@28
-main_tb.uut.mprj.DMA_Controller.mem_r_valid
-@420
-main_tb.uut.mprj.DMA_Controller.mem_r_data[31:0]
-@200
--
-@28
-main_tb.uut.mprj.DMA_Controller.mem_w_valid
-@24
-main_tb.uut.mprj.DMA_Controller.mem_w_data[31:0]
-@22
-main_tb.uut.mprj.DMA_Controller.mem_w_addr[12:0]
-@200
 -
 -AXI-Stream(Write)
 @28
 main_tb.uut.mprj.DMA_Controller.sm_tready
-@420
+@24
 main_tb.uut.mprj.DMA_Controller.sm_tdata[31:0]
 @28
 main_tb.uut.mprj.DMA_Controller.sm_tvalid
@@ -120,8 +83,8 @@ main_tb.uut.mprj.DMA_Controller.ss_tdata[31:0]
 @200
 -ASIC
 @28
-main_tb.uut.mprj.DMA_Controller.ap_done_ASIC[2:0]
 main_tb.uut.mprj.DMA_Controller.ap_start_ASIC[2:0]
+main_tb.uut.mprj.DMA_Controller.ap_done_ASIC[2:0]
 main_tb.uut.mprj.DMA_Controller.ap_idle_ASIC
 main_tb.uut.mprj.acc_ASIC.ap_start[2:0]
 [pattern_trace] 1

@@ -5,4 +5,5 @@ testbench/*.map
 testbench/*.hexe
 testbench/*.vcd
 testbench/*.vvp
+testbench/*.log
 .vscode

@@ -151,6 +151,9 @@ always @(posedge wb_clk_i, posedge wb_rst_i) begin
             end
             endcase
         end
+        else begin
+            wbs_dat_o <= 0;
+        end
     end
 end
 
@@ -239,7 +242,6 @@ always @(posedge wb_clk_i, posedge wb_rst_i) begin
         
         if(|ap_start_ASIC) 
             ap_start_ASIC <= 3'b0;
-
     end
 end
 endmodule
