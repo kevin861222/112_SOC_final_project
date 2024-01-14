@@ -1,0 +1,166 @@
+[*]
+[*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
+[*] Sun Jan 14 09:02:40 2024
+[*]
+[dumpfile] "/home/a605/soclab/112_SOC_final_project-main/testbench/main.vcd"
+[dumpfile_mtime] "Sun Jan 14 09:01:39 2024"
+[dumpfile_size] 340032855
+[savefile] "/home/a605/soclab/112_SOC_final_project-main/testbench/wangyu.gtkw"
+[timestart] 2417535000
+[size] 1848 1016
+[pos] -1 -140
+*-19.000000 2418974000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] main_tb.
+[treeopen] main_tb.uut.
+[treeopen] main_tb.uut.mprj.
+[sst_width] 233
+[signals_width] 230
+[sst_expanded] 1
+[sst_vpaned_height] 289
+@200
+-CPU
+@28
+main_tb.uut.mprj.wbs_ack_o_abt
+main_tb.uut.mprj.wbs_ack_o_dma
+main_tb.uut.mprj.wbs_ack_o_FIFO
+main_tb.uut.mprj.wbs_ack_o_brc_u0
+main_tb.uut.mprj.wbs_ack_o_uart
+@200
+-
+-Arbiter
+@28
+main_tb.uut.mprj.Arbiter.wb_clk_i
+main_tb.uut.mprj.Arbiter.wb_rst_i
+main_tb.uut.mprj.Arbiter.wbs_stb_i
+main_tb.uut.mprj.Arbiter.wbs_cyc_i
+main_tb.uut.mprj.Arbiter.wbs_we_i
+@c00022
+main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+@28
+(0)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(1)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(2)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(3)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(4)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(5)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(6)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(7)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(8)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(9)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(10)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(11)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(12)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(13)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(14)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(15)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(16)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(17)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(18)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(19)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(20)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(21)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(22)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(23)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(24)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(25)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(26)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(27)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(28)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(29)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(30)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(31)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+@1401200
+-group_end
+@24
+main_tb.uut.mprj.Arbiter.wbs_dat_i[31:0]
+@28
+main_tb.uut.mprj.Arbiter.wbs_ack_o
+main_tb.uut.mprj.Arbiter.cpu_read_request
+@200
+-
+@28
+main_tb.uut.mprj.Arbiter.dma_read_request
+@22
+main_tb.uut.mprj.Arbiter.dma_r_addr[12:0]
+@28
+main_tb.uut.mprj.Arbiter.dma_r_ack
+@200
+-
+@28
+main_tb.uut.mprj.Arbiter.dma_write_request
+@22
+main_tb.uut.mprj.Arbiter.dma_w_addr[12:0]
+main_tb.uut.mprj.Arbiter.dma_w_data[31:0]
+@200
+-
+-BRAM controller u0
+@24
+main_tb.uut.mprj.brc_u0.bram_Di[31:0]
+@28
+main_tb.uut.mprj.brc_u0.EN
+main_tb.uut.mprj.brc_u0.WE
+@22
+main_tb.uut.mprj.brc_u0.A[12:0]
+main_tb.uut.mprj.brc_u0.Do[31:0]
+@29
+main_tb.uut.mprj.brc_u0.wbs_ack_o_brc_u0
+@c00022
+main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+@28
+(0)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(1)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(2)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(3)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(4)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(5)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(6)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(7)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(8)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(9)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(10)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(11)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(12)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(13)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(14)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(15)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(16)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(17)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(18)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(19)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(20)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(21)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(22)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(23)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(24)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(25)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(26)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(27)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(28)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(29)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(30)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+(31)main_tb.uut.mprj.Arbiter.wbs_adr_i[31:0]
+@1401200
+-group_end
+@200
+-
+@28
+main_tb.uut.mprj.brc_u0.dma_in_valid
+@200
+-BRAM controller u1
+@22
+main_tb.uut.mprj.brc_u1.bram_Di[31:0]
+@28
+main_tb.uut.mprj.brc_u1.EN
+main_tb.uut.mprj.brc_u1.WE
+@22
+main_tb.uut.mprj.brc_u1.A[12:0]
+main_tb.uut.mprj.brc_u1.Do[31:0]
+@200
+-
+-Instruction Cache
+-
+-DMA
+@28
+main_tb.uut.mprj.DMA_Controller.wbs_ack_o
+[pattern_trace] 1
+[pattern_trace] 0

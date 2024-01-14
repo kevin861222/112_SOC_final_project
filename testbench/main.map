@@ -1,0 +1,140 @@
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+vexriscv_debug   0x00000000f00f0000 0x0000000000000100
+dff              0x0000000000000000 0x0000000000000400
+dff2             0x0000000000000400 0x0000000000000200
+flash            0x0000000010000000 0x0000000001000000
+mprj             0x0000000030000000 0x0000000000100000
+rawdata          0x0000000038000000 0x0000000000000500
+mprjram          0x0000000038001000 0x0000000000001000
+hk               0x0000000026000000 0x0000000000100000
+csr              0x00000000f0000000 0x0000000000010000
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+                0x0000000000000000                __DYNAMIC = 0x0
+
+.text           0x0000000010000000      0x75c
+                0x0000000010000000                _ftext = .
+ *crt0*(.text)
+ .text          0x0000000010000000      0x150 main.elf-crt0_vex.o
+                0x0000000010000000                _start
+                0x0000000010000020                trap_entry
+ *crt0*(.text)
+ *(.text.isr)
+                0x0000000010000150                _etext = .
+ .text          0x0000000010000150      0x168 main.elf-isr.o
+                0x0000000010000240                isr
+ .text          0x00000000100002b8       0x38 main.elf-uart.o
+ .text          0x00000000100002f0        0x0 main.elf-define.o
+ .text          0x00000000100002f0      0x46c main.elf-main.o
+                0x00000000100003e0                main
+
+.mprj           0x000000001000075c      0x1ec
+ .mprj          0x000000001000075c      0x1ec main.elf-uart.o
+                0x000000001000075c                uart_write
+                0x00000000100007a4                uart_write_char
+                0x000000001000080c                uart_write_string
+                0x0000000010000860                uart_read_char
+                0x00000000100008d4                uart_read
+
+.rela.dyn       0x0000000010000948        0x0
+ .rela.text     0x0000000010000948        0x0 main.elf-crt0_vex.o
+
+.rodata         0x0000000010000948        0x0
+                0x0000000010000948                . = ALIGN (0x8)
+ *fill*         0x0000000010000948        0x0 
+                0x0000000010000948                _frodata = .
+ *(.rodata .rodata.* .gnu.linkonce.r.*)
+ *(.rodata1)
+                0x0000000010000948                . = ALIGN (0x8)
+                0x0000000010000948                _erodata = .
+
+.data           0x0000000038000000      0x1d8 load address 0x0000000010000948
+                0x0000000038000000                . = ALIGN (0x8)
+                0x0000000038000000                _fdata = .
+ *(.data .data.* .gnu.linkonce.d.*)
+ .data          0x0000000038000000        0x0 main.elf-crt0_vex.o
+ .data          0x0000000038000000        0x0 main.elf-isr.o
+ .data          0x0000000038000000        0x0 main.elf-uart.o
+ .data          0x0000000038000000      0x1d4 main.elf-define.o
+                0x0000000038000000                fir_taps
+                0x000000003800002c                fir_input
+                0x000000003800012c                mat_A
+                0x000000003800016c                mat_B_T
+                0x00000000380001ac                qsort_input
+ .data          0x00000000380001d4        0x0 main.elf-main.o
+ *(.data1)
+                0x00000000380001e0                _gp = ALIGN (0x10)
+ *(.sdata .sdata.* .gnu.linkonce.s.*)
+                0x00000000380001d8                . = ALIGN (0x8)
+ *fill*         0x00000000380001d4        0x4 
+                0x00000000380001d8                _edata = .
+
+.bss            0x0000000000000000      0x168 load address 0x0000000010000b20
+                0x0000000000000000                . = ALIGN (0x8)
+                0x0000000000000000                _fbss = .
+ *(.dynsbss)
+ *(.sbss .sbss.* .gnu.linkonce.sb.*)
+ *(.scommon)
+ *(.dynbss)
+ *(.bss .bss.* .gnu.linkonce.b.*)
+ .bss           0x0000000000000000        0x0 main.elf-crt0_vex.o
+ .bss           0x0000000000000000        0x0 main.elf-isr.o
+ .bss           0x0000000000000000        0x0 main.elf-uart.o
+ .bss           0x0000000000000000      0x168 main.elf-define.o
+                0x0000000000000000                fir_output
+                0x0000000000000100                mat_output
+                0x0000000000000140                qsort_output
+ .bss           0x0000000000000168        0x0 main.elf-main.o
+ *(COMMON)
+                0x0000000000000168                . = ALIGN (0x8)
+                0x0000000000000168                _ebss = .
+                0x0000000000000168                _end = .
+
+.mprjram        0x0000000038001000      0x234 load address 0x0000000010000b20
+                0x0000000038001000                . = ALIGN (0x8)
+                0x0000000038001000                _fsram = .
+ *libgcc.a:*(.text .text.*)
+ .mprjram       0x0000000038001000      0x234 main.elf-main.o
+                0x0000000038001000                Hardware_test
+                0x0000000000000600                PROVIDE (_fstack = (ORIGIN (dff2) + LENGTH (dff2)))
+                0x0000000010000948                PROVIDE (_fdata_rom = LOADADDR (.data))
+                [!provide]                        PROVIDE (_edata_rom = (LOADADDR (.data) + SIZEOF (.data)))
+                0x0000000038001234                PROVIDE (_esram = (ORIGIN (mprjram) + SIZEOF (.mprjram)))
+                0x0000000010000b20                PROVIDE (_esram_rom = LOADADDR (.mprjram))
+LOAD main.elf-crt0_vex.o
+LOAD main.elf-isr.o
+LOAD main.elf-uart.o
+LOAD main.elf-define.o
+LOAD main.elf-main.o
+LOAD /opt/riscv/lib/gcc/riscv32-unknown-elf/12.1.0/libgcc.a
+START GROUP
+LOAD /opt/riscv/lib/gcc/riscv32-unknown-elf/12.1.0/../../../../riscv32-unknown-elf/lib/libc.a
+LOAD /opt/riscv/lib/gcc/riscv32-unknown-elf/12.1.0/../../../../riscv32-unknown-elf/lib/libgloss.a
+END GROUP
+LOAD /opt/riscv/lib/gcc/riscv32-unknown-elf/12.1.0/libgcc.a
+OUTPUT(main.elf elf32-littleriscv)
+
+.riscv.attributes
+                0x0000000000000000       0x20
+ .riscv.attributes
+                0x0000000000000000       0x1e main.elf-crt0_vex.o
+ .riscv.attributes
+                0x000000000000001e       0x20 main.elf-isr.o
+ .riscv.attributes
+                0x000000000000003e       0x1c main.elf-uart.o
+ .riscv.attributes
+                0x000000000000005a       0x1c main.elf-define.o
+ .riscv.attributes
+                0x0000000000000076       0x20 main.elf-main.o
+
+.comment        0x0000000000000000       0x1b
+ .comment       0x0000000000000000       0x1b main.elf-isr.o
+                                         0x1c (size before relaxing)
+ .comment       0x000000000000001b       0x1c main.elf-uart.o
+ .comment       0x000000000000001b       0x1c main.elf-define.o
+ .comment       0x000000000000001b       0x1c main.elf-main.o
