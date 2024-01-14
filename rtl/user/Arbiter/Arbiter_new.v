@@ -33,7 +33,7 @@ module Arbiter #(
 
     /* CPU Cache <--> Arbiter */
     // sent read miss message
-    input wbs_cache_miss ,     // CPU intruction cache miss
+    // input wbs_cache_miss ,     // CPU intruction cache miss
 
     /* Data FIFO <--> Arbiter */
     input fifo_full_n ,
@@ -52,6 +52,7 @@ module Arbiter #(
     input [31:0] dma_w_data ,
 
     /* Arbiter <--> BRAM Controller u0 */
+    input CPU_get_data ,
     output bram_u0_wr ,  // 0:R 1:W
     output bram_u0_in_valid , 
     output [12:0] bram_u0_addr , 
@@ -69,6 +70,11 @@ module Arbiter #(
 // WB bus
 reg wbs_ack_d ;
 assign wbs_ack_o = wbs_ack_d ;
+wire cpu_read_request ;
+wire cpu_read_valid ;
+assign cpu_read_valid = wbs_stb_i & wbs_cyc_i & (~wbs_we_i) ;
+
+assign cpu_read_request = cpu_read_valid & (wbs_adr_i[15:12]==4'b0001) & (wbs_adr_i[31:24]==8'h38) & (wbs_adr_i[4:0]==5'd0);
 
 // BRAM u0
 reg bram_u0_wr_d ;
@@ -112,17 +118,26 @@ end
 wire wbs_same_addr_n ;
 assign wbs_same_addr_n = (last_wbs_read_addr==wbs_adr_i[15:2])?(0):(1);
 
-// read_counter
+// CPU_read_counter
 reg read_flag_d ,FIFO_read_flag_d ;
 reg [12:0] FIFO_counter ;
-reg [2:0] read_counter ;
+reg [2:0] CPU_read_counter ;
 always @(posedge wb_rst_i or posedge wb_clk_i) begin
     if (wb_rst_i) begin
         FIFO_counter <= 0 ;
-        read_counter <= 0 ;
+        CPU_read_counter <= 0 ;
     end else begin
-        read_counter <= read_counter + read_flag_d ;
+        CPU_read_counter <= CPU_read_counter + read_flag_d ;
         FIFO_counter <= FIFO_counter + FIFO_read_flag_d ;
+    end
+end
+
+reg same_addr_flag_d , same_addr_flag_q ;
+always @(posedge wb_clk_i or posedge wb_rst_i ) begin
+    if (wb_rst_i) begin
+        same_addr_flag_q <= 0 ;
+    end else begin
+        same_addr_flag_q <= same_addr_flag_d ;
     end
 end
 
@@ -134,6 +149,11 @@ Condition : CPU - W / R
             DMA - R
 */
 always @(*) begin
+    if (same_addr_flag_q) begin : CPU_Read_Request_is_been_processed
+        same_addr_flag_d = CPU_get_data ? (0):(1) ;
+    end else begin
+        same_addr_flag_d = 0 ;
+    end
     read_flag_d = 0 ;
     wbs_ack_d = 0 ; 
     bram_u0_wr_d = 0 ;
@@ -156,14 +176,15 @@ always @(*) begin
         bram_u0_reader_sel_d = 0 ;
         dma_r_ack_d = 1 ;
         // switch into DMA burst read mode .
-    end else if (|read_counter) begin:                                      CPU_Burst_Read_Instruction
+    end else if (|CPU_read_counter) begin:                                      CPU_Burst_Read_Instruction
         read_flag_d = 1 ;
         bram_u0_wr_d = 0 ;
         bram_u0_in_valid_d = 1 ;
-        bram_u0_addr_d = wbs_adr_i[15:2] + read_counter ;
+        bram_u0_addr_d = wbs_adr_i[15:2] + CPU_read_counter ;
         bram_u0_reader_sel_d = 1 ;
-    end else if ( wbs_cache_miss ) begin :                                  CPU_Read_u0
+    end else if ( cpu_read_request & ~same_addr_flag_q ) begin :                                  CPU_Read_u0
         /*wbs_stb_i & wbs_cyc_i & ~wbs_we_i & ~wbs_adr_i[15] & is_u0 &*/
+        same_addr_flag_d = 1 ;
         read_flag_d = 1 ;
         bram_u0_wr_d = 0 ;
         bram_u0_in_valid_d = 1 ;
