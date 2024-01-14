@@ -117,7 +117,8 @@ make
 ### Memory Map 
 |  Base   |   End   |   Hardware   |                  Description                 |
 |---------|---------|--------------|----------------------------------------------|
-|3800_0000|3800_6FFF|BRAM_u0       |instruction<br/>initialized data
+|3800_0000|3800_04FF|BRAM_u0       |Initialized datas                             |
+|3800_0500|3800_6FFF|BRAM_u0       |RISC-V Instructions                           |
 |3800_7000|3800_7FFF|BRAM_u1       |Calculated Result                             |
 |3000_8000|3000_8000|DMA_Controller|DMA_cfg                                       |
 |3000_8004|3000_8004|DMA_Controller|DMA_addr                                      |
