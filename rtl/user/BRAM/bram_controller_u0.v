@@ -22,7 +22,7 @@ input [1:0] reader_sel ,*/
 output dma_in_valid ,
 
 /* To CPU cache */
-output cache_in_valid ,
+output wbs_ack_o_brc_u0 ,
 
 /* To DMA or CPU cache */
 output [31:0] Do //
@@ -106,21 +106,21 @@ always @(*) begin
 end
 // 有分 Bank 理當可以用地址判斷，但我先用比較簡單的方法實現，我直接用Arbiter告訴controller這是誰給的 Read request
 // wire IsDataForCache , IsDataForDMA ;
-reg IsDataForCache_d , IsDataForCache_q , IsDataForDMA_d , IsDataForDMA_q ;
+reg IsDataForCPU_d , IsDataForCPU_q , IsDataForDMA_d , IsDataForDMA_q ;
 always @(posedge clk or posedge rst) begin
     if (rst) begin
-        IsDataForCache_q <= 0 ;
+        IsDataForCPU_q <= 0 ;
         IsDataForDMA_q <= 0 ;
     end else begin
-        IsDataForCache_q <= IsDataForCache_d ;
+        IsDataForCPU_q <= IsDataForCPU_d ;
         IsDataForDMA_q <= IsDataForDMA_d ; 
     end
 end
 always @(*) begin
-    IsDataForCache_d = Task_bay_sel[pointer]==2'b01;
+    IsDataForCPU_d = Task_bay_sel[pointer]==2'b01;
     IsDataForDMA_d = Task_bay_sel[pointer]==2'b00;
 end
-assign cache_in_valid = Out_valid_q & IsDataForCache_q ;
+assign wbs_ack_o_brc_u0 = Out_valid_q & IsDataForCPU_q ;
 assign dma_in_valid = Out_valid_q & IsDataForDMA_q ;
 
 endmodule
