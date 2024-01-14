@@ -21,7 +21,7 @@
 #ifdef USER_PROJ_IRQ0_EN
 #include <irq_vex.h>
 #endif
-void /*__attribute__ ( ( section ( ".mprjram" ) ) )*/ test(){
+void __attribute__ ( ( section ( ".mprjram" ) ) ) Hardware_test(){
 	// start flag - FIR
 	reg_mprj_datal = (0xAB00<<16);
 	// FIR tap
@@ -165,8 +165,8 @@ void main()
 	reg_mprj_xfer = 1;
 	while (reg_mprj_xfer == 1);
 
-	test();
-	test();
-	test();
+	Hardware_test();
+	Hardware_test();
+	Hardware_test();
 	while (1) ;
 }
