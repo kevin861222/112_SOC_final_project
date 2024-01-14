@@ -1,16 +1,18 @@
 ifeq ($(OS), Windows_NT)
-CC = riscv-none-elf-gcc
-OBJCPY = riscv-none-elf-objcopy
+CROSS_COMPILE = riscv-none-elf-
 march = rv32i_zicsr
 else
-CC = riscv32-unknown-elf-gcc
-OBJCPY = riscv32-unknown-elf-objcopy
+CROSS_COMPILE = riscv32-unknown-elf-
 march = rv32i
 endif
 
+CC = $(CROSS_COMPILE)gcc
+OBJCPY = $(CROSS_COMPILE)objcopy
+OBJDMP = $(CROSS_COMPILE)objdump
+
 Target:
 	@ make clean
-	@ $(CC) -Wl,--no-warn-rwx-segments \
+	@ $(CC) -Wl,--no-warn-rwx-segments -O2 \
 		--save-temps \
 		-I ../firmware \
 		-march=$(march) -mabi=ilp32 -D__vexriscv__ \
@@ -24,10 +26,13 @@ Target:
 		-f ./include.rtl.list -o main.vvp main_tb.v
 	@ vvp main.vvp
 
-.PHONY: clean wv
+.PHONY: clean wv dump
 
 clean:
 	@ rm -f *.s *.o *.i *.out *.map *.elf *.hexe *.vvp *.vcd *.hex
 
 wv:
-	@ gtkwave main.vcd  uart.gtkw
+	@ gtkwave main.vcd  ../gtkw/uart.gtkw
+
+dump:
+	@ $(OBJDMP) -d main.elf > dump.log

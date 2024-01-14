@@ -43,17 +43,23 @@ end
 ![截圖 2024-01-13 下午4 40 39](https://github.com/pocper/112_SOC_final_project/assets/79128379/d9315803-cecd-42dd-8cff-b8e1560f28bc)
 
 
-## Simulation
-``` bash
-cd ~/testbench
-make
-```
+## Simulation RTL
+1. generate project firmware and simulation on vivado
+    ``` bash
+      cd ~/testbench
+      make
+    ```
+
+## Simulation on FPGA
+1. generate bitstream/hardware handoff files
+    ``` bash
+    cd ~/vivado
+    make
+    ```
 
 ## Simulation Result
 - Command Line
     ``` bash
-    ~\testbench (main)
-    λ make
     make[1]: Entering directory '~/testbench'
     make[1]: Leaving directory '~/testbench'
     Reading main.hex
@@ -62,55 +68,56 @@ make
     VCD info: dumpfile main.vcd opened for output.
     Times = 1/3 - UART
     Times = 1/3 - Hardware
-    tx data bit index 0: 0
-    tx data bit index 1: 0
-    tx data bit index 3: 0
-    tx data bit index 4: 0
-    tx data bit index 5: 0
-    tx data bit index 6: 0
-    tx data bit index 7: 0
+    tx_data[0] = 1'b0
+    tx_data[1] = 1'b0
+    tx_data[2] = 1'b0
+    tx_data[3] = 1'b0
+    tx_data[4] = 1'b0
+    tx_data[5] = 1'b0
+    tx_data[6] = 1'b0
+    tx_data[7] = 1'b0
     tx complete - data: 8'd000, 8'h00
     Times = 2/3 - UART
-    tx data bit index 0: 1
-    tx data bit index 1: 0
-    tx data bit index 2: 0
-    tx data bit index 3: 0
+    tx_data[0] = 1'b1
+    tx_data[1] = 1'b0
     Test start - FIR
-    tx data bit index 4: 0
-    tx data bit index 5: 0
     Test end   - FIR
     Test start - matmul
-    tx data bit index 6: 0
+    tx_data[2] = 1'b0
     Test end   - matmul
     Test start - qsort
-    tx data bit index 7: 0
     Test end   - qsort
     Times = 2/3 - Hardware
-    tx complete - data: 8'd001, 8'h01
-    Times = 3/3 - UART
+    tx_data[3] = 1'b0
     Test start - FIR
     Test end   - FIR
     Test start - matmul
     Test end   - matmul
-    tx data bit index 0: 0
     Test start - qsort
-    tx data bit index 1: 1
+    tx_data[4] = 1'b0
     Test end   - qsort
     Times = 3/3 - Hardware
-    tx data bit index 2: 0
     Test start - FIR
-    tx data bit index 3: 0
+    tx_data[5] = 1'b0
     Test end   - FIR
     Test start - matmul
-    tx data bit index 4: 0
-    tx data bit index 5: 0
     Test end   - matmul
     Test start - qsort
-    tx data bit index 6: 0
+    tx_data[6] = 1'b0
     Test end   - qsort
-    tx data bit index 7: 0
+    tx_data[7] = 1'b0
+    tx complete - data: 8'd001, 8'h01
+    Times = 3/3 - UART
+    tx_data[0] = 1'b0
+    tx_data[1] = 1'b1
+    tx_data[2] = 1'b0
+    tx_data[3] = 1'b0
+    tx_data[4] = 1'b0
+    tx_data[5] = 1'b0
+    tx_data[6] = 1'b0
+    tx_data[7] = 1'b0
     tx complete - data: 8'd002, 8'h02
-    main_tb.v:79: $finish called at 3593727000 (1ps)
+    main_tb.v:80: $finish called at 3593727000 (1ps)
     ```
 - Waveform
 ## About This Project

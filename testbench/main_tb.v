@@ -48,7 +48,7 @@ module main_tb;
 		$dumpvars(0, main_tb);
 
 		// Repeat cycles of 1000 clock edges as needed to complete testbench
-		repeat (250) begin
+		repeat (150) begin
 			repeat (1000) @(posedge clock);
 			// $display("+1000 cycles");
 		end
@@ -62,19 +62,19 @@ module main_tb;
 		$finish;
 	end
 
-	reg [7:0] times;
+	reg [7:0] times_workload, times_uart;
 	initial begin
 		fork
-			for(times=0;times<`times_rerun;times=times+1) begin
-				$display("Times = %1d/%1d - Hardware", times+1, `times_rerun);
+			for(times_workload=0;times_workload<`times_rerun;times_workload=times_workload+1) begin
+				$display("Times = %1d/%1d - Hardware", times_workload+1, `times_rerun);
 				fir;
 				matmul;
 				qsort;
 			end
 			
-			for(times=0;times<`times_rerun;times=times+1) begin
-				$display("Times = %1d/%1d - UART", times+1, `times_rerun);
-				send_data(times[7:0]);
+			for(times_uart=0;times_uart<`times_rerun;times_uart=times_uart+1) begin
+				$display("Times = %1d/%1d - UART", times_uart+1, `times_rerun);
+				send_data(times_uart);
 			end
 		join
 		$finish;
@@ -112,8 +112,6 @@ module main_tb;
 
 	task send_data(input [7:0] data);
 	begin
-		tx_start = 0;
-		wait(!tx_busy); // wait for uart ready
 		tx_start = 1;
 		tx_data = data;
 		wait(tx_busy); // wait for transmission start

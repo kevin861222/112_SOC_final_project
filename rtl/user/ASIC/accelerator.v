@@ -56,6 +56,19 @@ module accelerator(
                 if(ap_start != 3'b000) begin 
                     ap_start_en = 1'd1;
                     state_ns = WAIT;
+
+                    if(ap_start == 3'b001) begin
+                        counter_d = 6'd63;
+                    end
+                    else if(ap_start == 3'b010) begin
+                        counter_d = 6'd15;
+                    end
+                    else if(ap_start == 3'b100) begin
+                        counter_d = 6'd9;
+                    end
+                    else begin
+                        counter_d = 6'd0;
+                    end
                 end
                 else begin
                     ap_start_d = 2'd0;
@@ -69,12 +82,10 @@ module accelerator(
                     ss_tlast_fir = ss_tlast;
 
                     if(done_fir) begin
-                        counter_d = 6'd63;
                         ap_done = 3'b001;
-                        state_ns = SEND;
                     end
                     else
-                        state_ns = WAIT;
+                        ap_done = 3'b000;
                 end
                 else if(ap_start_q == 3'b010) begin
                     ss_tvalid_matmul = ss_tvalid;
@@ -82,12 +93,10 @@ module accelerator(
                     ss_tlast_matmul = ss_tlast;
 
                     if(done_matmul) begin
-                        counter_d = 6'd15;
                         ap_done = 3'b010;
-                        state_ns = SEND;
                     end
                     else
-                        state_ns = WAIT;                    
+                        ap_done = 3'b000;                 
                 end
                 else if(ap_start_q == 3'b100) begin
                     ss_tvalid_sorting = ss_tvalid;
@@ -95,19 +104,15 @@ module accelerator(
                     ss_tlast_sorting = ss_tlast;
 
                     if(done_sorting) begin
-                        counter_d = 6'd9;
                         ap_done = 3'b100;
-                        state_ns = SEND;
                     end
                     else
-                        state_ns = WAIT;                    
+                        ap_done = 3'b000;                   
                 end
                 else begin
-                    counter_d = 6'd0;
                     state_ns = WAIT;
                 end
-            end
-            SEND: begin
+
                 if(sm_tvalid) begin
                     counter_d = counter_q - 6'd1;
                     if((counter_q == 0) && empty) begin
@@ -118,18 +123,18 @@ module accelerator(
                         state_ns = IDLE;
                     end
                     else begin
-                        state_ns = SEND;
+                        state_ns = WAIT;
                     end
                 end
                 else begin
                     counter_d = counter_q;
-                    state_ns = SEND;
+                    state_ns = WAIT;
                 end
             end
             default: state_ns = IDLE;
         endcase
     end
-
+    
     always @(posedge clk, posedge rst) begin
         if(rst)
             ap_start_q <= 3'd0;

@@ -170,7 +170,7 @@ module tbuart (
 			T_START_BIT: ser_tx <= 0;
 			T_SEND_DATA:begin 
 				ser_tx <= tx_pattern[tx_index];
-				$display("tx data bit index %d: %b", tx_index, tx_pattern[tx_index]);
+				$display("tx_data[%d] = 1'b%b", tx_index, tx_pattern[tx_index]);
 			end
 			T_STOP_BIT: ser_tx <= 1;
 			T_CLEAR: ser_tx <= 1;

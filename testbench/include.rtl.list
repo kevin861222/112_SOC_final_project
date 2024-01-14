@@ -9,7 +9,7 @@
 -v ../rtl/user/BRAM/bram_controller_u0.v
 -v ../rtl/user/BRAM/bram_controller_u1.v
 -v ../rtl/user/BRAM/bram.v
--v ../rtl/user/Arbiter/Arbiter_new.v
+-v ../rtl/user/Arbiter/Arbiter.v
 -v ../rtl/user/ASIC/accelerator.v
 -v ../rtl/user/ASIC/firmat.v
 -v ../rtl/user/ASIC/sorting.v
