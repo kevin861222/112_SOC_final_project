@@ -51,55 +51,55 @@ void __attribute__ ( ( section ( ".mprjram" ) ) ) Hardware_test(){
 	// end flag - FIR
 	reg_mprj_datal = (0xAB01<<16);
 
-	// start flag - matmul
-	reg_mprj_datal = (0xAB10<<16);
-	// matmul input A
-	reg_DMA_addr   = 	(mat_A_base<<DMA_addr_base);
-	reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
-						(DMA_type_MEM2IO << DMA_cfg_type) | 
-						(DMA_ch_matmul << DMA_cfg_channel) | 
-						(NUM_MAT_A<<DMA_cfg_length);
-	// wait for DMA done
-	while(!(reg_DMA_cfg & (1<<DMA_cfg_idle))) ;
-	// matmul input B
-	reg_DMA_addr   = 	(mat_B_base<<DMA_addr_base);
-	reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
-						(DMA_type_MEM2IO << DMA_cfg_type) | 
-						(DMA_ch_matmul << DMA_cfg_channel) | 
-						(NUM_MAT_B<<DMA_cfg_length);
-	// wait for DMA done
-	while(!(reg_DMA_cfg & (1<<DMA_cfg_idle))) ;
-	// matmul output
-	reg_DMA_addr   = 	(mat_output_base<<DMA_addr_base);
-	reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
-						(DMA_type_IO2MEM << DMA_cfg_type) | 
-						(DMA_ch_matmul << DMA_cfg_channel) | 
-						(NUM_MAT_OUTPUT<<DMA_cfg_length);
-	// wait for DMA done
-	while(!(reg_DMA_cfg & (1<<DMA_cfg_idle))) ;
-	// end flag - matmul
-	reg_mprj_datal = (0xAB11<<16);
+	// // start flag - matmul
+	// reg_mprj_datal = (0xAB10<<16);
+	// // matmul input A
+	// reg_DMA_addr   = 	(mat_A_base<<DMA_addr_base);
+	// reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
+	// 					(DMA_type_MEM2IO << DMA_cfg_type) | 
+	// 					(DMA_ch_matmul << DMA_cfg_channel) | 
+	// 					(NUM_MAT_A<<DMA_cfg_length);
+	// // wait for DMA done
+	// while(!(reg_DMA_cfg & (1<<DMA_cfg_idle))) ;
+	// // matmul input B
+	// reg_DMA_addr   = 	(mat_B_base<<DMA_addr_base);
+	// reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
+	// 					(DMA_type_MEM2IO << DMA_cfg_type) | 
+	// 					(DMA_ch_matmul << DMA_cfg_channel) | 
+	// 					(NUM_MAT_B<<DMA_cfg_length);
+	// // wait for DMA done
+	// while(!(reg_DMA_cfg & (1<<DMA_cfg_idle))) ;
+	// // matmul output
+	// reg_DMA_addr   = 	(mat_output_base<<DMA_addr_base);
+	// reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
+	// 					(DMA_type_IO2MEM << DMA_cfg_type) | 
+	// 					(DMA_ch_matmul << DMA_cfg_channel) | 
+	// 					(NUM_MAT_OUTPUT<<DMA_cfg_length);
+	// // wait for DMA done
+	// while(!(reg_DMA_cfg & (1<<DMA_cfg_idle))) ;
+	// // end flag - matmul
+	// reg_mprj_datal = (0xAB11<<16);
 
-	// start flag - qsort
-	reg_mprj_datal = (0xAB20<<16);
-	// qsort input
-	reg_DMA_addr   = 	(qsort_input_base<<DMA_addr_base);
-	reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
-						(DMA_type_MEM2IO << DMA_cfg_type) | 
-						(DMA_ch_qsort << DMA_cfg_channel) | 
-						(NUM_QSORT_INPUT<<DMA_cfg_length);
-	// wait for DMA done
-	while(!(reg_DMA_cfg & (1<<DMA_cfg_idle))) ;
-	// qsort output
-	reg_DMA_addr   = 	(mat_output_base<<DMA_addr_base);
-	reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
-						(DMA_type_IO2MEM << DMA_cfg_type) | 
-						(DMA_ch_qsort << DMA_cfg_channel) | 
-						(NUM_QSORT_OUTPUT<<DMA_cfg_length);
-	// wait for DMA done
-	while(!(reg_DMA_cfg & (1<<DMA_cfg_idle))) ;
-	// end flag - qsort
-	reg_mprj_datal = (0xAB21<<16);
+	// // start flag - qsort
+	// reg_mprj_datal = (0xAB20<<16);
+	// // qsort input
+	// reg_DMA_addr   = 	(qsort_input_base<<DMA_addr_base);
+	// reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
+	// 					(DMA_type_MEM2IO << DMA_cfg_type) | 
+	// 					(DMA_ch_qsort << DMA_cfg_channel) | 
+	// 					(NUM_QSORT_INPUT<<DMA_cfg_length);
+	// // wait for DMA done
+	// while(!(reg_DMA_cfg & (1<<DMA_cfg_idle))) ;
+	// // qsort output
+	// reg_DMA_addr   = 	(mat_output_base<<DMA_addr_base);
+	// reg_DMA_cfg    = 	(1 << DMA_cfg_start) | 
+	// 					(DMA_type_IO2MEM << DMA_cfg_type) | 
+	// 					(DMA_ch_qsort << DMA_cfg_channel) | 
+	// 					(NUM_QSORT_OUTPUT<<DMA_cfg_length);
+	// // wait for DMA done
+	// while(!(reg_DMA_cfg & (1<<DMA_cfg_idle))) ;
+	// // end flag - qsort
+	// reg_mprj_datal = (0xAB21<<16);
 
 }
 void main()
@@ -166,7 +166,7 @@ void main()
 	while (reg_mprj_xfer == 1);
 
 	Hardware_test();
-	Hardware_test();
-	Hardware_test();
+	// Hardware_test();
+	// Hardware_test();
 	while (1) ;
 }

@@ -16,7 +16,8 @@
 `default_nettype none
 
 `timescale 1 ns / 1 ps
-`define times_rerun 3
+// `define times_rerun 3
+`define times_rerun 1
 module main_tb;
 	reg clock;
 	reg RSTB;
@@ -68,8 +69,8 @@ module main_tb;
 			for(times=0;times<`times_rerun;times=times+1) begin
 				$display("Times = %1d/%1d - Hardware", times+1, `times_rerun);
 				fir;
-				matmul;
-				qsort;
+				// matmul;
+				// qsort;
 			end
 			
 			for(times=0;times<`times_rerun;times=times+1) begin

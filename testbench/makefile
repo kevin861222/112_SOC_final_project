@@ -30,4 +30,4 @@ clean:
 	@ rm -f *.s *.o *.i *.out *.map *.elf *.hexe *.vvp *.vcd *.hex
 
 wv:
-	@ gtkwave main.vcd  uart.gtkw
+	@ gtkwave main.vcd  ../gtkw/DMA.gtkw
