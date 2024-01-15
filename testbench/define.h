@@ -14,6 +14,7 @@
 #define TIMES_RERUN 1
 
 // Memory Map of BRAM u0 (data - unprocessed)
+// Reference: ~/testbench/main.map
 typedef enum
 {
     fir_taps_base,

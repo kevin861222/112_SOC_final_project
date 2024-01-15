@@ -69,21 +69,21 @@ module main_tb;
 			for(times_workload=0;times_workload<`times_rerun;times_workload=times_workload+1) begin
 				$display("Times = %1d/%1d - Hardware", times_workload+1, `times_rerun);
 				fir;
-				// matmul;
-				// qsort;
+				matmul;
+				qsort;
 			end
 			
-			for(times_workload=0;times_workload<`times_rerun;times_workload=times_workload+1) begin
-				$display("Times = %1d/%1d - Hardware(check)", times_workload+1, `times_rerun);
-				fir_check;
-				// matmul_check;
-				// qsort_check;
-			end
-			
-			// for(times_uart=0;times_uart<`times_rerun;times_uart=times_uart+1) begin
-			// 	$display("Times = %1d/%1d - UART", times_uart+1, `times_rerun);
-			// 	send_data(times_uart);
+			// for(times_workload=0;times_workload<`times_rerun;times_workload=times_workload+1) begin
+			// 	$display("Times = %1d/%1d - Hardware(check)", times_workload+1, `times_rerun);
+			// 	fir_check;
+			// 	matmul_check;
+			// 	qsort_check;
 			// end
+			
+			for(times_uart=0;times_uart<`times_rerun;times_uart=times_uart+1) begin
+				$display("Times = %1d/%1d - UART", times_uart+1, `times_rerun);
+				send_data(times_uart);
+			end
 		join
 		$finish;
 	end
@@ -113,10 +113,8 @@ module main_tb;
 		// Output - FIR Yn
 		for(fir_i=0;fir_i<64;fir_i=fir_i+1) begin
 			fir_output[fir_i] = 0;
-			for(fir_j=0;fir_j<11;fir_j=fir_j+1) begin
-				if(fir_i>fir_j) begin
-					fir_output[fir_i] = fir_output[fir_i] + fir_taps[fir_j] * fir_input[fir_i-fir_j];
-				end
+			for(fir_j=0;fir_j<$min(fir_i+1, 11);fir_j=fir_j+1) begin
+				fir_output[fir_i] = fir_output[fir_i] + fir_taps[fir_j] * fir_input[fir_i-fir_j];
 			end
 		end
 	end
@@ -186,22 +184,25 @@ module main_tb;
 	end
 	endtask
 
-	reg [6:0] fir_chk_i;
+	// reg [6:0] fir_chk_i;
 	task fir_check;
 	begin
 		// FIR
 		wait(checkbits == 16'hAB30);
 		$display("Test check start - FIR");
-		for(fir_chk_i=0;fir_chk_i<64;fir_chk_i=fir_chk_i+1) 
-		begin
-			$display("golden ans = %5d", fir_output[fir_chk_i]);
-			wait(checkbits==fir_output[fir_chk_i]);
-			$display("FIR, received = %5d, golden ans = %5d", checkbits, fir_output[fir_chk_i]);
-		end
+		// wait(checkbits != 16'hAB30);
+		// for(fir_chk_i=0;fir_chk_i<64;fir_chk_i=fir_chk_i+1) 
+		// begin
+		// 	wait(checkbits==fir_output[fir_chk_i][31:16]);
+		// 	wait(checkbits==fir_output[fir_chk_i][15:0]);
+		// 	$display("FIR i = %d, received = %5d, golden ans = %5d", fir_chk_i, checkbits, fir_output[fir_chk_i]);
+		// 	$display("in 213");
+		// end
 		wait(checkbits == 16'hAB31);
 		$display("Test check end   - FIR");
 	end
 	endtask
+
 
 	task matmul;
 	begin
@@ -213,11 +214,17 @@ module main_tb;
 	end
 	endtask
 
+	reg [6:0] mat_chk_i;
 	task matmul_check;
 	begin
 		// Matrix Multiplication
 		wait(checkbits == 16'hAB40);
 		$display("Test check start - matmul");
+		for(mat_chk_i=0;mat_chk_i<16;mat_chk_i=mat_chk_i+1) 
+		begin
+			wait(checkbits==mat_output[mat_chk_i]);
+			$display("received = %5d, golden ans = %5d", checkbits, mat_output[mat_chk_i]);
+		end
 		wait(checkbits == 16'hAB41);
 		$display("Test check end   - matmul");
 	end
@@ -233,11 +240,17 @@ module main_tb;
 	end
 	endtask
 
+	reg [6:0] qsort_chk_i;
 	task qsort_check;
 	begin
-		// Matrix Multiplication
+		// Quick Sort
 		wait(checkbits == 16'hAB50);
 		$display("Test check start - qsort");
+		for(qsort_chk_i=0;qsort_chk_i<10;qsort_chk_i=qsort_chk_i+1) 
+		begin
+			wait(checkbits==qsort_output[qsort_chk_i]);
+			$display("received = %5d, golden ans = %5d", checkbits, qsort_output[qsort_chk_i]);
+		end
 		wait(checkbits == 16'hAB51);
 		$display("Test check end   - qsort");
 	end

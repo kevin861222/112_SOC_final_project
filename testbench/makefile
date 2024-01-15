@@ -13,7 +13,7 @@ OBJSIZE = $(CROSS_COMPILE)size
 
 Target:
 	@ make clean
-	@ $(CC) -Wl,--no-warn-rwx-segments -Os \
+	@ $(CC) -Wl,--no-warn-rwx-segments \
 		--save-temps \
 		-I ../firmware \
 		-march=$(march) -mabi=ilp32 -D__vexriscv__ \
@@ -33,9 +33,8 @@ clean:
 	@ rm -f *.s *.o *.i *.out *.map *.elf *.hexe *.vvp *.vcd *.hex
 
 wv:
+	@ gtkwave main.vcd  ../gtkw/fifo.gtkw
 
-	@ gtkwave main.vcd
-	# @ gtkwave main.vcd  ../gtkw/testbench.gtkw
 dump:
 	@ $(OBJDMP) -d main.elf > dump.log
 

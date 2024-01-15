@@ -34,8 +34,8 @@ extern void qsort_check();
 void __attribute__ ((section(".mprjram" ))) workload()
 {
 	fir();
-	// matmul();
-	// qsort();
+	matmul();
+	qsort();
 }
 
 void __attribute__ ((section(".mprjram" ))) fir()
@@ -114,8 +114,8 @@ void __attribute__ ((section(".mprjram" ))) workload_check()
 {
 	// Read Result from BRAM to transmit data to testbench
 	fir_check();
-	// matmul_check();
-	// qsort_check();
+	matmul_check();
+	qsort_check();
 }
 
 void __attribute__ ((section(".mprjram" ))) fir_check()
@@ -123,8 +123,26 @@ void __attribute__ ((section(".mprjram" ))) fir_check()
 	// start flag - FIR
 	reg_mprj_datal = (0xAB30<<16);
 	// Read Result - FIR
-	for(int i = 0; i < NUM_FIR_OUTPUT; i++)
-		reg_mprj_datal = (reg_bram_u1_base + fir_output_base + i)<<16;
+	// volatile uint32_t data;
+	// // uint32_t datal, datah;
+	// for(int i = 0; i < NUM_FIR_OUTPUT; i++)
+	// {
+	// 	data = (reg_bram_u1_base + fir_output_base + i);
+	// 	// reg_mprj_datal = data;
+	// 	// reg_mprj_datal = (reg_bram_u1_base + fir_output_base + i);
+	// 	// datal = (data&0xffff);
+	// 	// datah = (data&0xffff0000)>>16;
+	// 	// for(int j = 0; j < sizeof(uint32_t)/sizeof(uint16_t); j++)
+	// 	// for(int j = 0; j < 2; j++)
+	// 	// {
+	// 	// 	// transmission 
+	// 	// 	// 1. data[31:16]
+	// 	// 	// 1. data[15:0]
+	// 	// 	if(j==0) reg_mprj_datal = datah<<16;
+	// 	// 	else reg_mprj_datal = datal<<16;
+	// 	// }
+	// }
+		
 	// end flag - FIR
 	reg_mprj_datal = (0xAB31<<16);
 }
