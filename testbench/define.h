@@ -44,7 +44,7 @@ typedef enum
 #define MMIO_UART        0x31000000
 // Reference: ~/firmware/sections.lds
 #define BRAM_u0_base     0x38000000
-#define BRAM_u1_base     0x38001000
+#define BRAM_u1_base     0x38007000
 
 #define offset_DMA_cfg  0x00
 #define offset_DMA_addr 0x04
