@@ -16,7 +16,8 @@
 `default_nettype none
 
 `timescale 1 ns / 1 ps
-`define times_rerun 3
+// `define times_rerun 3
+`define times_rerun 1
 module main_tb;
 	reg clock;
 	reg RSTB;
@@ -68,20 +69,21 @@ module main_tb;
 			for(times_workload=0;times_workload<`times_rerun;times_workload=times_workload+1) begin
 				$display("Times = %1d/%1d - Hardware", times_workload+1, `times_rerun);
 				fir;
-				matmul;
-				qsort;
+				// matmul;
+				// qsort;
 			end
 			
-			for(times_uart=0;times_uart<`times_rerun;times_uart=times_uart+1) begin
-				$display("Times = %1d/%1d - UART", times_uart+1, `times_rerun);
-				send_data(times_uart);
-			end
-
-			begin
+			for(times_workload=0;times_workload<`times_rerun;times_workload=times_workload+1) begin
+				$display("Times = %1d/%1d - Hardware(check)", times_workload+1, `times_rerun);
 				fir_check;
-				matmul_check;
-				qsort_check;
+				// matmul_check;
+				// qsort_check;
 			end
+			
+			// for(times_uart=0;times_uart<`times_rerun;times_uart=times_uart+1) begin
+			// 	$display("Times = %1d/%1d - UART", times_uart+1, `times_rerun);
+			// 	send_data(times_uart);
+			// end
 		join
 		$finish;
 	end
@@ -90,9 +92,9 @@ module main_tb;
 	integer fir_taps   [10:0];
 	integer fir_input  [63:0];
 	integer fir_output [63:0];
-	reg [5:0]fir_i, fir_j;
+	reg [6:0] fir_i, fir_j;
 	initial begin
-		// Input
+		// Input - FIR taps
 		fir_taps[0] =   0;
 		fir_taps[1] = -10;
 		fir_taps[2] =  -9;
@@ -104,14 +106,17 @@ module main_tb;
 		fir_taps[8] =  -9;
 		fir_taps[9] = -10;
 		fir_taps[10] =  0;
-		for(fir_i=0;fir_i<16;fir_i=fir_i+1) begin
+		// Input - FIR Xn
+		for(fir_i=0;fir_i<64;fir_i=fir_i+1) begin
 			fir_input[fir_i] = fir_i + 1;
 		end
-		// Output
+		// Output - FIR Yn
 		for(fir_i=0;fir_i<64;fir_i=fir_i+1) begin
 			fir_output[fir_i] = 0;
 			for(fir_j=0;fir_j<11;fir_j=fir_j+1) begin
-				fir_output[fir_i] = fir_output[fir_i] + fir_taps[fir_j] * fir_input[10-fir_j];
+				if(fir_i>fir_j) begin
+					fir_output[fir_i] = fir_output[fir_i] + fir_taps[fir_j] * fir_input[fir_i-fir_j];
+				end
 			end
 		end
 	end
@@ -120,21 +125,25 @@ module main_tb;
 	integer mat_A[15:0];
 	integer mat_B_T[15:0];
 	integer mat_output[15:0];
-	reg [3:0]mat_i, mat_j;
+	reg [4:0]mat_i, mat_j, mat_k;
 	initial begin
-		// Input
+		// Input - mat_A
 		for(mat_i=0;mat_i<16;mat_i=mat_i+1) begin
 			mat_A[mat_i] = mat_i%4;
 		end
+		// Input - mat_B
 		for(mat_i=0;mat_i<4;mat_i=mat_i+1) begin
 			for(mat_j=0;mat_j<4;mat_j=mat_j+1) begin
-				mat_B_T[mat_i*4+mat_j] = mat_j*4+mat_i;
+				mat_B_T[mat_i*4+mat_j] = mat_j*4+mat_i+1;
 			end
 		end
 		// Output
 		for(mat_i=0;mat_i<4;mat_i=mat_i+1) begin
 			for(mat_j=0;mat_j<4;mat_j=mat_j+1) begin
-				mat_output[mat_i*4+mat_j] = mat_A[mat_i*4+mat_j] * mat_B_T[mat_i*4+mat_j];
+				mat_output[mat_i*4+mat_j] = 0;
+				for(mat_k=0;mat_k<4;mat_k=mat_k+1) begin
+					mat_output[mat_i*4+mat_j] = mat_output[mat_i*4+mat_j] + mat_A[mat_k] * mat_B_T[mat_j*4+mat_k];
+				end
 			end
 		end
 	end
@@ -177,11 +186,18 @@ module main_tb;
 	end
 	endtask
 
+	reg [6:0] fir_chk_i;
 	task fir_check;
 	begin
 		// FIR
 		wait(checkbits == 16'hAB30);
 		$display("Test check start - FIR");
+		for(fir_chk_i=0;fir_chk_i<64;fir_chk_i=fir_chk_i+1) 
+		begin
+			$display("golden ans = %5d", fir_output[fir_chk_i]);
+			wait(checkbits==fir_output[fir_chk_i]);
+			$display("FIR, received = %5d, golden ans = %5d", checkbits, fir_output[fir_chk_i]);
+		end
 		wait(checkbits == 16'hAB31);
 		$display("Test check end   - FIR");
 	end

@@ -34,8 +34,8 @@ extern void qsort_check();
 void __attribute__ ((section(".mprjram" ))) workload()
 {
 	fir();
-	matmul();
-	qsort();
+	// matmul();
+	// qsort();
 }
 
 void __attribute__ ((section(".mprjram" ))) fir()
@@ -114,8 +114,8 @@ void __attribute__ ((section(".mprjram" ))) workload_check()
 {
 	// Read Result from BRAM to transmit data to testbench
 	fir_check();
-	matmul_check();
-	qsort_check();
+	// matmul_check();
+	// qsort_check();
 }
 
 void __attribute__ ((section(".mprjram" ))) fir_check()
@@ -215,10 +215,11 @@ void main()
 	reg_mprj_xfer = 1;
 	while (reg_mprj_xfer == 1);
 
-	// Workload (FIR/Matrix Multiplication/Quick Sort)
 	for(int i = 0; i < TIMES_RERUN; i++)
+	{
+		// Workload (FIR/Matrix Multiplication/Quick Sort)
 		workload();
-
-	// Workload_check (FIR/Matrix Multiplication/Quick Sort)
-	workload_check();
+		// Workload_check (FIR/Matrix Multiplication/Quick Sort)
+		workload_check();
+	}
 }

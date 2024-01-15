@@ -6,13 +6,14 @@ CROSS_COMPILE = riscv32-unknown-elf-
 march = rv32i
 endif
 
-CC = $(CROSS_COMPILE)gcc
-OBJCPY = $(CROSS_COMPILE)objcopy
-OBJDMP = $(CROSS_COMPILE)objdump
+CC      = $(CROSS_COMPILE)gcc
+OBJCPY  = $(CROSS_COMPILE)objcopy
+OBJDMP  = $(CROSS_COMPILE)objdump
+OBJSIZE = $(CROSS_COMPILE)size
 
 Target:
 	@ make clean
-	@ $(CC) -Wl,--no-warn-rwx-segments -O2 \
+	@ $(CC) -Wl,--no-warn-rwx-segments -Os \
 		--save-temps \
 		-I ../firmware \
 		-march=$(march) -mabi=ilp32 -D__vexriscv__ \
@@ -26,13 +27,17 @@ Target:
 		-f ./include.rtl.list -o main.vvp main_tb.v
 	@ vvp main.vvp
 
-.PHONY: clean wv dump
+.PHONY: clean wv dump size
 
 clean:
 	@ rm -f *.s *.o *.i *.out *.map *.elf *.hexe *.vvp *.vcd *.hex
 
 wv:
-	@ gtkwave main.vcd  ../gtkw/uart.gtkw
 
+	@ gtkwave main.vcd
+	# @ gtkwave main.vcd  ../gtkw/testbench.gtkw
 dump:
 	@ $(OBJDMP) -d main.elf > dump.log
+
+size:
+	@ $(OBJSIZE) main.elf

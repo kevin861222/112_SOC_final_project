@@ -1,0 +1,35 @@
+[*]
+[*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
+[*] Mon Jan 15 07:32:39 2024
+[*]
+[dumpfile] "D:\vivado\Lab_final\gtkw\main.vcd"
+[savefile] "D:\vivado\Lab_final\gtkw\testbench.gtkw"
+[timestart] 2171060000
+[size] 1536 889
+[pos] -9 -9
+*-21.658770 1727000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] main_tb.
+[treeopen] main_tb.uut.
+[treeopen] main_tb.uut.mprj.
+[treeopen] main_tb.uut.mprj.acc_ASIC.
+[treeopen] main_tb.uut.soc.
+[treeopen] main_tb.uut.soc.core.
+[sst_width] 291
+[signals_width] 345
+[sst_expanded] 1
+[sst_vpaned_height] 374
+@200
+-wishbone
+@28
+main_tb.uut.mprj.wb_clk_i
+main_tb.uut.mprj.wb_rst_i
+main_tb.uut.mprj.wbs_ack_o
+@22
+main_tb.uut.mprj.wbs_adr_i[31:0]
+@420
+main_tb.uut.mprj.wbs_dat_i[31:0]
+@22
+main_tb.uut.mprj.wbs_dat_o[31:0]
+main_tb.checkbits[15:0]
+[pattern_trace] 1
+[pattern_trace] 0
