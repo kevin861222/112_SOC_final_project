@@ -34,8 +34,8 @@ extern void qsort_check();
 void __attribute__ ((section(".mprjram" ))) workload()
 {
 	fir();
-	matmul();
-	qsort();
+	// matmul();
+	// qsort();
 }
 
 void __attribute__ ((section(".mprjram" ))) fir()
@@ -114,8 +114,8 @@ void __attribute__ ((section(".mprjram" ))) workload_check()
 {
 	// Read Result from BRAM to transmit data to testbench
 	fir_check();
-	matmul_check();
-	qsort_check();
+	// matmul_check();
+	// qsort_check();
 }
 
 void __attribute__ ((section(".mprjram" ))) fir_check()
@@ -123,26 +123,44 @@ void __attribute__ ((section(".mprjram" ))) fir_check()
 	// start flag - FIR
 	reg_mprj_datal = (0xAB30<<16);
 	// Read Result - FIR
-	// volatile uint32_t data;
-	// // uint32_t datal, datah;
-	// for(int i = 0; i < NUM_FIR_OUTPUT; i++)
-	// {
-	// 	data = (reg_bram_u1_base + fir_output_base + i);
-	// 	// reg_mprj_datal = data;
-	// 	// reg_mprj_datal = (reg_bram_u1_base + fir_output_base + i);
-	// 	// datal = (data&0xffff);
-	// 	// datah = (data&0xffff0000)>>16;
-	// 	// for(int j = 0; j < sizeof(uint32_t)/sizeof(uint16_t); j++)
-	// 	// for(int j = 0; j < 2; j++)
-	// 	// {
-	// 	// 	// transmission 
-	// 	// 	// 1. data[31:16]
-	// 	// 	// 1. data[15:0]
-	// 	// 	if(j==0) reg_mprj_datal = datah<<16;
-	// 	// 	else reg_mprj_datal = datal<<16;
-	// 	// }
-	// }
-		
+	int32_t data;
+	for(int i = 0; i < NUM_FIR_OUTPUT; i++)
+	{
+		data = (*(volatile uint32_t *)(BRAM_u1_base + (uint32_t)(i<<2)));
+		reg_mprj_datal = (data & 0xffff0000);
+		reg_mprj_datal = ((data & 0xffff) << 16);
+	}
+
+	// Total waste : 4 [hr]
+	// Useless
+	// data = reg_bram_u1_base + 0;
+	// reg_mprj_datal = (data & 0xffff0000);
+	// reg_mprj_datal = ((data & 0xffff) << 16);
+	// data = reg_bram_u1_base + 4; // or + 1
+	// reg_mprj_datal = (data & 0xffff0000);
+	// reg_mprj_datal = ((data & 0xffff) << 16);
+
+	// Useful
+	// 1
+	// data = (*(volatile uint32_t *)0x38007000);
+	// reg_mprj_datal = (data & 0xffff0000);
+	// reg_mprj_datal = ((data & 0xffff) << 16);
+	// data = (*(volatile uint32_t *)0x38007004);
+	// reg_mprj_datal = (data & 0xffff0000);
+	// reg_mprj_datal = ((data & 0xffff) << 16);
+	// 2
+	// data = (*(volatile uint32_t *)BRAM_u1_base);
+	// reg_mprj_datal = (data & 0xffff0000);
+	// reg_mprj_datal = ((data & 0xffff) << 16);
+	// data = (*(volatile uint32_t *)(BRAM_u1_base + ((uint32_t)1<<2)));
+	// reg_mprj_datal = (data & 0xffff0000);
+	// reg_mprj_datal = ((data & 0xffff) << 16);
+	// data = (*(volatile uint32_t *)(BRAM_u1_base + ((uint32_t)2<<2)));
+	// reg_mprj_datal = (data & 0xffff0000);
+	// reg_mprj_datal = ((data & 0xffff) << 16);
+	// data = (*(volatile uint32_t *)(BRAM_u1_base +  (3<<2)));
+	// reg_mprj_datal = (data & 0xffff0000);
+	// reg_mprj_datal = ((data & 0xffff) << 16);
 	// end flag - FIR
 	reg_mprj_datal = (0xAB31<<16);
 }
@@ -207,8 +225,9 @@ void main()
 	reg_mprj_io_5  = GPIO_MODE_USER_STD_INPUT_NOPULL;
 
 	// Configure LA probes [127:0] as inputs to the cpu 
+	// reg_la0_oenb = reg_la0_iena = 0x00000000;    // [ 31: 0]
 	reg_la0_oenb = reg_la0_iena = 0x00000000;    // [ 31: 0]
-	reg_la1_oenb = reg_la1_iena = 0x00000000;    // [ 63:32]
+	reg_la1_oenb = reg_la1_iena = 0xffffffff;    // [ 63:32]
 	reg_la2_oenb = reg_la2_iena = 0x00000000;    // [ 95:64]
 	reg_la3_oenb = reg_la3_iena = 0x00000000;    // [127:96]
 

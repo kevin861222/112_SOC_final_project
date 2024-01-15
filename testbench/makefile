@@ -33,7 +33,7 @@ clean:
 	@ rm -f *.s *.o *.i *.out *.map *.elf *.hexe *.vvp *.vcd *.hex
 
 wv:
-	@ gtkwave main.vcd  ../gtkw/fifo.gtkw
+	@ gtkwave main.vcd  ../gtkw/data_fifo.gtkw
 
 dump:
 	@ $(OBJDMP) -d main.elf > dump.log

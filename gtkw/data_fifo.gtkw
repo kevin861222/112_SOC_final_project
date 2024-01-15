@@ -1,0 +1,100 @@
+[*]
+[*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
+[*] Mon Jan 15 19:38:05 2024
+[*]
+[dumpfile] "D:\vivado\Lab_final\testbench\main.vcd"
+[dumpfile_mtime] "Mon Jan 15 19:37:54 2024"
+[dumpfile_size] 243948353
+[savefile] "D:\vivado\Lab_final\gtkw\data_fifo.gtkw"
+[timestart] 2916925000
+[size] 1536 889
+[pos] -1 -1
+*-20.790899 2920712500 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] main_tb.
+[treeopen] main_tb.uut.
+[treeopen] main_tb.uut.mprj.
+[treeopen] main_tb.uut.mprj.acc_ASIC.
+[treeopen] main_tb.uut.mprj.brc_u0.
+[treeopen] main_tb.uut.mprj.brc_u1.
+[treeopen] main_tb.uut.soc.
+[treeopen] main_tb.uut.soc.core.
+[sst_width] 296
+[signals_width] 287
+[sst_expanded] 1
+[sst_vpaned_height] 374
+@200
+-wishbone
+@28
+main_tb.uut.mprj.wb_clk_i
+main_tb.uut.mprj.wb_rst_i
+main_tb.uut.mprj.wbs_cyc_i
+main_tb.uut.mprj.wbs_stb_i
+main_tb.uut.mprj.wbs_we_i
+@22
+main_tb.uut.mprj.wbs_sel_i[3:0]
+main_tb.checkbits[15:0]
+main_tb.uut.mprj.wbs_dat_i[31:0]
+main_tb.uut.mprj.wbs_adr_i[31:0]
+@200
+-DMA
+@28
+main_tb.uut.mprj.DMA_Controller.isAddr_DMA
+main_tb.uut.mprj.DMA_Controller.isAddr_DMA_r
+main_tb.uut.mprj.DMA_Controller.isAddr_DMA_w
+main_tb.uut.mprj.DMA_Controller.ap_start_DMA
+main_tb.uut.mprj.DMA_Controller.ap_idle_DMA
+main_tb.uut.mprj.DMA_Controller.ap_done_DMA
+main_tb.uut.mprj.DMA_Controller.ap_idle_ASIC
+main_tb.uut.mprj.DMA_Controller.ap_start_ASIC[2:0]
+main_tb.uut.mprj.DMA_Controller.ap_done_ASIC[2:0]
+@200
+-wbs_ack
+@28
+main_tb.uut.mprj.wbs_ack_o
+main_tb.uut.mprj.wbs_ack_o_FIFO
+main_tb.uut.mprj.wbs_ack_o_brc_u0
+@200
+-wbs_dat_o
+@22
+main_tb.uut.mprj.wbs_dat_o[31:0]
+main_tb.uut.mprj.wbs_dat_o_FIFO[31:0]
+@200
+-data_FIFO
+@28
+main_tb.uut.mprj.data_FIFO.brc_in_valid
+main_tb.uut.mprj.data_FIFO.full
+@29
+main_tb.uut.mprj.data_FIFO.IsAcessFIFO
+@22
+main_tb.uut.mprj.data_FIFO.FIFO_reg[31:0]
+main_tb.uut.mprj.data_FIFO.wbs_dat_o_q[31:0]
+@420
+main_tb.uut.mprj.data_FIFO.Di[31:0]
+@28
+main_tb.uut.mprj.data_FIFO.Isu1addr
+@22
+main_tb.uut.mprj.data_FIFO.wbs_dat_o[31:0]
+main_tb.uut.mprj.data_FIFO.wbs_dat_i[31:0]
+@200
+-BRAM_u1
+@28
+main_tb.uut.mprj.brc_u1.EN
+main_tb.uut.mprj.brc_u1.WE
+@22
+main_tb.uut.mprj.brc_u1.A[12:0]
+@420
+main_tb.uut.mprj.brc_u1.bram_Di[31:0]
+main_tb.uut.mprj.brc_u1.bram_Do[31:0]
+@200
+-BRAM_Controller_u1
+@28
+main_tb.uut.mprj.fifo_in_valid
+main_tb.uut.mprj.brc_u1.Out_valid_d
+main_tb.uut.mprj.brc_u1.Out_valid_q
+[pattern_trace] 1
+[pattern_trace] 0
+!100000@@
+?"38007000
+@23
+main_tb.uut.mprj.wbs_adr_i[31:0]
+!!

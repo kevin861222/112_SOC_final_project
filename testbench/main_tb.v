@@ -69,21 +69,21 @@ module main_tb;
 			for(times_workload=0;times_workload<`times_rerun;times_workload=times_workload+1) begin
 				$display("Times = %1d/%1d - Hardware", times_workload+1, `times_rerun);
 				fir;
-				matmul;
-				qsort;
+				// matmul;
+				// qsort;
 			end
 			
-			// for(times_workload=0;times_workload<`times_rerun;times_workload=times_workload+1) begin
-			// 	$display("Times = %1d/%1d - Hardware(check)", times_workload+1, `times_rerun);
-			// 	fir_check;
-			// 	matmul_check;
-			// 	qsort_check;
+			for(times_workload=0;times_workload<`times_rerun;times_workload=times_workload+1) begin
+				$display("Times = %1d/%1d - Hardware(check)", times_workload+1, `times_rerun);
+				fir_check;
+				// matmul_check;
+				// qsort_check;
+			end
+			
+			// for(times_uart=0;times_uart<`times_rerun;times_uart=times_uart+1) begin
+			// 	$display("Times = %1d/%1d - UART", times_uart+1, `times_rerun);
+			// 	send_data(times_uart);
 			// end
-			
-			for(times_uart=0;times_uart<`times_rerun;times_uart=times_uart+1) begin
-				$display("Times = %1d/%1d - UART", times_uart+1, `times_rerun);
-				send_data(times_uart);
-			end
 		join
 		$finish;
 	end
@@ -184,20 +184,21 @@ module main_tb;
 	end
 	endtask
 
-	// reg [6:0] fir_chk_i;
+	reg [6:0] fir_chk_i;
 	task fir_check;
 	begin
 		// FIR
 		wait(checkbits == 16'hAB30);
 		$display("Test check start - FIR");
-		// wait(checkbits != 16'hAB30);
-		// for(fir_chk_i=0;fir_chk_i<64;fir_chk_i=fir_chk_i+1) 
-		// begin
-		// 	wait(checkbits==fir_output[fir_chk_i][31:16]);
-		// 	wait(checkbits==fir_output[fir_chk_i][15:0]);
-		// 	$display("FIR i = %d, received = %5d, golden ans = %5d", fir_chk_i, checkbits, fir_output[fir_chk_i]);
-		// 	$display("in 213");
-		// end
+		wait(checkbits != 16'hAB30);
+		for(fir_chk_i=0;fir_chk_i<64;fir_chk_i=fir_chk_i+1) 
+		begin
+			wait(checkbits==fir_output[fir_chk_i][31:16]);
+			$display("received = %5d, golden ans = %5d", checkbits, fir_output[fir_chk_i][31:16]);
+			wait(checkbits==fir_output[fir_chk_i][15:0]);
+			$display("received = %5d, golden ans = %5d", checkbits, fir_output[fir_chk_i][15:0]);
+			$display("Y[%d] ,golden ans = %5d", fir_chk_i, fir_output[fir_chk_i]);
+		end
 		wait(checkbits == 16'hAB31);
 		$display("Test check end   - FIR");
 	end
