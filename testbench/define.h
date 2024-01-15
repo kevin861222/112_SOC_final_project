@@ -70,8 +70,8 @@ typedef enum
 #define BRAM_u1_end (BRAM_u1_base + BRAM_u1_length - 1)
 #define reg_bram_u0_base (*(volatile uint32_t *)BRAM_u0_base) // 0x3800_0000
 #define reg_bram_u0_end  (*(volatile uint32_t *)BRAM_u0_end)  // 0x3800_04ff
-#define reg_bram_u1_base (*(volatile uint32_t *)BRAM_u1_base) // 0x3800_1000
-#define reg_bram_u1_end  (*(volatile uint32_t *)BRAM_u1_end)  // 0x3800_1fff
+#define reg_bram_u1_base (*(volatile uint32_t *)BRAM_u1_base) // 0x3800_7000
+#define reg_bram_u1_end  (*(volatile uint32_t *)BRAM_u1_end)  // 0x3800_7fff
 
 #define DMA_cfg_length  0
 #define DMA_cfg_channel 7
