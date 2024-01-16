@@ -37,31 +37,22 @@ assign abt_full_n = ~full ;
 reg wbs_ack_q ;
 reg [31:0] wbs_dat_o_q ;
 assign wbs_ack_o = wbs_ack_q ;
-assign wbs_dat_o = wbs_dat_o_q;
+assign wbs_dat_o = wbs_dat_o_q ;
 always @(posedge clk or posedge rst) begin
     if (rst) begin
         full <= 0 ;
         wbs_ack_q <= 0 ;
         wbs_dat_o_q <= 32'd0 ;
-    end 
-    else begin
-        if (brc_in_valid) begin
-            FIFO_reg <= Di ;
-            full <= 1 ;
-            // wbs_ack_q <= 0;
-            wbs_dat_o_q <= 0;
-        end 
-        else if (IsAcessFIFO) begin
-            wbs_ack_q <= 1 ;
-            wbs_dat_o_q <= FIFO_reg ;
-            full <= 0 ;
-        end
-        else begin
-            // full <= 0 ;
-            // wbs_ack_q <= 0 ;
-            wbs_dat_o_q <= 32'd0 ;
-        end
-        if(wbs_ack_q) wbs_ack_q<=0;
+    end else if (brc_in_valid) begin
+        FIFO_reg <= Di ;
+        full <= 1 ;
+    end else if (IsAcessFIFO) begin
+        wbs_ack_q <= 1 ;
+        wbs_dat_o_q <= FIFO_reg ;
+        full <= 0 ;
+    end else begin
+        wbs_ack_q <= 0 ;
+        wbs_dat_o_q <= 32'd0 ;
     end
 end
     

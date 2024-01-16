@@ -215,6 +215,9 @@ always @(*) begin
     if (FIFO_get_data) begin
         FIFO_read_flag_d = 0;
     end
+    else begin
+        FIFO_read_flag_d = FIFO_read_flag_q;
+    end
     bram_u1_wr_d = 0 ;
     bram_u1_in_valid_d = 0 ;
     bram_u1_addr_d = 13'd0 ;

@@ -10,8 +10,7 @@
 #define QSORT_SIZE 10
 #define NUM_QSORT_INPUT  QSORT_SIZE
 #define NUM_QSORT_OUTPUT QSORT_SIZE
-// #define TIMES_RERUN 3
-#define TIMES_RERUN 1
+#define TIMES_RERUN 3
 
 // Memory Map of BRAM u0 (data - unprocessed)
 // Reference: ~/testbench/main.map

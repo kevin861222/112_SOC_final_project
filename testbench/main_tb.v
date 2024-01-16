@@ -16,8 +16,7 @@
 `default_nettype none
 
 `timescale 1 ns / 1 ps
-// `define times_rerun 3
-`define times_rerun 1
+`define times_rerun 3
 module main_tb;
 	reg clock;
 	reg RSTB;
@@ -49,7 +48,7 @@ module main_tb;
 		$dumpvars(0, main_tb);
 
 		// Repeat cycles of 1000 clock edges as needed to complete testbench
-		repeat (150) begin
+		repeat (250) begin
 			repeat (1000) @(posedge clock);
 			// $display("+1000 cycles");
 		end
@@ -69,21 +68,21 @@ module main_tb;
 			for(times_workload=0;times_workload<`times_rerun;times_workload=times_workload+1) begin
 				$display("Times = %1d/%1d - Hardware", times_workload+1, `times_rerun);
 				fir;
-				// matmul;
-				// qsort;
+				matmul;
+				qsort;
 			end
 			
 			for(times_workload=0;times_workload<`times_rerun;times_workload=times_workload+1) begin
 				$display("Times = %1d/%1d - Hardware(check)", times_workload+1, `times_rerun);
 				fir_check;
-				// matmul_check;
-				// qsort_check;
+				matmul_check;
+				qsort_check;
 			end
 			
-			// for(times_uart=0;times_uart<`times_rerun;times_uart=times_uart+1) begin
-			// 	$display("Times = %1d/%1d - UART", times_uart+1, `times_rerun);
-			// 	send_data(times_uart);
-			// end
+			for(times_uart=0;times_uart<`times_rerun;times_uart=times_uart+1) begin
+				$display("Times = %1d/%1d - UART", times_uart+1, `times_rerun);
+				send_data(times_uart);
+			end
 		join
 		$finish;
 	end
@@ -117,6 +116,9 @@ module main_tb;
 				fir_output[fir_i] = fir_output[fir_i] + fir_taps[fir_j] * fir_input[fir_i-fir_j];
 			end
 		end
+		// for(fir_i=0;fir_i<64;fir_i=fir_i+1) begin
+		// 	$display("Y[%d] = %d", fir_i, fir_output[fir_i]);
+		// end
 	end
 
 	// matmul
@@ -144,6 +146,9 @@ module main_tb;
 				end
 			end
 		end
+		// for(mat_i=0;mat_i<16;mat_i=mat_i+1) begin
+		// 	$display("mat_output[%d] = %d", mat_i, mat_output[mat_i]);
+		// end
 	end
 
 	// qsort
@@ -162,16 +167,16 @@ module main_tb;
 		qsort_input[8] = 5681;
 		qsort_input[9] = 4622;
 		// Output
-		qsort_input[0] =   40;
-		qsort_input[1] =  893;
-		qsort_input[2] = 2541;
-		qsort_input[3] = 2669;
-		qsort_input[4] = 3233;
-		qsort_input[5] = 4267;
-		qsort_input[6] = 4622;
-		qsort_input[7] = 5681;
-		qsort_input[8] = 6023;
-		qsort_input[9] = 9073;
+		qsort_output[0] =   40;
+		qsort_output[1] =  893;
+		qsort_output[2] = 2541;
+		qsort_output[3] = 2669;
+		qsort_output[4] = 3233;
+		qsort_output[5] = 4267;
+		qsort_output[6] = 4622;
+		qsort_output[7] = 5681;
+		qsort_output[8] = 6023;
+		qsort_output[9] = 9073;
 	end
 
 	task fir;
@@ -194,10 +199,10 @@ module main_tb;
 		for(fir_chk_i=0;fir_chk_i<64;fir_chk_i=fir_chk_i+1) 
 		begin
 			wait(checkbits==fir_output[fir_chk_i][31:16]);
-			$display("received = %5d, golden ans = %5d", checkbits, fir_output[fir_chk_i][31:16]);
+			$display("ans[31:16] = %6d, golden ans[31:16] = %6d", checkbits, fir_output[fir_chk_i][31:16]);
 			wait(checkbits==fir_output[fir_chk_i][15:0]);
-			$display("received = %5d, golden ans = %5d", checkbits, fir_output[fir_chk_i][15:0]);
-			$display("Y[%d] ,golden ans = %5d", fir_chk_i, fir_output[fir_chk_i]);
+			$display("ans[15:0]  = %6d, golden ans[15:0]  = %6d", checkbits, fir_output[fir_chk_i][15:0]);
+			$display("FIR passed - pattern #%2d", fir_chk_i);
 		end
 		wait(checkbits == 16'hAB31);
 		$display("Test check end   - FIR");
@@ -224,7 +229,8 @@ module main_tb;
 		for(mat_chk_i=0;mat_chk_i<16;mat_chk_i=mat_chk_i+1) 
 		begin
 			wait(checkbits==mat_output[mat_chk_i]);
-			$display("received = %5d, golden ans = %5d", checkbits, mat_output[mat_chk_i]);
+			$display("ans = %2d, golden ans = %2d", checkbits, mat_output[mat_chk_i]);
+			$display("matmul passed - pattern #%02d", mat_chk_i);
 		end
 		wait(checkbits == 16'hAB41);
 		$display("Test check end   - matmul");
@@ -250,7 +256,8 @@ module main_tb;
 		for(qsort_chk_i=0;qsort_chk_i<10;qsort_chk_i=qsort_chk_i+1) 
 		begin
 			wait(checkbits==qsort_output[qsort_chk_i]);
-			$display("received = %5d, golden ans = %5d", checkbits, qsort_output[qsort_chk_i]);
+			$display("ans = %4d, golden ans = %4d", checkbits, qsort_output[qsort_chk_i]);
+			$display("qsort passed - pattern #%1d", qsort_chk_i);
 		end
 		wait(checkbits == 16'hAB51);
 		$display("Test check end   - qsort");

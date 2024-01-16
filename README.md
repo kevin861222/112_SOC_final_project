@@ -72,34 +72,35 @@ end
 ## 2. Simulation
 ## 2.1 RTL
 1. generate project firmware and simulation on vivado
-    ``` bash=
+    ``` bash
       cd ~/testbench
       make
     ```
 
 ## 2.2 Synthesis/Implementation
 1. generate bitstream/hardware handoff files
-    ``` bash=
+    ``` bash
     cd ~/vivado
     make
     ```
 2. upload files on online FPGA
-    ``` bash=
+    ``` bash
     cp ./vivado/jupyter_notebook/* onlineFPGA
     # Run caravel_fpga.ipynb
     ```
 
 ## 3. Result
 ### 3.1 Command Line
-``` text=
+``` text
 make[1]: Entering directory '~/testbench'
 make[1]: Leaving directory '~/testbench'
 Reading main.hex
 main.hex loaded into memory
 Memory 5 bytes = 0x6f 0x00 0x00 0x0b 0x13
 VCD info: dumpfile main.vcd opened for output.
-Times = 1/3 - UART
-Times = 1/3 - Hardware
+Times = 1/1 - UART
+Times = 1/1 - Hardware(check)
+Times = 1/1 - Hardware
 tx_data[0] = 1'b0
 tx_data[1] = 1'b0
 tx_data[2] = 1'b0
@@ -109,47 +110,263 @@ tx_data[5] = 1'b0
 tx_data[6] = 1'b0
 tx_data[7] = 1'b0
 tx complete - data: 8'd000, 8'h00
-Times = 2/3 - UART
-tx_data[0] = 1'b1
-tx_data[1] = 1'b0
-Test start - FIR
-Test end   - FIR
-Test start - matmul
-tx_data[2] = 1'b0
-Test end   - matmul
-Test start - qsort
-Test end   - qsort
-Times = 2/3 - Hardware
-tx_data[3] = 1'b0
 Test start - FIR
 Test end   - FIR
 Test start - matmul
 Test end   - matmul
 Test start - qsort
-tx_data[4] = 1'b0
 Test end   - qsort
-Times = 3/3 - Hardware
-Test start - FIR
-tx_data[5] = 1'b0
-Test end   - FIR
-Test start - matmul
-Test end   - matmul
-Test start - qsort
-tx_data[6] = 1'b0
-Test end   - qsort
-tx_data[7] = 1'b0
-tx complete - data: 8'd001, 8'h01
-Times = 3/3 - UART
-tx_data[0] = 1'b0
-tx_data[1] = 1'b1
-tx_data[2] = 1'b0
-tx_data[3] = 1'b0
-tx_data[4] = 1'b0
-tx_data[5] = 1'b0
-tx_data[6] = 1'b0
-tx_data[7] = 1'b0
-tx complete - data: 8'd002, 8'h02
-main_tb.v:80: $finish called at 3593727000 (1ps)
+Test check start - FIR
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =      0, golden ans[15:0]  =      0
+FIR passed - pattern # 0
+ans[31:16] =  65535, golden ans[31:16] =  65535
+ans[15:0]  =  65526, golden ans[15:0]  =  65526
+FIR passed - pattern # 1
+ans[31:16] =  65535, golden ans[31:16] =  65535
+ans[15:0]  =  65507, golden ans[15:0]  =  65507
+FIR passed - pattern # 2
+ans[31:16] =  65535, golden ans[31:16] =  65535
+ans[15:0]  =  65511, golden ans[15:0]  =  65511
+FIR passed - pattern # 3
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =     35, golden ans[15:0]  =     35
+FIR passed - pattern # 4
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =    158, golden ans[15:0]  =    158
+FIR passed - pattern # 5
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =    337, golden ans[15:0]  =    337
+FIR passed - pattern # 6
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =    539, golden ans[15:0]  =    539
+FIR passed - pattern # 7
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =    732, golden ans[15:0]  =    732
+FIR passed - pattern # 8
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =    915, golden ans[15:0]  =    915
+FIR passed - pattern # 9
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   1098, golden ans[15:0]  =   1098
+FIR passed - pattern #10
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   1281, golden ans[15:0]  =   1281
+FIR passed - pattern #11
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   1464, golden ans[15:0]  =   1464
+FIR passed - pattern #12
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   1647, golden ans[15:0]  =   1647
+FIR passed - pattern #13
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   1830, golden ans[15:0]  =   1830
+FIR passed - pattern #14
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   2013, golden ans[15:0]  =   2013
+FIR passed - pattern #15
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   2196, golden ans[15:0]  =   2196
+FIR passed - pattern #16
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   2379, golden ans[15:0]  =   2379
+FIR passed - pattern #17
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   2562, golden ans[15:0]  =   2562
+FIR passed - pattern #18
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   2745, golden ans[15:0]  =   2745
+FIR passed - pattern #19
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   2928, golden ans[15:0]  =   2928
+FIR passed - pattern #20
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   3111, golden ans[15:0]  =   3111
+FIR passed - pattern #21
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   3294, golden ans[15:0]  =   3294
+FIR passed - pattern #22
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   3477, golden ans[15:0]  =   3477
+FIR passed - pattern #23
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   3660, golden ans[15:0]  =   3660
+FIR passed - pattern #24
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   3843, golden ans[15:0]  =   3843
+FIR passed - pattern #25
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   4026, golden ans[15:0]  =   4026
+FIR passed - pattern #26
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   4209, golden ans[15:0]  =   4209
+FIR passed - pattern #27
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   4392, golden ans[15:0]  =   4392
+FIR passed - pattern #28
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   4575, golden ans[15:0]  =   4575
+FIR passed - pattern #29
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   4758, golden ans[15:0]  =   4758
+FIR passed - pattern #30
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   4941, golden ans[15:0]  =   4941
+FIR passed - pattern #31
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   5124, golden ans[15:0]  =   5124
+FIR passed - pattern #32
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   5307, golden ans[15:0]  =   5307
+FIR passed - pattern #33
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   5490, golden ans[15:0]  =   5490
+FIR passed - pattern #34
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   5673, golden ans[15:0]  =   5673
+FIR passed - pattern #35
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   5856, golden ans[15:0]  =   5856
+FIR passed - pattern #36
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   6039, golden ans[15:0]  =   6039
+FIR passed - pattern #37
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   6222, golden ans[15:0]  =   6222
+FIR passed - pattern #38
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   6405, golden ans[15:0]  =   6405
+FIR passed - pattern #39
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   6588, golden ans[15:0]  =   6588
+FIR passed - pattern #40
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   6771, golden ans[15:0]  =   6771
+FIR passed - pattern #41
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   6954, golden ans[15:0]  =   6954
+FIR passed - pattern #42
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   7137, golden ans[15:0]  =   7137
+FIR passed - pattern #43
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   7320, golden ans[15:0]  =   7320
+FIR passed - pattern #44
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   7503, golden ans[15:0]  =   7503
+FIR passed - pattern #45
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   7686, golden ans[15:0]  =   7686
+FIR passed - pattern #46
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   7869, golden ans[15:0]  =   7869
+FIR passed - pattern #47
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   8052, golden ans[15:0]  =   8052
+FIR passed - pattern #48
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   8235, golden ans[15:0]  =   8235
+FIR passed - pattern #49
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   8418, golden ans[15:0]  =   8418
+FIR passed - pattern #50
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   8601, golden ans[15:0]  =   8601
+FIR passed - pattern #51
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   8784, golden ans[15:0]  =   8784
+FIR passed - pattern #52
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   8967, golden ans[15:0]  =   8967
+FIR passed - pattern #53
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   9150, golden ans[15:0]  =   9150
+FIR passed - pattern #54
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   9333, golden ans[15:0]  =   9333
+FIR passed - pattern #55
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   9516, golden ans[15:0]  =   9516
+FIR passed - pattern #56
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   9699, golden ans[15:0]  =   9699
+FIR passed - pattern #57
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =   9882, golden ans[15:0]  =   9882
+FIR passed - pattern #58
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =  10065, golden ans[15:0]  =  10065
+FIR passed - pattern #59
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =  10248, golden ans[15:0]  =  10248
+FIR passed - pattern #60
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =  10431, golden ans[15:0]  =  10431
+FIR passed - pattern #61
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =  10614, golden ans[15:0]  =  10614
+FIR passed - pattern #62
+ans[31:16] =      0, golden ans[31:16] =      0
+ans[15:0]  =  10797, golden ans[15:0]  =  10797
+FIR passed - pattern #63
+Test check end   - FIR
+Test check start - matmul
+ans = 62, golden ans = 62
+matmul passed - pattern #00
+ans = 68, golden ans = 68
+matmul passed - pattern #01
+ans = 74, golden ans = 74
+matmul passed - pattern #02
+ans = 80, golden ans = 80
+matmul passed - pattern #03
+ans = 62, golden ans = 62
+matmul passed - pattern #04
+ans = 68, golden ans = 68
+matmul passed - pattern #05
+ans = 74, golden ans = 74
+matmul passed - pattern #06
+ans = 80, golden ans = 80
+matmul passed - pattern #07
+ans = 62, golden ans = 62
+matmul passed - pattern #08
+ans = 68, golden ans = 68
+matmul passed - pattern #09
+ans = 74, golden ans = 74
+matmul passed - pattern #10
+ans = 80, golden ans = 80
+matmul passed - pattern #11
+ans = 62, golden ans = 62
+matmul passed - pattern #12
+ans = 68, golden ans = 68
+matmul passed - pattern #13
+ans = 74, golden ans = 74
+matmul passed - pattern #14
+ans = 80, golden ans = 80
+matmul passed - pattern #15
+Test check end   - matmul
+Test check start - qsort
+ans =   40, golden ans =   40
+qsort passed - pattern #0
+ans =  893, golden ans =  893
+qsort passed - pattern #1
+ans = 2541, golden ans = 2541
+qsort passed - pattern #2
+ans = 2669, golden ans = 2669
+qsort passed - pattern #3
+ans = 3233, golden ans = 3233
+qsort passed - pattern #4
+ans = 4267, golden ans = 4267
+qsort passed - pattern #5
+ans = 4622, golden ans = 4622
+qsort passed - pattern #6
+ans = 5681, golden ans = 5681
+qsort passed - pattern #7
+ans = 6023, golden ans = 6023
+qsort passed - pattern #8
+ans = 9073, golden ans = 9073
+qsort passed - pattern #9
+Test check end   - qsort
+main_tb.v:88: $finish called at 3251237500 (1ps)
 ```
 
 ### 3.2 Waveform
