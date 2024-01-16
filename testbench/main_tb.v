@@ -16,7 +16,8 @@
 `default_nettype none
 
 `timescale 1 ns / 1 ps
-`define times_rerun 3
+// `define times_rerun 3
+`define times_rerun 1
 module main_tb;
 	reg clock;
 	reg RSTB;

@@ -1,28 +1,22 @@
 // Memory Map - wishbone
 //          +------+------+-------+------+---------+--------+
-//  DMA_cfg |      |      |       |      |         |        |
-//          | done | idle | start | type | channel | length |
-// 38008000 |      |      |       |      |         |        |
+// DMA_cfg  | done | idle | start | type | channel | length |
+//          | [12] | [11] | [10]  | [9]  |  [8:7]  |  [6:0] |
 //          +------+------+-------+------+---------+--------+
-//            [12]   [11]   [10]     [9]    [8:7]     [6:0]
-// 
-// 
-//          +--------------------------------+--------------+
-// DMA_addr |                                |              |
-//          |                                | addr_DMA2RAM |
-// 38008004 |                                |              |
-//          +--------------------------------+--------------+
-//                                                 [12:0]
-// parameter
-// ------------------------------------------------------------------ //
-// DMA_cfg[12]     = ap_done (1 stands for done)           [Read only]
-// DMA_cfg[11]     = ap_idle (1 stands for idle)           [Read only]
-// DMA_cfg[10]     = ap_start(1 stands for start)          [R/W]
-// DMA_cfg[9]      = type (mem->io=0, io->mem=1)           [R/W]
-// DMA_cfg[8:7]    = channel[1:0] (fir=0,matmul=1,qsort=2) [R/W]
-// DMA_cfg[6:0]    = length[6:0]                           [R/W]
-// ------------------------------------------------------------------ //
-// DMA_addr[12:0]  = address_DMA2RAM                       [R/W]
+// DMA_addr |                addr_DMA2RAM                   |
+//          |                   [12:0]                      |
+//          +-----------------------------------------------+
+// DMA Config
+// |Parameter     |Permission |Meaning                              |
+// |--------------|-----------|-------------------------------------|
+// |DMA_cfg[12]   |[Read only]|ap_done (1 stands for done)          |
+// |DMA_cfg[11]   |[Read only]|ap_idle (1 stands for idle)          |
+// |DMA_cfg[10]   |[R/W]      |ap_start(1 stands for start)         |
+// |DMA_cfg[9]    |[R/W]      |type (mem->io=0, io->mem=1)          |
+// |DMA_cfg[8:7]  |[R/W]      |channel[1:0] (fir=0,matmul=1,qsort=2)|
+// |DMA_cfg[6:0]  |[R/W]      |length[6:0]                          |
+// |--------------|-----------|-------------------------------------|
+// |DMA_addr[12:0]|[R/W]      |address_DMA2RAM                      |
 
 `include "../rtl/user/defines.v"
 module DMA_Controller 
