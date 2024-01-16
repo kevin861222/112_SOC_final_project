@@ -220,6 +220,7 @@ Arbiter Arbiter (
     .bram_u0_reader_sel(bram_u0_reader_sel), // 0:DMA  1:CPU
 
     /* Arbiter <--> BRAM Controller u1 */
+    .FIFO_get_data(fifo_in_valid),
     .bram_u1_wr(bram_u1_wr),  // 0:R 1:W
     .bram_u1_in_valid(bram_u1_in_valid), 
     .bram_u1_addr(bram_u1_addr), 

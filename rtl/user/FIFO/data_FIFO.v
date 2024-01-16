@@ -45,6 +45,7 @@ always @(posedge clk or posedge rst) begin
         wbs_dat_o_q <= 32'd0 ;
     end else if (brc_in_valid) begin
         FIFO_reg <= Di ;
+        full <= 1 ;
     end else if (IsAcessFIFO) begin
         wbs_ack_q <= 1 ;
         wbs_dat_o_q <= FIFO_reg ;

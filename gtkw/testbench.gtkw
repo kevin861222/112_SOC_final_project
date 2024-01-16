@@ -1,14 +1,12 @@
 [*]
 [*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
-[*] Sun Jan 14 18:27:11 2024
+[*] Mon Jan 15 07:32:39 2024
 [*]
-[dumpfile] "D:\vivado\Lab_final\testbench\main.vcd"
-[dumpfile_mtime] "Sun Jan 14 17:36:39 2024"
-[dumpfile_size] 217324358
-[savefile] "D:\vivado\Lab_final\gtkw\uart.gtkw"
+[dumpfile] "D:\vivado\Lab_final\gtkw\main.vcd"
+[savefile] "D:\vivado\Lab_final\gtkw\testbench.gtkw"
 [timestart] 2171060000
 [size] 1536 889
-[pos] -1 -1
+[pos] -9 -9
 *-21.658770 1727000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] main_tb.
 [treeopen] main_tb.uut.

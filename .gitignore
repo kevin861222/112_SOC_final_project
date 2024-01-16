@@ -12,3 +12,4 @@ vivado/*.log
 vivado/*.jou
 vivado/vvd_caravel_fpga
 vivado/NA
+*.log

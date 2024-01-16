@@ -13,6 +13,7 @@
 #define TIMES_RERUN 3
 
 // Memory Map of BRAM u0 (data - unprocessed)
+// Reference: ~/testbench/main.map
 typedef enum
 {
     fir_taps_base,
@@ -41,6 +42,9 @@ typedef enum
 // Memory-Map Address
 #define MMIO_DMA         0x30008000
 #define MMIO_UART        0x31000000
+// Reference: ~/firmware/sections.lds
+#define BRAM_u0_base     0x38000000
+#define BRAM_u1_base     0x38007000
 
 #define offset_DMA_cfg  0x00
 #define offset_DMA_addr 0x04
@@ -58,6 +62,16 @@ typedef enum
 #define reg_rx_data   (*(volatile uint32_t *)UART_RX_DATA) // 0x3100_0000
 #define reg_tx_data   (*(volatile uint32_t *)UART_TX_DATA) // 0x3100_0004
 #define reg_uart_stat (*(volatile uint32_t *)UART_STAT)    // 0x3100_0008
+
+// Reference: ~/firmware/sections.lds
+#define BRAM_u0_length 0x00000500
+#define BRAM_u1_length 0x00001000
+#define BRAM_u0_end (BRAM_u0_base + BRAM_u0_length - 1)
+#define BRAM_u1_end (BRAM_u1_base + BRAM_u1_length - 1)
+#define reg_bram_u0_base (*(volatile uint32_t *)BRAM_u0_base) // 0x3800_0000
+#define reg_bram_u0_end  (*(volatile uint32_t *)BRAM_u0_end)  // 0x3800_04ff
+#define reg_bram_u1_base (*(volatile uint32_t *)BRAM_u1_base) // 0x3800_7000
+#define reg_bram_u1_end  (*(volatile uint32_t *)BRAM_u1_end)  // 0x3800_7fff
 
 #define DMA_cfg_length  0
 #define DMA_cfg_channel 7

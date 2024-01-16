@@ -1,0 +1,119 @@
+[*]
+[*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
+[*] Mon Jan 15 17:37:51 2024
+[*]
+[dumpfile] "D:\vivado\Lab_final\testbench\main.vcd"
+[dumpfile_mtime] "Mon Jan 15 17:35:21 2024"
+[dumpfile_size] 102817944
+[savefile] "D:\vivado\Lab_final\gtkw\fifo.gtkw"
+[timestart] 2745053000
+[size] 1536 889
+[pos] -1 -1
+*-18.790899 2749537500 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] main_tb.
+[treeopen] main_tb.uut.
+[treeopen] main_tb.uut.mprj.
+[treeopen] main_tb.uut.mprj.acc_ASIC.
+[treeopen] main_tb.uut.mprj.brc_u0.
+[treeopen] main_tb.uut.mprj.brc_u1.
+[treeopen] main_tb.uut.soc.
+[treeopen] main_tb.uut.soc.core.
+[sst_width] 296
+[signals_width] 287
+[sst_expanded] 1
+[sst_vpaned_height] 374
+@200
+-wishbone
+@28
+main_tb.uut.mprj.wb_clk_i
+main_tb.uut.mprj.wb_rst_i
+main_tb.uut.mprj.wbs_ack_o
+@22
+main_tb.uut.mprj.wbs_adr_i[31:0]
+main_tb.uut.mprj.wbs_dat_i[31:0]
+main_tb.uut.mprj.wbs_dat_o[31:0]
+@23
+main_tb.uut.mprj.wbs_dat_o_FIFO[31:0]
+@28
+main_tb.uut.mprj.fifo_in_valid
+main_tb.uut.mprj.brc_u1.Out_valid_d
+@22
+main_tb.uut.mprj_dat_o_user[31:0]
+main_tb.uut.mprj_dat_o_core[31:0]
+main_tb.uut.mprj.wbs_dat_o_dma[31:0]
+main_tb.uut.mprj.wbs_dat_o_uart[31:0]
+main_tb.checkbits[15:0]
+@200
+-data_FIFO
+@28
+main_tb.uut.mprj.data_FIFO.brc_in_valid
+@22
+main_tb.uut.mprj.data_FIFO.wbs_dat_o_q[31:0]
+@420
+main_tb.uut.mprj.data_FIFO.Di[31:0]
+@28
+main_tb.uut.mprj.data_FIFO.IsAcessFIFO
+main_tb.uut.mprj.data_FIFO.wbs_ack_o
+@22
+main_tb.uut.mprj.data_FIFO.FIFO_reg[31:0]
+@28
+main_tb.uut.mprj.data_FIFO.Isu1addr
+@22
+main_tb.uut.mprj.data_FIFO.wbs_dat_o[31:0]
+main_tb.uut.mprj.data_FIFO.wbs_dat_i[31:0]
+@28
+main_tb.uut.mprj.data_FIFO.wbs_stb_i
+main_tb.uut.mprj.data_FIFO.wbs_we_i
+@200
+-BRAM_u1
+@28
+main_tb.uut.mprj.brc_u1.EN
+main_tb.uut.mprj.brc_u1.WE
+@22
+main_tb.uut.mprj.brc_u1.A[12:0]
+@420
+main_tb.uut.mprj.brc_u1.bram_Di[31:0]
+main_tb.uut.mprj.brc_u1.bram_Do[31:0]
+@200
+-BRAM_Controller_u1
+@22
+main_tb.uut.mprj.brc_u1.Addr[12:0]
+main_tb.uut.mprj.brc_u1.Do[31:0]
+main_tb.uut.mprj.brc_u1.A[12:0]
+main_tb.uut.mprj.brc_u1.Addr[12:0]
+@200
+-Arbiter
+@28
+main_tb.uut.mprj.Arbiter.dma_write_request
+main_tb.uut.mprj.DMA_Controller.ss_tvalid
+main_tb.uut.mprj.DMA_Controller.ss_tready
+main_tb.uut.mprj.DMA_Controller.ss_tlast
+@22
+main_tb.uut.mprj.DMA_Controller.ss_tdata[31:0]
+@28
+main_tb.uut.mprj.DMA_Controller.sm_tvalid
+main_tb.uut.mprj.DMA_Controller.sm_tready
+main_tb.uut.mprj.DMA_Controller.sm_tlast
+@420
+main_tb.uut.mprj.DMA_Controller.sm_tdata[31:0]
+@200
+-ASIC
+-DMA
+@28
+main_tb.uut.mprj.DMA_Controller.ch[1:0]
+@24
+main_tb.uut.mprj.DMA_Controller.length[6:0]
+@28
+main_tb.uut.mprj.DMA_Controller.ap_start_ASIC[2:0]
+main_tb.uut.mprj.DMA_Controller.ap_idle_ASIC
+main_tb.uut.mprj.DMA_Controller.ap_done_ASIC[2:0]
+main_tb.uut.mprj.DMA_Controller.ap_start_DMA
+main_tb.uut.mprj.DMA_Controller.ap_idle_DMA
+main_tb.uut.mprj.DMA_Controller.ap_done_DMA
+[pattern_trace] 1
+[pattern_trace] 0
+!100000@@
+?"2600000C
+@23
+main_tb.uut.mprj.wbs_adr_i[31:0]
+!!

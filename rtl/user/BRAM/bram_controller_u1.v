@@ -19,6 +19,7 @@ input [31:0] Di ,
 output fifo_in_valid ,
 output [31:0] Do //
 );
+assign Do = (fifo_in_valid)?(bram_Do):(0);
 /*----------------------------------------------------------------------*/ 
 // Pre-store
 reg isFIFOrst ; 
@@ -70,6 +71,7 @@ always @( posedge clk or posedge rst ) begin
 end
 /*---------------------------------------------------------------------*/
 /* Signal to Bram */
+wire [31:0] bram_Do ;
 wire WE ;
 assign WE = Task_bay_rw[pointer];
 wire EN ;
@@ -86,7 +88,7 @@ bram bram_u0 (
     .Di(bram_Di),
     .A(A),
     /* From bram */
-    .Do(Do)
+    .Do(bram_Do)
 );
 /*---------------------------------------------------------------------*/
 /* Output Valid */

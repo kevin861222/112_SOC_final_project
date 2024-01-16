@@ -60,6 +60,7 @@ module Arbiter #(
     output bram_u0_reader_sel , // 0:DMA  1:CPU
 
     /* Arbiter <--> BRAM Controller u1 */
+    input FIFO_get_data ,
     output bram_u1_wr ,  // 0:R 1:W
     output bram_u1_in_valid , 
     output [12:0] bram_u1_addr , 
@@ -74,7 +75,7 @@ wire cpu_read_request ;
 wire cpu_read_valid ;
 assign cpu_read_valid = wbs_stb_i & wbs_cyc_i & (~wbs_we_i) ;
 
-assign cpu_read_request = cpu_read_valid & (wbs_adr_i[15:12]==4'b0001) & (wbs_adr_i[31:24]==8'h38) & (wbs_adr_i[4:0]==5'd0);
+assign cpu_read_request = cpu_read_valid & ((wbs_adr_i[15:12]==4'h1) | (wbs_adr_i[15:12]==4'h2)) & (wbs_adr_i[31:24]==8'h38) & (wbs_adr_i[4:0]==5'd0);
 
 // BRAM u0
 reg bram_u0_wr_d ;
@@ -119,7 +120,15 @@ wire wbs_same_addr_n ;
 assign wbs_same_addr_n = (last_wbs_read_addr==wbs_adr_i[15:2])?(0):(1);
 
 // CPU_read_counter
-reg read_flag_d ,FIFO_read_flag_d ;
+reg CPU_read_flag_d ;
+reg FIFO_read_flag_d , FIFO_read_flag_q;
+always @(posedge wb_clk_i or posedge wb_rst_i) begin
+    if (wb_rst_i) begin
+        FIFO_read_flag_q <= 0 ;
+    end else begin
+        FIFO_read_flag_q <= FIFO_read_flag_d ;
+    end
+end
 reg [12:0] FIFO_counter ;
 reg [2:0] CPU_read_counter ;
 always @(posedge wb_rst_i or posedge wb_clk_i) begin
@@ -127,8 +136,8 @@ always @(posedge wb_rst_i or posedge wb_clk_i) begin
         FIFO_counter <= 0 ;
         CPU_read_counter <= 0 ;
     end else begin
-        CPU_read_counter <= CPU_read_counter + read_flag_d ;
-        FIFO_counter <= FIFO_counter + FIFO_read_flag_d ;
+        CPU_read_counter <= CPU_read_counter + CPU_read_flag_d ;
+        FIFO_counter <= FIFO_counter + FIFO_get_data ;
     end
 end
 
@@ -154,7 +163,7 @@ always @(*) begin
     end else begin
         same_addr_flag_d = 0 ;
     end
-    read_flag_d = 0 ;
+    CPU_read_flag_d = 0 ;
     wbs_ack_d = 0 ; 
     bram_u0_wr_d = 0 ;
     bram_u0_in_valid_d = 0 ;
@@ -177,7 +186,7 @@ always @(*) begin
         dma_r_ack_d = 1 ;
         // switch into DMA burst read mode .
     end else if (|CPU_read_counter) begin:                                      CPU_Burst_Read_Instruction
-        read_flag_d = 1 ;
+        CPU_read_flag_d = 1 ;
         bram_u0_wr_d = 0 ;
         bram_u0_in_valid_d = 1 ;
         bram_u0_addr_d = wbs_adr_i[15:2] + CPU_read_counter ;
@@ -185,7 +194,7 @@ always @(*) begin
     end else if ( cpu_read_request & ~same_addr_flag_q ) begin :                                  CPU_Read_u0
         /*wbs_stb_i & wbs_cyc_i & ~wbs_we_i & ~wbs_adr_i[15] & is_u0 &*/
         same_addr_flag_d = 1 ;
-        read_flag_d = 1 ;
+        CPU_read_flag_d = 1 ;
         bram_u0_wr_d = 0 ;
         bram_u0_in_valid_d = 1 ;
         bram_u0_addr_d = wbs_adr_i[15:2] ;
@@ -203,7 +212,12 @@ Condition : CPU - R
             DMA - W 
 */
 always @(*) begin
-    FIFO_read_flag_d = 0 ;
+    if (FIFO_get_data) begin
+        FIFO_read_flag_d = 0;
+    end
+    else begin
+        FIFO_read_flag_d = FIFO_read_flag_q;
+    end
     bram_u1_wr_d = 0 ;
     bram_u1_in_valid_d = 0 ;
     bram_u1_addr_d = 13'd0 ;
@@ -214,12 +228,12 @@ always @(*) begin
         bram_u1_in_valid_d = 1 ;
         bram_u1_addr_d = dma_w_addr ;
         bram_u1_data_in_d = dma_w_data ;
-    end else if (fifo_full_n) begin : CPU_Read_u1
+    end else if (fifo_full_n & (~FIFO_read_flag_q)) begin : CPU_Read_u1
     /*wbs_stb_i & wbs_cyc_i & ~wbs_we_i & ~wbs_adr_i[15] & is_u1 & wbs_same_addr_n*/
-        FIFO_read_flag_d = 1 ;
+        FIFO_read_flag_d = 1;
         bram_u1_wr_d = 0 ;
         bram_u1_in_valid_d = 1 ;
-        bram_u1_addr_d = /*offset =*/13'd1 + FIFO_counter ;//wbs_adr_i[15:2] ;
+        bram_u1_addr_d = /*offset =*/13'd0 + FIFO_counter ;//wbs_adr_i[15:2] ;
     end
 end
 

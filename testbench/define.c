@@ -17,10 +17,10 @@ int fir_output[NUM_FIR_INPUT];
 // matmul
 int mat_A[NUM_MAT_A] = 
 {
-        0, 1, 2, 3,
-        0, 1, 2, 3,
-        0, 1, 2, 3,
-        0, 1, 2, 3,
+     0, 1, 2, 3,
+     0, 1, 2, 3,
+     0, 1, 2, 3,
+     0, 1, 2, 3,
 };
 // Transpose matrix
 int mat_B_T[NUM_MAT_B] = 
