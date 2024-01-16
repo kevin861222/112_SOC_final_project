@@ -1,18 +1,40 @@
 # 112 SOC Lab - Final Project
-![Static Badge](https://img.shields.io/badge/Build-Success-green?labelColor=gray)
+![Badge_Build](https://img.shields.io/badge/Build-passing-green?labelColor=gray)
+![Badge_Contributor](https://img.shields.io/github/contributors/pocper/112_SOC_final_project
+)
+![Badge_platform](https://img.shields.io/badge/platform-RISC--V-blue)
+![Badge_language](https://img.shields.io/badge/language-C%2C%20Verilog-blue)
+![Badge_Activity](https://img.shields.io/github/commit-activity/m/pocper/112_SOC_final_project)
+
+
+## Intro
+### Course 
+SoC Design
+### Time
+112 Autumn
+### Team
+07
 
 ## Outline
 - [112 SOC Lab - Final Project](#112-soc-lab---final-project)
+  - [Intro](#intro)
+    - [Course](#course)
+    - [Time](#time)
+    - [Team](#team)
   - [Outline](#outline)
   - [1. System](#1-system)
-    - [1.1 System Architecture](#11-system-architecture)
-    - [1.2 Data Flow](#12-data-flow)
+    - [1.1 Data Flow](#11-data-flow)
+    - [1.2 Performance](#12-performance)
+    - [1.3 Firmware](#13-firmware)
   - [2. Simulation](#2-simulation)
-  - [2.1 RTL](#21-rtl)
-  - [2.2 Synthesis/Implementation](#22-synthesisimplementation)
+    - [2.1 RTL](#21-rtl)
   - [3. Result](#3-result)
-    - [3.1 Command Line](#31-command-line)
+    - [3.1 Simulation](#31-simulation)
     - [3.2 Waveform](#32-waveform)
+      - [3.2.1 CPU - Write](#321-cpu---write)
+      - [3.2.2 CPU - Read](#322-cpu---read)
+      - [3.2.3 DMA - Write](#323-dma---write)
+      - [3.2.4 DMA - Read](#324-dma---read)
   - [4. About Project](#4-about-project)
     - [4.1 Memory Map](#41-memory-map)
     - [4.2 Checkbits](#42-checkbits)
@@ -24,60 +46,39 @@
       - [4.6.0 Naming Abbreviation](#460-naming-abbreviation)
       - [4.6.1 DMA/brc0](#461-dmabrc0)
       - [4.6.2 DMA/ASIC](#462-dmaasic)
+  - [5. Report](#5-report)
+  - [6. Youtube](#6-youtube)
 
 ## 1. System
-### 1.1 System Architecture
-```mermaid
-flowchart LR
-A[CPU]
-B[Cache_instruction]
-C[Arbiter]
-D[DMA Controller]
-E[BRAM Controller]
-F[BRAM]
-G[ASIC Controller]
-G1[FIR]
-G2[q-sort]
-G3[matmul]
-G4[FIFO_in]
-G5[FIFO_out]
-A -- wishbone --> B
-A -- wishbone --> C
-A -- wishbone --> D
-B --> C
-D -- AXI-Stream --> G
-G -- AXI-Stream --> D
-
-C -- AXI-Stream --> D
-D -- AXI-Stream --> C
-C <--> E
-E <--> F
-subgraph ASIC
-G --> G4
-G4 --> G1
-G4 --> G2
-G4 --> G3
-G1 --> G5
-G2 --> G5
-G3 --> G5
-G5 --> G
-end
+### 1.1 Data Flow
+![dataflow](./img/dataflow.jpg)
+### 1.2 Performance
+![performance](./img/performance.png)
+### 1.3 Firmware
+``` c
+int main() {
+    // mprj_init
+    // la_init
+    // uart_interrupt_init
+    // apply_config
+    for(int i = 0; i < TIMES_RERUN; i++) {
+		// Workload
+		fir(); matmul(); qsort();
+		// Workload_check
+		fir_check(); matmul_check(); qsort_check();
+	}
+}
 ```
 
-### 1.2 Data Flow
-![dataflow](./img/dataflow.jpg)
-
----
-
 ## 2. Simulation
-## 2.1 RTL
+### 2.1 RTL
 1. generate project firmware and simulation on vivado
     ``` bash
       cd ~/testbench
       make
     ```
 
-## 2.2 Synthesis/Implementation
+<!-- ### 2.2 Synthesis/Implementation
 1. generate bitstream/hardware handoff files
     ``` bash
     cd ~/vivado
@@ -87,10 +88,10 @@ end
     ``` bash
     cp ./vivado/jupyter_notebook/* onlineFPGA
     # Run caravel_fpga.ipynb
-    ```
+    ```  -->
 
 ## 3. Result
-### 3.1 Command Line
+### 3.1 Simulation
 ``` text
 make[1]: Entering directory '~/testbench'
 make[1]: Leaving directory '~/testbench'
@@ -370,6 +371,14 @@ main_tb.v:88: $finish called at 3251237500 (1ps)
 ```
 
 ### 3.2 Waveform
+#### 3.2.1 CPU - Write
+![dataflow_cpu_write](./img/dataflow_cpu_write.png)
+#### 3.2.2 CPU - Read
+![dataflow_cpu_read](./img/dataflow_cpu_read.png)
+#### 3.2.3 DMA - Write
+![dataflow_dma_write](./img/dataflow_dma_write.png)
+#### 3.2.4 DMA - Read
+![dataflow_dma_read](./img/dataflow_dma_read.png)
 
 ## 4. About Project
 ### 4.1 Memory Map 
@@ -392,7 +401,7 @@ main_tb.v:88: $finish called at 3251237500 (1ps)
 ```
 
 |checkbits|Hardware|Meaning                                               |
-|:-------:|:------:|------------------------------------------------------|
+|---------|--------|------------------------------------------------------|
 |16'hAB00 |FIR     |testbench has received CPU - FIR start signal         |
 |16'hAB01 |FIR     |testbench has received CPU - FIR end signal           |
 |16'hAB10 |matmul  |testbench has received CPU - matmul start signal      |
@@ -418,7 +427,7 @@ DMA_addr |                addr_DMA2RAM                   |
          +-----------------------------------------------+
 ```
 ### 4.4 UART Config
-```
+``` 
          +-------------------------------------------------------------------+
 RX_DATA  |                             DATA BITS                             |
          |                               [7:0]                               |
@@ -433,13 +442,13 @@ STAT_REG | Frame Err | Overrun Err | Tx_full | Tx_empty | Rx_full | Rx_empty |
 
 ### 4.4 Linker Script
 File : [Linker Script](./firmware/sections.lds)
-``` ld
+``` linker-script
 MEMORY {
 	vexriscv_debug : ORIGIN = 0xf00f0000, LENGTH = 0x00000100
 	dff            : ORIGIN = 0x00000000, LENGTH = 0x00000400
 	dff2           : ORIGIN = 0x00000400, LENGTH = 0x00000200
 	flash          : ORIGIN = 0x10000000, LENGTH = 0x01000000
-	mprj           : ORIGIN = 0x30000000, LENGTH = 0x00100000
+	mprj           : ORIGIN = 0x31000000, LENGTH = 0x00100000
 	rawdata        : ORIGIN = 0x38000000, LENGTH = 0x00000500
 	mprjram        : ORIGIN = 0x38001000, LENGTH = 0x00001000
 	hk             : ORIGIN = 0x26000000, LENGTH = 0x00100000
@@ -448,11 +457,14 @@ MEMORY {
 ```
 
 ### 4.5 Arbiter Priority
-  1. CPU_Write_u0 (Initialized datas/instruction)
-  2. DMA_Read_u0 (Initialized datas)
-  3. CPU_Burst_Read_Instruction (instrcution cache prefetch)
-  4. CPU_Read_u0 (Calculated Result)
-  5. Arbiter_Idle (Exception)
+> BRAM_u0 & BRAM_u1 do not concurrent working!
+
+|Priority|BRAM_u0       |BRAM_u1    |
+|--------|--------------|-----------|
+|Highest |CPU (Write)   |DMA (Write)|
+|        |CPU (Prefetch)|CPU (Read) |
+|        |DMA (Read)    |           |
+|Lowest  |CPU (Read)    |           |
 
 ### 4.6 Transfer Protocol
 #### 4.6.0 Naming Abbreviation
@@ -519,3 +531,13 @@ MEMORY {
   ```
 
 #### 4.6.2 DMA/ASIC
+- AXI-Lite (Write)
+![dataflow_AXI_lite_write](./img/dataflow_AXI_lite_write.png)
+- AXI-Lite (Read)
+![dataflow_AXI_lite_read](./img/dataflow_AXI_lite_read.png)
+
+## 5. Report
+[Report - SoC Final Project #07 - pdf](./report/report_soc_final_07.pdf)
+
+## 6. Youtube
+[SOC Lab - Final Project (Team#07) - Youtube](https://youtu.be/Cj6Op68bTSg)
