@@ -28,11 +28,13 @@ task list
 3. Matrix multiply
 4. Quick sorting
 
+
 Acceleraor IP
 1. Direct Memory Access(DMA) with AXI-stream protocol
 2. Block RAM controller with AXI-stream protocol
 3. Memory Arbiter
 4. FIFO
+5. Specialized IP for FIR, Matrix multiply, Quick sorting (ASIC in the picture below)
 
 ## Outline
 - [112 SOC Lab - Final Project](#112-soc-lab---final-project)
