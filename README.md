@@ -14,6 +14,11 @@ SoC Design
 112 Autumn
 ### Team
 07
+### Memers
+黃鉦淳
+王語
+何佳玲
+
 
 ## Outline
 - [112 SOC Lab - Final Project](#112-soc-lab---final-project)
