@@ -15,9 +15,9 @@ SoC Design
 ### Team
 07
 ### Memers
-黃鉦淳
-王語
-何佳玲
+黃鉦淳 <br>
+王語<br>
+何佳玲<br>
 
 
 ## Outline
