@@ -29,7 +29,10 @@ task list
 4. Quick sorting
 
 Acceleraor IP
-1. 
+1. Direct Memory Access(DMA) with AXI-stream protocol
+2. Block RAM controller with AXI-stream protocol
+3. Memory Arbiter
+4. FIFO
 
 ## Outline
 - [112 SOC Lab - Final Project](#112-soc-lab---final-project)
