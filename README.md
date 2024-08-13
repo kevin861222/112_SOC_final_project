@@ -23,8 +23,8 @@ SoC Design
 自修研發多個 IP ，加速一系列任務需求。
 
 task list
-1. UART 傳輸
-2. FIR 運算
+1. UART 
+2. FIR 
 3. Matrix multiply
 4. Quick sorting
 
