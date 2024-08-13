@@ -19,6 +19,17 @@ SoC Design
 王語<br>
 何佳玲<br>
 
+### Brief introdution
+自修研發多個 IP ，加速一系列任務需求。
+
+task list
+1. UART 傳輸
+2. FIR 運算
+3. Matrix multiply
+4. Quick sorting
+
+Acceleraor IP
+1. 
 
 ## Outline
 - [112 SOC Lab - Final Project](#112-soc-lab---final-project)
@@ -26,6 +37,8 @@ SoC Design
     - [Course](#course)
     - [Time](#time)
     - [Team](#team)
+    - [Memers](#Memers)
+    - [Brief introdution](#Brief-introdution)
   - [Outline](#outline)
   - [1. System](#1-system)
     - [1.1 Data Flow](#11-data-flow)
