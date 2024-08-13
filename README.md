@@ -20,7 +20,7 @@ SoC Design
 何佳玲<br>
 
 ### Brief introdution
-自修研發多個 IP ，加速一系列任務需求。
+自修研發多個 IP 以及記憶體控制電路，並設計相應韌體，加速一系列任務需求。
 
 task list
 1. UART 
