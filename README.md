@@ -23,6 +23,9 @@ SoC Design
 
 [Caravel SoC](https://github.com/efabless/caravel?tab=readme-ov-file)
 
+![caravel_block_diagram](https://github.com/user-attachments/assets/960cf0bf-b4ca-49b6-a086-6d276b24b94c)
+
+
 ### Brief introdution
 自修研發多個 IP 以及記憶體控制電路，並設計相應韌體，加速一系列任務需求。
 
