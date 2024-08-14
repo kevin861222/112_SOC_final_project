@@ -19,6 +19,10 @@ SoC Design
 王語<br>
 何佳玲<br>
 
+### Powered by
+
+[Caravel SoC](https://github.com/efabless/caravel?tab=readme-ov-file)
+
 ### Brief introdution
 自修研發多個 IP 以及記憶體控制電路，並設計相應韌體，加速一系列任務需求。
 
@@ -43,6 +47,7 @@ Acceleraor IP
     - [Time](#time)
     - [Team](#team)
     - [Memers](#Memers)
+    - [Powerd by](#Powered-by)
     - [Brief introdution](#Brief-introdution)
   - [Outline](#outline)
   - [1. System](#1-system)
