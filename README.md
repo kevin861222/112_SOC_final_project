@@ -32,8 +32,8 @@ SoC Design
 1. 以特化 IP 取代 CPU 完成複雜運算
 2. 設計 DMA 讓特化 IP 可以直接訪問 Memory
 3. 設計 Memory Arbiter
-4. 優化韌體，增加硬體使用率
-5. 設計
+4. 優化韌體，降低外部記憶體訪問次數並增加硬體使用率
+5. 設計 Data FIFO 與 prefetch 功能，作為 cache 使用。
 
 task list
 1. UART 
