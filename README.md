@@ -36,7 +36,7 @@ SoC Design
 5. 設計 Data FIFO 與 prefetch 功能，作為 cache 使用。
 
 task list
-1. UART 
+1. UART transfer
 2. FIR 
 3. Matrix multiply
 4. Quick sorting
