@@ -27,9 +27,9 @@ SoC Design
 
 
 ### Brief introdution
-自修研發多個 IP 以及記憶體控制電路，並設計相應韌體，加速一系列任務需求。
+為加快記憶體讀取效率以及分擔 CPU 負載，開發多個 IP 以及記憶體控制電路，並設計相應韌體，加速一系列任務需求。
 研發項目
-1. 以特化 IP 取代 CPU 完成複雜運算
+1. 以特化 IP 取代 CPU 完成高複雜度運算，包含 FIR 、矩陣乘法、快速排序法
 2. 設計 DMA 讓特化 IP 可以直接訪問 Memory
 3. 設計 Memory Arbiter
 4. 優化韌體，降低外部記憶體訪問次數並增加硬體使用率
@@ -41,13 +41,12 @@ task list
 3. Matrix multiply
 4. Quick sorting
 
-
-Acceleraor IP
+Accelerator IP
 1. Direct Memory Access(DMA) with AXI-stream protocol
 2. Block RAM controller with AXI-stream protocol
 3. Memory Arbiter
 5. FIFO
-6. Specialized IP for FIR, Matrix multiply, Quick sorting (ASIC in the picture below)
+6. Domain specific IP for FIR, Matrix multiply, Quick sorting (ASIC in the picture below)
 
 ## Outline
 - [112 SOC Lab - Final Project](#112-soc-lab---final-project)
